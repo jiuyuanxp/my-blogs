@@ -1,0 +1,40 @@
+server:
+  port: 4300
+
+spring:
+  application:
+    name: blog-service
+
+  datasource:
+    url: jdbc:postgresql://postgres:5432/blogdb
+    username: bloguser
+    password: blogpass
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+  data:
+    redis:
+      host: redis
+      port: 6379
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: always
+
+logging:
+  level:
+    com.blog: DEBUG
+    org.springframework.web: INFO

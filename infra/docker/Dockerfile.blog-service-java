@@ -1,0 +1,19 @@
+FROM maven:3.9-eclipse-temurin-21 AS builder
+
+WORKDIR /app
+
+COPY services/java/pom.xml .
+RUN mvn dependency:go-offline -B
+
+COPY services/java/src ./src
+RUN mvn clean package -DskipTests
+
+FROM eclipse-temurin-21-jre-alpine
+
+WORKDIR /app
+
+COPY --from=builder /app/target/*.jar app.jar
+
+EXPOSE 4300
+
+ENTRYPOINT ["java", "-jar", "/app/app.jar"]
