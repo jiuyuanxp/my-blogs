@@ -5,6 +5,9 @@ spring:
   application:
     name: blog-service
 
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:production}
+
   datasource:
     url: jdbc:postgresql://postgres:5432/blogdb
     username: bloguser
@@ -14,10 +17,10 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
-    show-sql: true
+      show-sql: false
     properties:
       hibernate:
-        format_sql: true
+        format_sql: false
         dialect: org.hibernate.dialect.PostgreSQLDialect
 
   data:
@@ -36,5 +39,9 @@ management:
 
 logging:
   level:
-    com.blog: DEBUG
-    org.springframework.web: INFO
+    com.blog: ${LOG_LEVEL:INFO}
+    org.springframework.web: ${LOG_LEVEL:INFO}
+    org.hibernate.SQL: ${SQL_LOGGING:false}
+    org.hibernate.type.descriptor.sql.BasicBinder: ${SQL_LOGGING:false}
+    org.hibernate.type.descriptor.sql.BasicExtractor: ${SQL_LOGGING:false}
+    org.springframework.jdbc: ${SQL_LOGGING:false}
