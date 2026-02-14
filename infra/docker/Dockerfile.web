@@ -7,10 +7,13 @@ ENV PATH="$PNPM_HOME:$PATH"
 
 WORKDIR /app
 
+# Copy pnpm workspace configuration and lockfile
+COPY pnpm-workspace.yaml pnpm-lock.yaml ./
+
 # Copy entire web app
 COPY apps/web .
 
-# Install dependencies with Corepack
+# Install dependencies with pnpm
 RUN corepack enable pnpm && pnpm install --prod
 
 # Build application
