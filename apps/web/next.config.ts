@@ -1,5 +1,7 @@
 import type { NextConfig } from "next";
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+
 const nextConfig: NextConfig = {
   output: 'standalone',
   images: {
@@ -16,7 +18,7 @@ const nextConfig: NextConfig = {
   async sitemap({ id }) {
     return [
       {
-        url: 'https://yourdomain.com',
+        url: siteUrl,
         lastModified: new Date(),
         changeFrequency: 'daily',
         priority: 1,
@@ -30,7 +32,7 @@ const nextConfig: NextConfig = {
         allow: '/',
         disallow: ['/api/', '/admin/'],
       },
-      sitemap: 'https://yourdomain.com/sitemap.xml',
+      sitemap: `${siteUrl}/sitemap.xml`,
     };
   },
   headers: async () => {
