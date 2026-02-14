@@ -1,13 +1,15 @@
-# Single-stage build for Next.js web app
+# Two-stage build for Next.js web app (pnpm best practices)
 FROM node:18-alpine
+
+# Set pnpm home and path
+ENV PNPM_HOME=/pnpm
+ENV PATH="$PNPM_HOME:$PATH"
 
 WORKDIR /app
 
-# Copy web application
-COPY apps/web ./
-
 # Install dependencies
-RUN corepack enable pnpm && pnpm install --frozen-lockfile
+COPY apps/web/package.json ./apps/web/
+RUN corepack enable pnpm && pnpm install --prod --frozen-lockfile
 
 # Build application
 RUN corepack enable pnpm && pnpm build
@@ -31,4 +33,4 @@ ENV HOSTNAME="0.0.0.0"
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s \
   CMD node -e "require('http').get('http://localhost:3000', (r) => {r.statusCode === 200 ? process.exit(0) : process.exit(1)})"
 
-CMD ["node", ".next/standalone/server.js"]
+CMD ["node", "apps/web/.next/standalone/server.js"]
