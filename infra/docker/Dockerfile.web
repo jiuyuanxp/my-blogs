@@ -18,8 +18,8 @@ COPY pnpm-workspace.yaml pnpm-lock.yaml ./
 COPY --from=deps /app/node_modules ./node_modules
 # Copy source code
 COPY apps/web ./apps/web
-COPY package.json ./
-RUN corepack enable pnpm && pnpm build --filter=web
+# Build directly in web directory
+RUN corepack enable pnpm && cd apps/web && pnpm build
 
 # Production image, copy all the files and run next
 FROM base AS runner
