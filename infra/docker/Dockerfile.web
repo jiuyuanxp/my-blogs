@@ -7,14 +7,41 @@ ENV PATH="$PNPM_HOME:$PATH"
 
 WORKDIR /app
 
+# Copy entire web app
+COPY apps/web .
+
 # Copy pnpm workspace configuration and lockfile
 COPY pnpm-workspace.yaml pnpm-lock.yaml ./
 
 # Copy entire web app
 COPY apps/web .
 
-# Install dependencies with pnpm
-RUN corepack enable pnpm && pnpm install --prod
+# Install dependencies with pnpm (install all dependencies)
+RUN corepack enable pnpm && pnpm install --prod --frozen-lockfile
+
+# Build application
+RUN corepack enable pnpm && pnpm build
+
+# Create non-root user
+RUN addgroup --system --gid 1001 nodejs && \
+    adduser --system --uid 1001 nextjs
+
+# Change ownership
+RUN chown -R nextjs:nodejs /app
+
+USER nextjs
+
+EXPOSE 3000
+
+ENV NODE_ENV=production
+ENV PORT=3000
+ENV HOSTNAME="0.0.0.0"
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s \
+  CMD node -e "require('http').get('http://localhost:3000', (r) => {r.statusCode === 200 ? process.exit(0) : process.exit(1)})"
+
+CMD ["node", ".next/standalone/server.js"]
 
 # Build application
 RUN corepack enable pnpm && pnpm build
