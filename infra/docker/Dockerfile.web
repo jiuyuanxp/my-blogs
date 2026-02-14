@@ -8,10 +8,10 @@ ENV PATH="$PNPM_HOME:$PATH"
 WORKDIR /app
 
 # Copy entire web app
-COPY apps/web ./
+COPY apps/web .
 
 # Install dependencies
-RUN corepack enable pnpm && pnpm install --prod --frozen-lockfile
+RUN corepack enable pnpm && pnpm install --prod
 
 # Build application
 RUN corepack enable pnpm && pnpm build
