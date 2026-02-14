@@ -14,12 +14,13 @@ FROM base AS builder
 WORKDIR /app
 # Copy pnpm workspace files
 COPY pnpm-workspace.yaml pnpm-lock.yaml ./
-# Copy dependencies from deps stage
+# Copy dependencies from deps stage (copy root node_modules)
 COPY --from=deps /app/node_modules ./node_modules
 # Copy source code
 COPY apps/web ./apps/web
-# Build directly in web directory
-RUN corepack enable pnpm && cd apps/web && pnpm build
+# Change to web directory and build
+WORKDIR /app/apps/web
+RUN corepack enable pnpm && pnpm build
 
 # Production image, copy all the files and run next
 FROM base AS runner
