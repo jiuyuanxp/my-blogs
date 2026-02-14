@@ -1,6 +1,9 @@
 import type { NextConfig } from "next";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+const siteName = process.env.NEXT_PUBLIC_SITE_NAME || "我的个人博客";
+const siteDescription = process.env.NEXT_PUBLIC_SITE_DESCRIPTION || "分享技术知识和生活感悟的个人博客";
+const twitterHandle = process.env.NEXT_PUBLIC_TWITTER_HANDLE || "@yourhandle";
 
 const nextConfig: NextConfig = {
   output: 'standalone',
@@ -11,50 +14,6 @@ const nextConfig: NextConfig = {
         hostname: '**',
       },
     ],
-  },
-  async generateSitemaps() {
-    return [{ id: 0 }];
-  },
-  async sitemap({ id }) {
-    return [
-      {
-        url: siteUrl,
-        lastModified: new Date(),
-        changeFrequency: 'daily',
-        priority: 1,
-      },
-    ];
-  },
-  async robots() {
-    return {
-      rules: {
-        userAgent: '*',
-        allow: '/',
-        disallow: ['/api/', '/admin/'],
-      },
-      sitemap: `${siteUrl}/sitemap.xml`,
-    };
-  },
-  headers: async () => {
-    return [
-      {
-        source: '/(.*)',
-        headers: [
-          {
-            key: 'X-Content-Type-Options',
-            value: 'nosniff',
-          },
-          {
-            key: 'X-Frame-Options',
-            value: 'DENY',
-          },
-          {
-            key: 'X-XSS-Protection',
-            value: '1; mode=block',
-          },
-        ],
-      },
-    ];
   },
 };
 
