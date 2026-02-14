@@ -1,5 +1,5 @@
 # Two-stage build for Next.js web app (pnpm best practices)
-FROM node:18-alpine
+FROM node:20-alpine
 
 # Set pnpm home and path
 ENV PNPM_HOME=/pnpm
@@ -10,7 +10,7 @@ WORKDIR /app
 # Copy entire web app
 COPY apps/web .
 
-# Install dependencies
+# Install dependencies with Corepack
 RUN corepack enable pnpm && pnpm install --prod
 
 # Build application
