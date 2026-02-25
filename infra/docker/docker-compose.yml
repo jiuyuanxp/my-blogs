@@ -16,12 +16,13 @@ services:
     restart: unless-stopped
 
   # PostgreSQL Database
+  # 生产环境请通过 env_file 或 environment 覆盖密码，勿使用默认值
   postgres:
     image: postgres:15-alpine
     environment:
-      POSTGRES_USER: bloguser
-      POSTGRES_PASSWORD: blogpass
-      POSTGRES_DB: blogdb
+      POSTGRES_USER: ${DB_USER:-bloguser}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-blogpass}
+      POSTGRES_DB: ${DB_NAME:-blogdb}
     ports:
       - "5432:5432"
     volumes:
@@ -63,6 +64,11 @@ services:
     environment:
       SPRING_PROFILES_ACTIVE: production
       SERVER_PORT: 4300
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: ${DB_NAME:-blogdb}
+      DB_USER: ${DB_USER:-bloguser}
+      DB_PASSWORD: ${DB_PASSWORD:-blogpass}
     ports:
       - "4300:4300"
     depends_on:

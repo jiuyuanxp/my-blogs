@@ -9,9 +9,9 @@ spring:
     active: ${SPRING_PROFILES_ACTIVE:production}
 
   datasource:
-    url: jdbc:postgresql://postgres:5432/blogdb
-    username: bloguser
-    password: blogpass
+    url: jdbc:postgresql://${DB_HOST:postgres}:${DB_PORT:5432}/${DB_NAME:blogdb}
+    username: ${DB_USER:bloguser}
+    password: ${DB_PASSWORD:blogpass}
     driver-class-name: org.postgresql.Driver
 
   jpa:

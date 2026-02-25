@@ -1,13 +1,22 @@
 # Blog Monorepo
 
-基于 Monorepo + Nginx 网关架构的个人博客项目，支持微前端和微服务架构，适合学习和练手。
+基于 Monorepo + Nginx 网关架构的个人博客项目，支持微前端和微服务架构，适合学习和练手前后端、部署、SEO 等知识。
+
+## 文档导航
+
+| 文档 | 说明 |
+|------|------|
+| [AGENTS.md](./AGENTS.md) | AI 协作规范、代码规范、开发流程 |
+| [docs/AI_DEVELOPMENT.md](./docs/AI_DEVELOPMENT.md) | 如何使用 AI 编程构建本项目 |
+| [docs/SECURITY.example.md](./docs/SECURITY.example.md) | 安全清单模板（敏感信息放本地 `SECURITY.md`，不上传） |
 
 ## 架构设计
 
 ### 技术栈
+
 - **Monorepo**: Turborepo + pnpm workspace
-- **前端**: React/Next.js, Vue/Nuxt, Angular
-- **后端**: Node.js, Go, Java
+- **前端**: Next.js (React), TypeScript
+- **后端**: Java (Spring Boot), Node.js, Go（待开发）
 - **网关**: Nginx
 - **容器化**: Docker + Docker Compose
 - **数据库**: PostgreSQL
@@ -18,44 +27,46 @@
 ```
 .
 ├── apps/                    # 应用层
-│   ├── web/                # 主站前端（微前端容器）
-│   ├── admin/              # 后台管理
-│   └── mobile/             # 移动端
+│   ├── web/                # 主站前端（Next.js）
+│   ├── admin/              # 后台管理（待开发）
+│   └── mobile/             # 移动端（待开发）
 ├── services/               # 后端微服务
 │   ├── gateway/            # API 网关
-│   ├── user/              # 用户服务
-│   ├── article/           # 文章服务
-│   ├── go/                # Go 服务
-│   ├── nodejs/            # Node.js 服务
-│   └── java/              # Java 服务
-├── packages/              # 共享库
-│   ├── ui/                # 通用 UI 组件
-│   ├── types/             # TypeScript 类型定义
-│   ├── config/            # 配置管理
-│   └── utils/             # 工具函数
-├── infra/                 # 基础设施
-│   ├── nginx/             # Nginx 配置
-│   └── docker/            # Docker Compose
-├── .github/               # GitHub Actions CI/CD
-├── turbo.json             # Turborepo 配置
-├── pnpm-workspace.yaml    # pnpm workspace 配置
-└── package.json           # 根 package.json
+│   ├── user/               # 用户服务（待开发）
+│   ├── article/            # 文章服务（待开发）
+│   ├── go/                 # Go 服务
+│   ├── nodejs/             # Node.js 服务
+│   └── java/               # Java 服务
+├── packages/               # 共享库
+│   ├── ui/                 # 通用 UI 组件（待开发）
+│   ├── types/              # TypeScript 类型定义
+│   ├── config/             # 配置管理（待开发）
+│   └── utils/              # 工具函数
+├── docs/                   # 设计文档
+├── infra/                  # 基础设施
+│   ├── nginx/              # Nginx 配置
+│   └── docker/             # Docker Compose
+├── .github/                # GitHub Actions CI/CD
+├── turbo.json              # Turborepo 配置
+├── pnpm-workspace.yaml     # pnpm workspace 配置
+└── package.json            # 根 package.json
 ```
 
 ### 架构优势
 
-1. **微前端**: 不同前端框架可以独立开发和部署
-2. **微服务**: 后端服务按业务领域拆分，独立扩展
-3. **代码复用**: 共享 packages 层减少重复代码
-4. **统一管理**: 所有项目在同一仓库，便于版本控制和协作
-5. **技术栈灵活**: 支持多种编程语言和框架
+1. **微前端**：不同前端框架可独立开发和部署
+2. **微服务**：后端按业务领域拆分，独立扩展
+3. **代码复用**：共享 packages 层减少重复
+4. **统一管理**：同一仓库，便于版本控制和协作
+5. **技术栈灵活**：支持多种编程语言和框架
 
 ## 快速开始
 
 ### 前置要求
+
 - Node.js >= 18.0.0
 - pnpm >= 8.0.0
-- Docker & Docker Compose
+- Docker & Docker Compose（可选）
 
 ### 安装依赖
 
@@ -71,26 +82,19 @@ pnpm dev
 
 # 启动特定服务
 pnpm --filter web dev
-pnpm --filter admin dev
 ```
 
 ### 构建项目
 
 ```bash
-# 构建所有项目
 pnpm build
-
-# 构建特定项目
 pnpm --filter web build
 ```
 
 ### Docker 部署
 
 ```bash
-# 启动所有容器
 pnpm docker:up
-
-# 停止所有容器
 pnpm docker:down
 ```
 
@@ -107,35 +111,32 @@ pnpm docker:down
 - [x] 初始化 Java Spring Boot 后端服务
 - [x] 配置 Nginx 网关路由
 - [x] 配置 Docker Compose 部署
-- [ ] 创建共享类型定义包
-- [ ] 实现前端文章列表页
+- [x] 创建共享类型定义包
+- [x] 国际化（next-intl）
+- [ ] 实现前端文章列表页（对接真实 API）
 - [ ] 实现前端文章详情页
 - [ ] 添加单元测试和 E2E 测试
 
 ## 开发指南
 
-### 前端开发（Next.js + React）
+### 前端（Next.js）
 
-进入 `apps/web` 目录：
 ```bash
 cd apps/web
 pnpm dev
 ```
 
-前端应用已配置 SEO 优化：
-- 自动生成 Sitemap
-- 自定义 Robots.txt
-- Open Graph 和 Twitter 卡片支持
-- 结构化数据
+已配置 SEO：Sitemap、Robots.txt、Open Graph、Twitter 卡片、结构化数据。
 
-### 后端开发（Java + Spring Boot）
+### 后端（Java + Spring Boot）
 
-进入 `services/java` 目录：
 ```bash
 cd services/java
+./mvnw spring-boot:run
 ```
 
-当前实现的 API：
+当前 API：
+
 - `GET /api/health` - 健康检查
 - `GET /api/articles` - 获取文章列表
 - `GET /api/articles/{id}` - 获取文章详情
@@ -143,24 +144,18 @@ cd services/java
 - `PUT /api/articles/{id}` - 更新文章
 - `DELETE /api/articles/{id}` - 删除文章
 
-### Docker 部署
+### 环境配置
 
-启动所有容器：
-```bash
-pnpm docker:up
-```
-
-访问地址：
-- 前端: http://localhost
-- API: http://localhost/api
+复制 `.env.example` 为 `.env` 并填入本地配置。**切勿提交 `.env` 到版本控制。** 详见 [docs/SECURITY.md](./docs/SECURITY.md)。
 
 ## 学习重点
 
-1. **Monorepo 管理**: 学习 Turborepo 和 pnpm workspace 的使用
-2. **微前端架构**: 实现不同框架的页面级集成
-3. **微服务架构**: 理解服务拆分和通信模式
-4. **容器化部署**: Docker 和 Docker Compose 的实战
-5. **网关设计**: Nginx 路由和负载均衡
+1. **Monorepo 管理**：Turborepo、pnpm workspace
+2. **微前端架构**：页面级集成
+3. **微服务架构**：服务拆分与通信
+4. **容器化部署**：Docker、Docker Compose
+5. **网关设计**：Nginx 路由与负载均衡
+6. **SEO 优化**：Metadata、Sitemap、JSON-LD
 
 ## License
 

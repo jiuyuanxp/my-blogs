@@ -34,6 +34,9 @@ lerna-debug.log*
 .env.production
 .env.development
 
+# 含服务器地址、密码等敏感信息，不上传 GitHub
+docs/SECURITY.md
+
 # IDE
 .vscode/*
 !.vscode/extensions.json
@@ -43,3 +46,11 @@ lerna-debug.log*
 
 # Build artifacts
 *.tsbuildinfo
+
+# Java / Maven
+target/
+*.class
+*.jar
+*.war
+*.ear
+*.log
