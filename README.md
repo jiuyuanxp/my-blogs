@@ -6,9 +6,19 @@
 
 | 文档 | 说明 |
 |------|------|
-| [AGENTS.md](./AGENTS.md) | AI 协作规范、代码规范、开发流程 |
+| [AGENTS.md](./AGENTS.md) | AI 协作规范、五大原则、代码规范 |
+| [.cursor/rules/](./.cursor/rules/) | Cursor 规则（安全、测试、TS/Java 风格） |
 | [docs/AI_DEVELOPMENT.md](./docs/AI_DEVELOPMENT.md) | 如何使用 AI 编程构建本项目 |
 | [docs/SECURITY.example.md](./docs/SECURITY.example.md) | 安全清单模板（敏感信息放本地 `SECURITY.md`，不上传） |
+| [docs/CLAUDE_CODE_COMMANDS.md](./docs/CLAUDE_CODE_COMMANDS.md) | Everything Claude Code 中文指令手册（/review、/test 等） |
+
+### ECC 移植组件
+
+| 路径 | 说明 |
+|------|------|
+| `.cursor/rules/` | 39 条规则 |
+| `.cursor/hooks/` + `hooks.json` | 自动化钩子 |
+| `scripts/hooks/` | 钩子实现脚本 |
 
 ## 架构设计
 
@@ -27,26 +37,16 @@
 ```
 .
 ├── apps/                    # 应用层
-│   ├── web/                # 主站前端（Next.js）
-│   ├── admin/              # 后台管理（待开发）
-│   └── mobile/             # 移动端（待开发）
+│   └── web/                # 主站前端（Next.js）
 ├── services/               # 后端微服务
-│   ├── gateway/            # API 网关
-│   ├── user/               # 用户服务（待开发）
-│   ├── article/            # 文章服务（待开发）
-│   ├── go/                 # Go 服务
-│   ├── nodejs/             # Node.js 服务
-│   └── java/               # Java 服务
+│   └── java/               # 博客服务（Spring Boot，含文章 CRUD）
 ├── packages/               # 共享库
-│   ├── ui/                 # 通用 UI 组件（待开发）
 │   ├── types/              # TypeScript 类型定义
-│   ├── config/             # 配置管理（待开发）
 │   └── utils/              # 工具函数
 ├── docs/                   # 设计文档
 ├── infra/                  # 基础设施
 │   ├── nginx/              # Nginx 配置
-│   └── docker/             # Docker Compose
-├── .github/                # GitHub Actions CI/CD
+│   └── docker/             # Docker Compose 与 Dockerfile
 ├── turbo.json              # Turborepo 配置
 ├── pnpm-workspace.yaml     # pnpm workspace 配置
 └── package.json            # 根 package.json
@@ -98,20 +98,22 @@ pnpm docker:up
 pnpm docker:down
 ```
 
+Docker Compose 包含：Nginx 网关、Web 前端、blog-service（Java）、PostgreSQL、Redis。
+
 ## 路由规则
 
-| 路径 | 目标服务 |
-|------|----------|
-| `/` | Web 前端 (3000) |
-| `/api` | Java Blog 服务 (4300) |
+| 路径 | 目标服务 | 端口 |
+|------|----------|------|
+| `/` | Web 前端 | 3000 |
+| `/api` | blog-service（Java Spring Boot） | 4300 |
 
 ## 当前进度
 
 - [x] 初始化 Next.js 前端应用（支持 SEO）
-- [x] 初始化 Java Spring Boot 后端服务
+- [x] 初始化 Java Spring Boot 后端服务（文章 CRUD、PostgreSQL、Redis）
 - [x] 配置 Nginx 网关路由
 - [x] 配置 Docker Compose 部署
-- [x] 创建共享类型定义包
+- [x] 创建共享包（types、utils）
 - [x] 国际化（next-intl）
 - [ ] 实现前端文章列表页（对接真实 API）
 - [ ] 实现前端文章详情页
@@ -146,7 +148,7 @@ cd services/java
 
 ### 环境配置
 
-复制 `.env.example` 为 `.env` 并填入本地配置。**切勿提交 `.env` 到版本控制。** 详见 [docs/SECURITY.md](./docs/SECURITY.md)。
+复制 `.env.example` 为 `.env` 并填入本地配置。**切勿提交 `.env` 到版本控制。** 安全清单模板见 [docs/SECURITY.example.md](./docs/SECURITY.example.md)，本地敏感信息放 `docs/SECURITY.md`（已 gitignore）。
 
 ## 学习重点
 

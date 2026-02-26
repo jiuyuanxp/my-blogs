@@ -8,24 +8,31 @@
     "dev": "turbo run dev --parallel",
     "lint": "turbo run lint",
     "test": "turbo run test",
+    "typecheck": "pnpm exec tsc --noEmit",
     "clean": "turbo run clean && rm -rf node_modules",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
     "docker:up": "docker-compose -f infra/docker/docker-compose.yml up -d",
     "docker:down": "docker-compose -f infra/docker/docker-compose.yml down"
   },
   "devDependencies": {
-    "turbo": "^2.0.0",
-    "prettier": "^3.2.0",
-    "eslint": "^8.56.0",
+    "@types/node": "^20.19.33",
     "@typescript-eslint/eslint-plugin": "^6.0.0",
     "@typescript-eslint/parser": "^6.0.0",
+    "eslint": "^8.56.0",
+    "prettier": "^3.2.0",
+    "turbo": "^2.0.0",
     "typescript": "^5.3.0"
   },
   "engines": {
     "node": ">=18.0.0",
     "pnpm": ">=8.0.0"
   },
-  "keywords": ["monorepo", "microservices", "micro-frontend", "blog"],
+  "keywords": [
+    "monorepo",
+    "microservices",
+    "micro-frontend",
+    "blog"
+  ],
   "author": "",
   "license": "MIT"
 }

@@ -1,0 +1,24 @@
+---
+description: Git 提交格式与 PR 流程
+alwaysApply: true
+---
+
+# Git 工作流
+
+## 提交信息格式
+
+```
+<type>: <description>
+
+<optional body>
+```
+
+类型：feat, fix, refactor, docs, test, chore, perf, ci
+
+## PR 流程
+
+1. 分析完整提交历史（非仅最新）
+2. 使用 `git diff [base-branch]...HEAD` 查看全部变更
+3. 撰写完整 PR 摘要
+4. 包含测试计划与 TODO
+5. 新分支推送时使用 `-u` 标志

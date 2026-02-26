@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Prevent "overwrite input file" when ESLint --fix processes config
+    "**/eslint.config.mjs",
   ]),
 ]);
 

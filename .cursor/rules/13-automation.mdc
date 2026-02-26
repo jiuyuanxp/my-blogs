@@ -1,0 +1,38 @@
+---
+description: 自动化钩子 - 保存后美化、构建前自检、测试失败回溯
+alwaysApply: true
+---
+
+# 自动化工作流钩子
+
+## 1. 保存后自动美化
+
+修改文件后必须执行 `pnpm format` 或 `pnpm lint`，确保代码风格一致。
+
+## 2. 构建前自检
+
+在尝试 `pnpm build` 之前，先运行 `pnpm typecheck` 做类型检查，避免构建中途失败。
+
+## 3. 错误回溯
+
+若 `pnpm test` 失败：
+1. 立即读取错误日志
+2. 定位失败用例和根因
+3. 提出修复建议并执行，无需等待用户干预
+
+## 实现方式
+
+- **VS Code**：配置 format on save、保存后运行 typecheck
+- **Git hooks**（Husky + lint-staged）：
+
+```json
+"lint-staged": {
+  "*.{ts,tsx,js,jsx}": ["prettier --write", "eslint --fix"]
+}
+```
+
+- **console.log**：提交前检测并提醒移除
+
+## 长时间任务
+
+执行耗时命令时提醒使用 `tmux` 或 `screen` 防止断开。

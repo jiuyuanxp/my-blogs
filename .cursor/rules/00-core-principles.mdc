@@ -1,0 +1,38 @@
+---
+description: Everything Claude Code 五大原则 - 高效 AI 协作核心理念
+alwaysApply: true
+---
+
+# AI 协作五大原则
+
+> 参考 [Everything Claude Code](https://github.com/affaan-m/everything-claude-code) 与 [精简指南](https://x.com/affaanmustafa/status/2012378465664745795)
+
+## 1. 保持简单
+
+- 不要过度复杂化指令
+- 一次聚焦一个任务，分步完成
+- 避免冗长的系统提示
+
+## 2. 上下文珍贵
+
+- 减少不必要的 Token 消耗
+- 只引用相关文件，不整库加载
+- 大任务分阶段，避免上下文溢出
+
+## 3. 并行执行
+
+- 独立任务使用 `mcp_task` 并行启动子代理
+- 示例：安全分析、性能审查、类型检查可同时进行
+- 避免不必要的串行等待
+
+## 4. 自动化重复劳动
+
+- 将频繁操作写成脚本或 Git hooks
+- 编辑后自动格式化（Prettier）、类型检查（tsc）
+- 提交前自动检测 console.log、lint
+
+## 5. 限制子代理范围
+
+- 给子代理明确且狭窄的任务边界
+- 复杂功能先规划再实现，避免范围蔓延
+- 使用 TodoWrite 跟踪多步骤任务

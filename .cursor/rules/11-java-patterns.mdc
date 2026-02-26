@@ -1,0 +1,24 @@
+---
+description: Java/Spring Boot 代码风格与分层架构
+globs: "**/*.java"
+alwaysApply: false
+---
+
+# Java/Spring Boot 规范
+
+## 分层架构
+
+- Controller → Service → Repository
+- RESTful：GET 查询，POST 创建，PUT 更新，DELETE 删除
+- 接口命名：findAllById, createArticle, deleteById
+
+## 代码风格
+
+- 使用 Lombok @Data @Builder 减少样板代码
+- 避免魔法数字，使用具名常量
+- 小函数，单一职责
+
+## 不可变性
+
+- 优先使用不可变 DTO
+- 使用 record（Java 16+）或 final 字段
