@@ -17,9 +17,18 @@ export default function LanguageSwitcher() {
   const handleLocaleChange = () => {
     const newLocale = locale === 'zh' ? 'en' : 'zh';
     startTransition(() => {
-      const segments = pathname.split('/');
-      segments[1] = newLocale;
-      router.push(segments.join('/'));
+      // usePathname 不含 basePath，pathname 形如 /zh 或 /zh/article/1
+      // 替换 locale 段，避免 /web/zh 时误生成 /en/web/zh
+      const pathWithoutBase =
+        pathname.startsWith('/web/') ? pathname.slice(5) : pathname;
+      const segments = pathWithoutBase.split('/').filter(Boolean);
+      const localeIndex = segments.findIndex((s) => s === locale);
+      if (localeIndex >= 0) {
+        segments[localeIndex] = newLocale;
+        router.push('/' + segments.join('/'));
+      } else {
+        router.push(`/${newLocale}`);
+      }
     });
   };
 
