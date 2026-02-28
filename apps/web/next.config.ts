@@ -10,7 +10,11 @@ const siteDescription =
   '分享技术知识和生活感悟的个人博客';
 const twitterHandle = process.env.NEXT_PUBLIC_TWITTER_HANDLE || '@yourhandle';
 
+const basePath = '/web';
+
 const nextConfig: NextConfig = {
+  basePath,
+  env: { NEXT_PUBLIC_BASE_PATH: basePath },
   output: 'standalone',
   images: {
     remotePatterns: [
