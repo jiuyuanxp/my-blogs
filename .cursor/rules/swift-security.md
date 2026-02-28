@@ -1,8 +1,9 @@
 ---
-description: "Swift security extending common rules"
-globs: ["**/*.swift", "**/Package.swift"]
+description: 'Swift security extending common rules'
+globs: ['**/*.swift', '**/Package.swift']
 alwaysApply: false
 ---
+
 # Swift Security
 
 > This file extends the common security rule with Swift specific content.

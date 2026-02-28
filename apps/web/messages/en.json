@@ -1,31 +1,36 @@
 {
   "common": {
     "language": "Language",
-    "languageSwitcher": {
-      "zh": "中文",
-      "en": "English"
-    },
+    "languageSwitcher": { "zh": "中文", "en": "English" },
     "readMore": "Read More",
     "viewCount": "views",
     "published": "Published",
     "draft": "Draft",
-    "loading": "Loading...",
+    "loading": "Loading…",
     "error": "An error occurred",
-    "empty": "No data"
+    "empty": "No data",
+    "footer": "jiuyuan.blog built with Next.js",
+    "category": "Category",
+    "all": "All",
+    "back": "Back",
+    "comments": "Comments",
+    "leaveComment": "Leave a comment",
+    "commentPlaceholder": "Share your thoughts…",
+    "postComment": "Post Comment",
+    "noComments": "No comments yet. Be the first to share your thoughts!",
+    "articleNotFound": "Article not found",
+    "loadingArticle": "Loading article…",
+    "loadingCategory": "Loading category…",
+    "noArticlesInCategory": "No articles found in this category.",
+    "dateFormat": "MMM d, yyyy",
+    "dateTimeFormat": "MMM d, h:mm a"
   },
   "home": {
-    "welcome": "Welcome to My Blog",
-    "subtitle": "Sharing technical knowledge, exploring programming",
     "latestArticles": "Latest Articles",
-    "aboutMe": "About Me",
-    "aboutDescription": "I am a full-stack developer who loves sharing technology. This blog is mainly used to record my learning notes and development experience, hoping to help you who also love programming.",
-    "sampleArticle1": {
-      "title": "Getting Started with Microservices Architecture",
-      "summary": "The journey from monolithic applications to microservices, with real-world case studies"
-    },
-    "sampleArticle2": {
-      "title": "React Performance Optimization Best Practices",
-      "summary": "Deep dive into React application performance optimization techniques and best practices"
-    }
+    "subtitle": "Thoughts, tutorials, and insights on web development and artificial intelligence."
+  },
+  "category": {
+    "title": "{category} Articles",
+    "subtitle": "Browse all articles in the {category} category."
   }
 }

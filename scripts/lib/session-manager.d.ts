@@ -81,7 +81,9 @@ export interface GetAllSessionsOptions {
  * Parse a session filename to extract date and short ID.
  * @returns Parsed metadata, or null if the filename doesn't match the expected pattern
  */
-export function parseSessionFilename(filename: string): SessionFilenameMeta | null;
+export function parseSessionFilename(
+  filename: string
+): SessionFilenameMeta | null;
 
 /** Get the full filesystem path for a session filename */
 export function getSessionPath(filename: string): string;
@@ -109,20 +111,31 @@ export function getSessionTitle(sessionPath: string): string;
 export function getSessionSize(sessionPath: string): string;
 
 /** Get all sessions with optional filtering and pagination */
-export function getAllSessions(options?: GetAllSessionsOptions): SessionListResult;
+export function getAllSessions(
+  options?: GetAllSessionsOptions
+): SessionListResult;
 
 /**
  * Find a session by short ID or filename.
  * @param sessionId - Short ID prefix, full filename, or filename without .tmp
  * @param includeContent - Whether to read and parse the session content
  */
-export function getSessionById(sessionId: string, includeContent?: boolean): Session | null;
+export function getSessionById(
+  sessionId: string,
+  includeContent?: boolean
+): Session | null;
 
 /** Write markdown content to a session file */
-export function writeSessionContent(sessionPath: string, content: string): boolean;
+export function writeSessionContent(
+  sessionPath: string,
+  content: string
+): boolean;
 
 /** Append content to an existing session file */
-export function appendSessionContent(sessionPath: string, content: string): boolean;
+export function appendSessionContent(
+  sessionPath: string,
+  content: string
+): boolean;
 
 /** Delete a session file */
 export function deleteSession(sessionPath: string): boolean;

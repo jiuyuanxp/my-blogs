@@ -11,11 +11,12 @@ const path = require('path');
 const MAX_STDIN = 1024 * 1024;
 
 function readStdin() {
-  return new Promise((resolve) => {
+  return new Promise(resolve => {
     let data = '';
     process.stdin.setEncoding('utf8');
     process.stdin.on('data', chunk => {
-      if (data.length < MAX_STDIN) data += chunk.substring(0, MAX_STDIN - data.length);
+      if (data.length < MAX_STDIN)
+        data += chunk.substring(0, MAX_STDIN - data.length);
     });
     process.stdin.on('end', () => resolve(data));
   });
@@ -49,7 +50,8 @@ function runExistingHook(scriptName, stdinData) {
   const scriptPath = path.join(getPluginRoot(), 'scripts', 'hooks', scriptName);
   try {
     execFileSync('node', [scriptPath], {
-      input: typeof stdinData === 'string' ? stdinData : JSON.stringify(stdinData),
+      input:
+        typeof stdinData === 'string' ? stdinData : JSON.stringify(stdinData),
       stdio: ['pipe', 'pipe', 'pipe'],
       timeout: 15000,
       cwd: process.cwd(),
@@ -59,4 +61,9 @@ function runExistingHook(scriptName, stdinData) {
   }
 }
 
-module.exports = { readStdin, getPluginRoot, transformToClaude, runExistingHook };
+module.exports = {
+  readStdin,
+  getPluginRoot,
+  transformToClaude,
+  runExistingHook,
+};

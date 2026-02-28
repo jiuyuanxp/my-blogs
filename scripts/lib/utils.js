@@ -62,7 +62,9 @@ function ensureDir(dirPath) {
   } catch (err) {
     // EEXIST is fine (race condition with another process creating it)
     if (err.code !== 'EEXIST') {
-      throw new Error(`Failed to create directory '${dirPath}': ${err.message}`);
+      throw new Error(
+        `Failed to create directory '${dirPath}': ${err.message}`
+      );
     }
   }
   return dirPath;
@@ -174,7 +176,8 @@ function findFiles(dir, pattern, options = {}) {
           }
 
           if (maxAge !== null) {
-            const ageInDays = (Date.now() - stats.mtimeMs) / (1000 * 60 * 60 * 24);
+            const ageInDays =
+              (Date.now() - stats.mtimeMs) / (1000 * 60 * 60 * 24);
             if (ageInDays <= maxAge) {
               results.push({ path: fullPath, mtime: stats.mtimeMs });
             }
@@ -208,7 +211,7 @@ function findFiles(dir, pattern, options = {}) {
 async function readStdinJson(options = {}) {
   const { timeoutMs = 5000, maxSize = 1024 * 1024 } = options;
 
-  return new Promise((resolve) => {
+  return new Promise(resolve => {
     let data = '';
     let settled = false;
 
@@ -343,7 +346,7 @@ function runCommand(cmd, options = {}) {
     const result = execSync(cmd, {
       encoding: 'utf8',
       stdio: ['pipe', 'pipe', 'pipe'],
-      ...options
+      ...options,
     });
     return { success: true, output: result.trim() };
   } catch (err) {
@@ -437,7 +440,10 @@ function countInFile(filePath, pattern) {
   try {
     if (pattern instanceof RegExp) {
       // Always create new RegExp to avoid shared lastIndex state; ensure global flag
-      regex = new RegExp(pattern.source, pattern.flags.includes('g') ? pattern.flags : pattern.flags + 'g');
+      regex = new RegExp(
+        pattern.source,
+        pattern.flags.includes('g') ? pattern.flags : pattern.flags + 'g'
+      );
     } else if (typeof pattern === 'string') {
       regex = new RegExp(pattern, 'g');
     } else {
@@ -525,5 +531,5 @@ module.exports = {
   commandExists,
   runCommand,
   isGitRepo,
-  getGitModifiedFiles
+  getGitModifiedFiles,
 };

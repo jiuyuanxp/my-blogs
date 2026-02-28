@@ -1,8 +1,9 @@
 ---
-description: "Python patterns extending common rules"
-globs: ["**/*.py", "**/*.pyi"]
+description: 'Python patterns extending common rules'
+globs: ['**/*.py', '**/*.pyi']
 alwaysApply: false
 ---
+
 # Python Patterns
 
 > This file extends the common patterns rule with Python specific content.

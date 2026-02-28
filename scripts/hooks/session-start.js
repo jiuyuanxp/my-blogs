@@ -16,9 +16,12 @@ const {
   ensureDir,
   readFile,
   log,
-  output
+  output,
 } = require('../lib/utils');
-const { getPackageManager, getSelectionPrompt } = require('../lib/package-manager');
+const {
+  getPackageManager,
+  getSelectionPrompt,
+} = require('../lib/package-manager');
 const { listAliases } = require('../lib/session-aliases');
 
 async function main() {
@@ -49,7 +52,9 @@ async function main() {
   const learnedSkills = findFiles(learnedDir, '*.md');
 
   if (learnedSkills.length > 0) {
-    log(`[SessionStart] ${learnedSkills.length} learned skill(s) available in ${learnedDir}`);
+    log(
+      `[SessionStart] ${learnedSkills.length} learned skill(s) available in ${learnedDir}`
+    );
   }
 
   // Check for available session aliases
@@ -57,8 +62,12 @@ async function main() {
 
   if (aliases.length > 0) {
     const aliasNames = aliases.map(a => a.name).join(', ');
-    log(`[SessionStart] ${aliases.length} session alias(es) available: ${aliasNames}`);
-    log(`[SessionStart] Use /sessions load <alias> to continue a previous session`);
+    log(
+      `[SessionStart] ${aliases.length} session alias(es) available: ${aliasNames}`
+    );
+    log(
+      `[SessionStart] Use /sessions load <alias> to continue a previous session`
+    );
   }
 
   // Detect and report package manager

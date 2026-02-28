@@ -1,8 +1,9 @@
 ---
-description: "Python coding style extending common rules"
-globs: ["**/*.py", "**/*.pyi"]
+description: 'Python coding style extending common rules'
+globs: ['**/*.py', '**/*.pyi']
 alwaysApply: false
 ---
+
 # Python Coding Style
 
 > This file extends the common coding style rule with Python specific content.

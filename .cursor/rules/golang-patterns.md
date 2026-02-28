@@ -1,8 +1,9 @@
 ---
-description: "Go patterns extending common rules"
-globs: ["**/*.go", "**/go.mod", "**/go.sum"]
+description: 'Go patterns extending common rules'
+globs: ['**/*.go', '**/go.mod', '**/go.sum']
 alwaysApply: false
 ---
+
 # Go Patterns
 
 > This file extends the common patterns rule with Go specific content.

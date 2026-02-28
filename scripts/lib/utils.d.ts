@@ -80,7 +80,11 @@ export interface FindFilesOptions {
  * Supports `*` (any chars), `?` (single char), and `.` (literal dot).
  * Results are sorted by modification time (newest first).
  */
-export function findFiles(dir: string, pattern: string, options?: FindFilesOptions): FileMatch[];
+export function findFiles(
+  dir: string,
+  pattern: string,
+  options?: FindFilesOptions
+): FileMatch[];
 
 /**
  * Read a text file safely. Returns null if the file doesn't exist or can't be read.
@@ -105,7 +109,12 @@ export interface ReplaceInFileOptions {
  * Replace text in a file (cross-platform sed alternative).
  * @returns true if the file was found and updated, false if file not found
  */
-export function replaceInFile(filePath: string, search: string | RegExp, replace: string, options?: ReplaceInFileOptions): boolean;
+export function replaceInFile(
+  filePath: string,
+  search: string | RegExp,
+  replace: string,
+  options?: ReplaceInFileOptions
+): boolean;
 
 /**
  * Count occurrences of a pattern in a file.
@@ -121,7 +130,10 @@ export interface GrepMatch {
 }
 
 /** Search for a pattern in a file and return matching lines with line numbers */
-export function grepFile(filePath: string, pattern: string | RegExp): GrepMatch[];
+export function grepFile(
+  filePath: string,
+  pattern: string | RegExp
+): GrepMatch[];
 
 // --- Hook I/O ---
 
@@ -143,7 +155,9 @@ export interface ReadStdinJsonOptions {
  * Returns an empty object if stdin is empty, times out, or contains invalid JSON.
  * Never rejects — safe to use without try-catch in hooks.
  */
-export function readStdinJson(options?: ReadStdinJsonOptions): Promise<Record<string, unknown>>;
+export function readStdinJson(
+  options?: ReadStdinJsonOptions
+): Promise<Record<string, unknown>>;
 
 /** Log a message to stderr (visible to user in Claude Code terminal) */
 export function log(message: string): void;
@@ -171,7 +185,10 @@ export interface CommandResult {
  * SECURITY: Only use with trusted, hardcoded commands.
  * Never pass user-controlled input directly.
  */
-export function runCommand(cmd: string, options?: ExecSyncOptions): CommandResult;
+export function runCommand(
+  cmd: string,
+  options?: ExecSyncOptions
+): CommandResult;
 
 /** Check if the current directory is inside a git repository */
 export function isGitRepo(): boolean;

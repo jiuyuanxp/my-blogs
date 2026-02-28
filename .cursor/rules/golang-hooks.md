@@ -1,8 +1,9 @@
 ---
-description: "Go hooks extending common rules"
-globs: ["**/*.go", "**/go.mod", "**/go.sum"]
+description: 'Go hooks extending common rules'
+globs: ['**/*.go', '**/go.mod', '**/go.sum']
 alwaysApply: false
 ---
+
 # Go Hooks
 
 > This file extends the common hooks rule with Go specific content.

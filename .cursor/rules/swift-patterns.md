@@ -1,8 +1,9 @@
 ---
-description: "Swift patterns extending common rules"
-globs: ["**/*.swift", "**/Package.swift"]
+description: 'Swift patterns extending common rules'
+globs: ['**/*.swift', '**/Package.swift']
 alwaysApply: false
 ---
+
 # Swift Patterns
 
 > This file extends the common patterns rule with Swift specific content.

@@ -10,16 +10,13 @@
 const fs = require('fs');
 const path = require('path');
 
-const {
-  getSessionsDir,
-  readFile,
-  log
-} = require('./utils');
+const { getSessionsDir, readFile, log } = require('./utils');
 
 // Session filename pattern: YYYY-MM-DD-[short-id]-session.tmp
 // The short-id is optional (old format) and can be 8+ alphanumeric characters
 // Matches: "2026-02-01-session.tmp" or "2026-02-01-a1b2c3d4-session.tmp"
-const SESSION_FILENAME_REGEX = /^(\d{4}-\d{2}-\d{2})(?:-([a-z0-9]{8,}))?-session\.tmp$/;
+const SESSION_FILENAME_REGEX =
+  /^(\d{4}-\d{2}-\d{2})(?:-([a-z0-9]{8,}))?-session\.tmp$/;
 
 /**
  * Parse session filename to extract metadata
@@ -50,7 +47,7 @@ function parseSessionFilename(filename) {
     // Use local-time constructor (consistent with validation on line 40)
     // new Date(dateStr) interprets YYYY-MM-DD as UTC midnight which shows
     // as the previous day in negative UTC offset timezones
-    datetime: new Date(year, month - 1, day)
+    datetime: new Date(year, month - 1, day),
   };
 }
 
@@ -86,7 +83,7 @@ function parseSessionMetadata(content) {
     completed: [],
     inProgress: [],
     notes: '',
-    context: ''
+    context: '',
   };
 
   if (!content) return metadata;
@@ -116,31 +113,43 @@ function parseSessionMetadata(content) {
   }
 
   // Extract completed items
-  const completedSection = content.match(/### Completed\s*\n([\s\S]*?)(?=###|\n\n|$)/);
+  const completedSection = content.match(
+    /### Completed\s*\n([\s\S]*?)(?=###|\n\n|$)/
+  );
   if (completedSection) {
     const items = completedSection[1].match(/- \[x\]\s*(.+)/g);
     if (items) {
-      metadata.completed = items.map(item => item.replace(/- \[x\]\s*/, '').trim());
+      metadata.completed = items.map(item =>
+        item.replace(/- \[x\]\s*/, '').trim()
+      );
     }
   }
 
   // Extract in-progress items
-  const progressSection = content.match(/### In Progress\s*\n([\s\S]*?)(?=###|\n\n|$)/);
+  const progressSection = content.match(
+    /### In Progress\s*\n([\s\S]*?)(?=###|\n\n|$)/
+  );
   if (progressSection) {
     const items = progressSection[1].match(/- \[ \]\s*(.+)/g);
     if (items) {
-      metadata.inProgress = items.map(item => item.replace(/- \[ \]\s*/, '').trim());
+      metadata.inProgress = items.map(item =>
+        item.replace(/- \[ \]\s*/, '').trim()
+      );
     }
   }
 
   // Extract notes
-  const notesSection = content.match(/### Notes for Next Session\s*\n([\s\S]*?)(?=###|\n\n|$)/);
+  const notesSection = content.match(
+    /### Notes for Next Session\s*\n([\s\S]*?)(?=###|\n\n|$)/
+  );
   if (notesSection) {
     metadata.notes = notesSection[1].trim();
   }
 
   // Extract context to load
-  const contextSection = content.match(/### Context to Load\s*\n```\n([\s\S]*?)```/);
+  const contextSection = content.match(
+    /### Context to Load\s*\n```\n([\s\S]*?)```/
+  );
   if (contextSection) {
     metadata.context = contextSection[1].trim();
   }
@@ -160,10 +169,12 @@ function getSessionStats(sessionPathOrContent) {
   // If the argument looks like a file path (no newlines, ends with .tmp,
   // starts with / on Unix or drive letter on Windows), read from disk.
   // Otherwise treat it as content.
-  const looksLikePath = typeof sessionPathOrContent === 'string' &&
+  const looksLikePath =
+    typeof sessionPathOrContent === 'string' &&
     !sessionPathOrContent.includes('\n') &&
     sessionPathOrContent.endsWith('.tmp') &&
-    (sessionPathOrContent.startsWith('/') || /^[A-Za-z]:[/\\]/.test(sessionPathOrContent));
+    (sessionPathOrContent.startsWith('/') ||
+      /^[A-Za-z]:[/\\]/.test(sessionPathOrContent));
   const content = looksLikePath
     ? getSessionContent(sessionPathOrContent)
     : sessionPathOrContent;
@@ -176,7 +187,7 @@ function getSessionStats(sessionPathOrContent) {
     inProgressItems: metadata.inProgress.length,
     lineCount: content ? content.split('\n').length : 0,
     hasNotes: !!metadata.notes,
-    hasContext: !!metadata.context
+    hasContext: !!metadata.context,
   };
 }
 
@@ -194,7 +205,7 @@ function getAllSessions(options = {}) {
     limit: rawLimit = 50,
     offset: rawOffset = 0,
     date = null,
-    search = null
+    search = null,
   } = options;
 
   // Clamp offset and limit to safe non-negative integers.
@@ -202,7 +213,9 @@ function getAllSessions(options = {}) {
   // and NaN values cause slice() to return empty or unexpected results.
   // Note: cannot use `|| default` because 0 is falsy — use isNaN instead.
   const offsetNum = Number(rawOffset);
-  const offset = Number.isNaN(offsetNum) ? 0 : Math.max(0, Math.floor(offsetNum));
+  const offset = Number.isNaN(offsetNum)
+    ? 0
+    : Math.max(0, Math.floor(offsetNum));
   const limitNum = Number(rawLimit);
   const limit = Number.isNaN(limitNum) ? 50 : Math.max(1, Math.floor(limitNum));
 
@@ -251,7 +264,7 @@ function getAllSessions(options = {}) {
       hasContent: stats.size > 0,
       size: stats.size,
       modifiedTime: stats.mtime,
-      createdTime: stats.birthtime || stats.ctime
+      createdTime: stats.birthtime || stats.ctime,
     });
   }
 
@@ -266,7 +279,7 @@ function getAllSessions(options = {}) {
     total: sessions.length,
     offset,
     limit,
-    hasMore: offset + limit < sessions.length
+    hasMore: offset + limit < sessions.length,
   };
 }
 
@@ -294,9 +307,14 @@ function getSessionById(sessionId, includeContent = false) {
     if (!metadata) continue;
 
     // Check if session ID matches (short ID or full filename without .tmp)
-    const shortIdMatch = sessionId.length > 0 && metadata.shortId !== 'no-id' && metadata.shortId.startsWith(sessionId);
-    const filenameMatch = filename === sessionId || filename === `${sessionId}.tmp`;
-    const noIdMatch = metadata.shortId === 'no-id' && filename === `${sessionId}-session.tmp`;
+    const shortIdMatch =
+      sessionId.length > 0 &&
+      metadata.shortId !== 'no-id' &&
+      metadata.shortId.startsWith(sessionId);
+    const filenameMatch =
+      filename === sessionId || filename === `${sessionId}.tmp`;
+    const noIdMatch =
+      metadata.shortId === 'no-id' && filename === `${sessionId}-session.tmp`;
 
     if (!shortIdMatch && !filenameMatch && !noIdMatch) {
       continue;
@@ -315,7 +333,7 @@ function getSessionById(sessionId, includeContent = false) {
       sessionPath,
       size: stats.size,
       modifiedTime: stats.mtime,
-      createdTime: stats.birthtime || stats.ctime
+      createdTime: stats.birthtime || stats.ctime,
     };
 
     if (includeContent) {
@@ -438,5 +456,5 @@ module.exports = {
   writeSessionContent,
   appendSessionContent,
   deleteSession,
-  sessionExists
+  sessionExists,
 };

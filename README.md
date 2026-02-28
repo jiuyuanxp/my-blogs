@@ -4,21 +4,21 @@
 
 ## 文档导航
 
-| 文档 | 说明 |
-|------|------|
-| [AGENTS.md](./AGENTS.md) | AI 协作规范、五大原则、代码规范 |
-| [.cursor/rules/](./.cursor/rules/) | Cursor 规则（安全、测试、TS/Java 风格） |
-| [docs/AI_DEVELOPMENT.md](./docs/AI_DEVELOPMENT.md) | 如何使用 AI 编程构建本项目 |
-| [docs/SECURITY.example.md](./docs/SECURITY.example.md) | 安全清单模板（敏感信息放本地 `SECURITY.md`，不上传） |
+| 文档                                                           | 说明                                                     |
+| -------------------------------------------------------------- | -------------------------------------------------------- |
+| [AGENTS.md](./AGENTS.md)                                       | AI 协作规范、五大原则、代码规范                          |
+| [.cursor/rules/](./.cursor/rules/)                             | Cursor 规则（安全、测试、TS/Java 风格）                  |
+| [docs/AI_DEVELOPMENT.md](./docs/AI_DEVELOPMENT.md)             | 如何使用 AI 编程构建本项目                               |
+| [docs/SECURITY.example.md](./docs/SECURITY.example.md)         | 安全清单模板（敏感信息放本地 `SECURITY.md`，不上传）     |
 | [docs/CLAUDE_CODE_COMMANDS.md](./docs/CLAUDE_CODE_COMMANDS.md) | Everything Claude Code 中文指令手册（/review、/test 等） |
 
 ### ECC 移植组件
 
-| 路径 | 说明 |
-|------|------|
-| `.cursor/rules/` | 39 条规则 |
-| `.cursor/hooks/` + `hooks.json` | 自动化钩子 |
-| `scripts/hooks/` | 钩子实现脚本 |
+| 路径                            | 说明         |
+| ------------------------------- | ------------ |
+| `.cursor/rules/`                | 39 条规则    |
+| `.cursor/hooks/` + `hooks.json` | 自动化钩子   |
+| `scripts/hooks/`                | 钩子实现脚本 |
 
 ## 架构设计
 
@@ -102,9 +102,9 @@ Docker Compose 包含：Nginx 网关、Web 前端、blog-service（Java）、Pos
 
 ## 路由规则
 
-| 路径 | 目标服务 | 端口 |
-|------|----------|------|
-| `/` | Web 前端 | 3000 |
+| 路径   | 目标服务                         | 端口 |
+| ------ | -------------------------------- | ---- |
+| `/`    | Web 前端                         | 3000 |
 | `/api` | blog-service（Java Spring Boot） | 4300 |
 
 ## 当前进度

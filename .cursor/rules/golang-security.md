@@ -1,8 +1,9 @@
 ---
-description: "Go security extending common rules"
-globs: ["**/*.go", "**/go.mod", "**/go.sum"]
+description: 'Go security extending common rules'
+globs: ['**/*.go', '**/go.mod', '**/go.sum']
 alwaysApply: false
 ---
+
 # Go Security
 
 > This file extends the common security rule with Go specific content.

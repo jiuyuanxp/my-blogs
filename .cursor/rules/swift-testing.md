@@ -1,8 +1,9 @@
 ---
-description: "Swift testing extending common rules"
-globs: ["**/*.swift", "**/Package.swift"]
+description: 'Swift testing extending common rules'
+globs: ['**/*.swift', '**/Package.swift']
 alwaysApply: false
 ---
+
 # Swift Testing
 
 > This file extends the common testing rule with Swift specific content.

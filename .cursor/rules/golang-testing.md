@@ -1,8 +1,9 @@
 ---
-description: "Go testing extending common rules"
-globs: ["**/*.go", "**/go.mod", "**/go.sum"]
+description: 'Go testing extending common rules'
+globs: ['**/*.go', '**/go.mod', '**/go.sum']
 alwaysApply: false
 ---
+
 # Go Testing
 
 > This file extends the common testing rule with Go specific content.

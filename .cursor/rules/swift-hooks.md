@@ -1,8 +1,9 @@
 ---
-description: "Swift hooks extending common rules"
-globs: ["**/*.swift", "**/Package.swift"]
+description: 'Swift hooks extending common rules'
+globs: ['**/*.swift', '**/Package.swift']
 alwaysApply: false
 ---
+
 # Swift Hooks
 
 > This file extends the common hooks rule with Swift specific content.

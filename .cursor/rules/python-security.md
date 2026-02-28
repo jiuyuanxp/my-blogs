@@ -1,8 +1,9 @@
 ---
-description: "Python security extending common rules"
-globs: ["**/*.py", "**/*.pyi"]
+description: 'Python security extending common rules'
+globs: ['**/*.py', '**/*.pyi']
 alwaysApply: false
 ---
+
 # Python Security
 
 > This file extends the common security rule with Python specific content.

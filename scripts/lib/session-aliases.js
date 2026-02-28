@@ -6,12 +6,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const {
-  getClaudeDir,
-  ensureDir,
-  readFile,
-  log
-} = require('./utils');
+const { getClaudeDir, ensureDir, readFile, log } = require('./utils');
 
 // Aliases file path
 function getAliasesPath() {
@@ -30,8 +25,8 @@ function getDefaultAliases() {
     aliases: {},
     metadata: {
       totalCount: 0,
-      lastUpdated: new Date().toISOString()
-    }
+      lastUpdated: new Date().toISOString(),
+    },
   };
 }
 
@@ -69,7 +64,7 @@ function loadAliases() {
     if (!data.metadata) {
       data.metadata = {
         totalCount: Object.keys(data.aliases).length,
-        lastUpdated: new Date().toISOString()
+        lastUpdated: new Date().toISOString(),
       };
     }
 
@@ -94,7 +89,7 @@ function saveAliases(aliases) {
     // Update metadata
     aliases.metadata = {
       totalCount: Object.keys(aliases.aliases).length,
-      lastUpdated: new Date().toISOString()
+      lastUpdated: new Date().toISOString(),
     };
 
     const content = JSON.stringify(aliases, null, 2);
@@ -174,7 +169,7 @@ function resolveAlias(alias) {
     alias,
     sessionPath: aliasData.sessionPath,
     createdAt: aliasData.createdAt,
-    title: aliasData.title || null
+    title: aliasData.title || null,
   };
 }
 
@@ -192,7 +187,11 @@ function setAlias(alias, sessionPath, title = null) {
   }
 
   // Validate session path
-  if (!sessionPath || typeof sessionPath !== 'string' || sessionPath.trim().length === 0) {
+  if (
+    !sessionPath ||
+    typeof sessionPath !== 'string' ||
+    sessionPath.trim().length === 0
+  ) {
     return { success: false, error: 'Session path cannot be empty' };
   }
 
@@ -201,7 +200,11 @@ function setAlias(alias, sessionPath, title = null) {
   }
 
   if (!/^[a-zA-Z0-9_-]+$/.test(alias)) {
-    return { success: false, error: 'Alias name must contain only letters, numbers, dashes, and underscores' };
+    return {
+      success: false,
+      error:
+        'Alias name must contain only letters, numbers, dashes, and underscores',
+    };
   }
 
   // Reserved alias names
@@ -218,7 +221,7 @@ function setAlias(alias, sessionPath, title = null) {
     sessionPath,
     createdAt: existing ? existing.createdAt : new Date().toISOString(),
     updatedAt: new Date().toISOString(),
-    title: title || null
+    title: title || null,
   };
 
   if (saveAliases(data)) {
@@ -227,7 +230,7 @@ function setAlias(alias, sessionPath, title = null) {
       isNew,
       alias,
       sessionPath,
-      title: data.aliases[alias].title
+      title: data.aliases[alias].title,
     };
   }
 
@@ -250,18 +253,23 @@ function listAliases(options = {}) {
     sessionPath: info.sessionPath,
     createdAt: info.createdAt,
     updatedAt: info.updatedAt,
-    title: info.title
+    title: info.title,
   }));
 
   // Sort by updated time (newest first)
-  aliases.sort((a, b) => (new Date(b.updatedAt || b.createdAt || 0).getTime() || 0) - (new Date(a.updatedAt || a.createdAt || 0).getTime() || 0));
+  aliases.sort(
+    (a, b) =>
+      (new Date(b.updatedAt || b.createdAt || 0).getTime() || 0) -
+      (new Date(a.updatedAt || a.createdAt || 0).getTime() || 0)
+  );
 
   // Apply search filter
   if (search) {
     const searchLower = search.toLowerCase();
-    aliases = aliases.filter(a =>
-      a.name.toLowerCase().includes(searchLower) ||
-      (a.title && a.title.toLowerCase().includes(searchLower))
+    aliases = aliases.filter(
+      a =>
+        a.name.toLowerCase().includes(searchLower) ||
+        (a.title && a.title.toLowerCase().includes(searchLower))
     );
   }
 
@@ -292,7 +300,7 @@ function deleteAlias(alias) {
     return {
       success: true,
       alias,
-      deletedSessionPath: deleted.sessionPath
+      deletedSessionPath: deleted.sessionPath,
     };
   }
 
@@ -318,11 +326,18 @@ function renameAlias(oldAlias, newAlias) {
   }
 
   if (newAlias.length > 128) {
-    return { success: false, error: 'New alias name cannot exceed 128 characters' };
+    return {
+      success: false,
+      error: 'New alias name cannot exceed 128 characters',
+    };
   }
 
   if (!/^[a-zA-Z0-9_-]+$/.test(newAlias)) {
-    return { success: false, error: 'New alias name must contain only letters, numbers, dashes, and underscores' };
+    return {
+      success: false,
+      error:
+        'New alias name must contain only letters, numbers, dashes, and underscores',
+    };
   }
 
   const reserved = ['list', 'help', 'remove', 'delete', 'create', 'set'];
@@ -345,7 +360,7 @@ function renameAlias(oldAlias, newAlias) {
       success: true,
       oldAlias,
       newAlias,
-      sessionPath: aliasData.sessionPath
+      sessionPath: aliasData.sessionPath,
     };
   }
 
@@ -354,7 +369,10 @@ function renameAlias(oldAlias, newAlias) {
   delete data.aliases[newAlias];
   // Attempt to persist the rollback
   saveAliases(data);
-  return { success: false, error: 'Failed to save renamed alias — rolled back to original' };
+  return {
+    success: false,
+    error: 'Failed to save renamed alias — rolled back to original',
+  };
 }
 
 /**
@@ -397,7 +415,7 @@ function updateAliasTitle(alias, title) {
     return {
       success: true,
       alias,
-      title
+      title,
     };
   }
 
@@ -418,7 +436,7 @@ function getAliasesForSession(sessionPath) {
       aliases.push({
         name,
         createdAt: info.createdAt,
-        title: info.title
+        title: info.title,
       });
     }
   }
@@ -433,7 +451,12 @@ function getAliasesForSession(sessionPath) {
  */
 function cleanupAliases(sessionExists) {
   if (typeof sessionExists !== 'function') {
-    return { totalChecked: 0, removed: 0, removedAliases: [], error: 'sessionExists must be a function' };
+    return {
+      totalChecked: 0,
+      removed: 0,
+      removedAliases: [],
+      error: 'sessionExists must be a function',
+    };
   }
 
   const data = loadAliases();
@@ -453,7 +476,7 @@ function cleanupAliases(sessionExists) {
       totalChecked: Object.keys(data.aliases).length + removed.length,
       removed: removed.length,
       removedAliases: removed,
-      error: 'Failed to save after cleanup'
+      error: 'Failed to save after cleanup',
     };
   }
 
@@ -461,7 +484,7 @@ function cleanupAliases(sessionExists) {
     success: true,
     totalChecked: Object.keys(data.aliases).length + removed.length,
     removed: removed.length,
-    removedAliases: removed
+    removedAliases: removed,
   };
 }
 
@@ -477,5 +500,5 @@ module.exports = {
   resolveSessionAlias,
   updateAliasTitle,
   getAliasesForSession,
-  cleanupAliases
+  cleanupAliases,
 };

@@ -1,8 +1,9 @@
 ---
-description: "Go coding style extending common rules"
-globs: ["**/*.go", "**/go.mod", "**/go.sum"]
+description: 'Go coding style extending common rules'
+globs: ['**/*.go', '**/go.mod', '**/go.sum']
 alwaysApply: false
 ---
+
 # Go Coding Style
 
 > This file extends the common coding style rule with Go specific content.

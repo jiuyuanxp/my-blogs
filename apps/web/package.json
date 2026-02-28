@@ -10,10 +10,16 @@
   },
   "dependencies": {
     "date-fns": "^4.1.0",
+    "highlight.js": "^11.11.1",
+    "lucide-react": "^0.575.0",
+    "motion": "^12.34.3",
     "next": "16.1.6",
     "next-intl": "^4.8.2",
     "react": "19.2.3",
-    "react-dom": "19.2.3"
+    "react-dom": "19.2.3",
+    "react-markdown": "^10.1.0",
+    "rehype-highlight": "^7.0.2",
+    "remark-gfm": "^4.0.1"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

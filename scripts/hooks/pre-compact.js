@@ -16,7 +16,7 @@ const {
   findFiles,
   ensureDir,
   appendFile,
-  log
+  log,
 } = require('../lib/utils');
 
 async function main() {
@@ -35,7 +35,10 @@ async function main() {
   if (sessions.length > 0) {
     const activeSession = sessions[0].path;
     const timeStr = getTimeString();
-    appendFile(activeSession, `\n---\n**[Compaction occurred at ${timeStr}]** - Context was summarized\n`);
+    appendFile(
+      activeSession,
+      `\n---\n**[Compaction occurred at ${timeStr}]** - Context was summarized\n`
+    );
   }
 
   log('[PreCompact] State saved before compaction');

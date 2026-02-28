@@ -1,34 +1,50 @@
-# Simplified Dockerfile for Next.js web app
-FROM node:20-alpine
+# Multi-stage build for Next.js web app (standalone output)
+FROM node:20-alpine AS builder
+
+ENV PNPM_HOME=/pnpm
+ENV PATH="$PNPM_HOME:$PATH"
+RUN corepack enable pnpm
 
 WORKDIR /app
 
-# Copy web application
-COPY apps/web .
+# Copy workspace config and lockfile
+COPY pnpm-workspace.yaml pnpm-lock.yaml package.json ./
 
-# Install dependencies
-RUN npm install
+# Copy apps/web and packages (for workspace resolution)
+COPY apps/web ./apps/web
+COPY packages ./packages
 
-# Build application
-RUN npm run build
+# Install and build
+RUN pnpm install --frozen-lockfile
+RUN pnpm --filter web build
 
-# Create non-root user
-RUN addgroup --system --gid 1001 nodejs && \
-    adduser --system --uid 1001 nextjs
+# Production stage
+FROM node:20-alpine AS runner
 
-# Change ownership
-RUN chown -R nextjs:nodejs /app
-
-USER nextjs
-
-EXPOSE 3000
+WORKDIR /app
 
 ENV NODE_ENV=production
 ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
 
-# Health check
-HEALTHCHECK --interval=30s --timeout=3s --start-period=5s \
-  CMD node -e "require('http').get('http://localhost:3000', (r) => {r.statusCode === 200 ? process.exit(0) : process.exit(1)})"
+RUN addgroup --system --gid 1001 nodejs && \
+    adduser --system --uid 1001 nextjs
 
-CMD ["node", ".next/standalone/server.js"]
+# Copy standalone output (Next.js output: 'standalone')
+# Monorepo structure: standalone contains apps/web/server.js
+COPY --from=builder /app/apps/web/.next/standalone ./
+COPY --from=builder /app/apps/web/.next/static ./apps/web/.next/static
+COPY --from=builder /app/apps/web/public ./apps/web/public
+
+RUN chown -R nextjs:nodejs /app
+
+USER nextjs
+
+WORKDIR /app/apps/web
+
+EXPOSE 3000
+
+HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3 \
+  CMD node -e "require('http').get('http://localhost:3000', (r) => { r.statusCode === 200 ? process.exit(0) : process.exit(1); })" || exit 1
+
+CMD ["node", "server.js"]

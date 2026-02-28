@@ -16,5 +16,14 @@
     "sourceMap": true
   },
   "include": ["packages/**/*.ts"],
-  "exclude": ["node_modules", "dist", "build", ".next", "apps", "scripts", "**/*.mjs", "**/*.mts"]
+  "exclude": [
+    "node_modules",
+    "dist",
+    "build",
+    ".next",
+    "apps",
+    "scripts",
+    "**/*.mjs",
+    "**/*.mts"
+  ]
 }

@@ -20,7 +20,7 @@ const {
   readFile,
   writeFile,
   replaceInFile,
-  log
+  log,
 } = require('../lib/utils');
 
 /**
@@ -45,14 +45,19 @@ function extractSessionSummary(transcriptPath) {
       const entry = JSON.parse(line);
 
       // Collect user messages (first 200 chars each)
-      if (entry.type === 'user' || entry.role === 'user' || entry.message?.role === 'user') {
+      if (
+        entry.type === 'user' ||
+        entry.role === 'user' ||
+        entry.message?.role === 'user'
+      ) {
         // Support both direct content and nested message.content (Claude Code JSONL format)
         const rawContent = entry.message?.content ?? entry.content;
-        const text = typeof rawContent === 'string'
-          ? rawContent
-          : Array.isArray(rawContent)
-            ? rawContent.map(c => (c && c.text) || '').join(' ')
-            : '';
+        const text =
+          typeof rawContent === 'string'
+            ? rawContent
+            : Array.isArray(rawContent)
+              ? rawContent.map(c => (c && c.text) || '').join(' ')
+              : '';
         if (text.trim()) {
           userMessages.push(text.trim().slice(0, 200));
         }
@@ -63,7 +68,8 @@ function extractSessionSummary(transcriptPath) {
         const toolName = entry.tool_name || entry.name || '';
         if (toolName) toolsUsed.add(toolName);
 
-        const filePath = entry.tool_input?.file_path || entry.input?.file_path || '';
+        const filePath =
+          entry.tool_input?.file_path || entry.input?.file_path || '';
         if (filePath && (toolName === 'Edit' || toolName === 'Write')) {
           filesModified.add(filePath);
         }
@@ -89,7 +95,9 @@ function extractSessionSummary(transcriptPath) {
   }
 
   if (parseErrors > 0) {
-    log(`[SessionEnd] Skipped ${parseErrors}/${lines.length} unparseable transcript lines`);
+    log(
+      `[SessionEnd] Skipped ${parseErrors}/${lines.length} unparseable transcript lines`
+    );
   }
 
   if (userMessages.length === 0) return null;
@@ -98,7 +106,7 @@ function extractSessionSummary(transcriptPath) {
     userMessages: userMessages.slice(-10), // Last 10 user messages
     toolsUsed: Array.from(toolsUsed).slice(0, 20),
     filesModified: Array.from(filesModified).slice(0, 30),
-    totalMessages: userMessages.length
+    totalMessages: userMessages.length,
   };
 }
 
@@ -232,4 +240,3 @@ function buildSummarySection(summary) {
 
   return section;
 }
-

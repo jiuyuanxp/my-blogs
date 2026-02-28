@@ -1,8 +1,9 @@
 ---
-description: "Swift coding style extending common rules"
-globs: ["**/*.swift", "**/Package.swift"]
+description: 'Swift coding style extending common rules'
+globs: ['**/*.swift', '**/Package.swift']
 alwaysApply: false
 ---
+
 # Swift Coding Style
 
 > This file extends the common coding style rule with Swift specific content.

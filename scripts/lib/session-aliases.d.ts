@@ -100,7 +100,11 @@ export function resolveAlias(alias: string): ResolvedAlias | null;
  * Alias names must be alphanumeric with dashes/underscores.
  * Reserved names (list, help, remove, delete, create, set) are rejected.
  */
-export function setAlias(alias: string, sessionPath: string, title?: string | null): SetAliasResult;
+export function setAlias(
+  alias: string,
+  sessionPath: string,
+  title?: string | null
+): SetAliasResult;
 
 /**
  * List all aliases, optionally filtered and limited.
@@ -115,7 +119,10 @@ export function deleteAlias(alias: string): DeleteAliasResult;
  * Rename an alias. Fails if old alias doesn't exist or new alias already exists.
  * New alias name must be alphanumeric with dashes/underscores.
  */
-export function renameAlias(oldAlias: string, newAlias: string): RenameAliasResult;
+export function renameAlias(
+  oldAlias: string,
+  newAlias: string
+): RenameAliasResult;
 
 /**
  * Resolve an alias or pass through a session path.
@@ -124,13 +131,20 @@ export function renameAlias(oldAlias: string, newAlias: string): RenameAliasResu
 export function resolveSessionAlias(aliasOrId: string): string;
 
 /** Update the title of an existing alias. Pass null to clear. */
-export function updateAliasTitle(alias: string, title: string | null): AliasResult;
+export function updateAliasTitle(
+  alias: string,
+  title: string | null
+): AliasResult;
 
 /** Get all aliases that point to a specific session path */
-export function getAliasesForSession(sessionPath: string): Array<{ name: string; createdAt: string; title: string | null }>;
+export function getAliasesForSession(
+  sessionPath: string
+): Array<{ name: string; createdAt: string; title: string | null }>;
 
 /**
  * Remove aliases whose sessions no longer exist.
  * @param sessionExists - Function that returns true if a session path is valid
  */
-export function cleanupAliases(sessionExists: (sessionPath: string) => boolean): CleanupResult;
+export function cleanupAliases(
+  sessionExists: (sessionPath: string) => boolean
+): CleanupResult;

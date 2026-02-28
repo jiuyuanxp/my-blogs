@@ -63,7 +63,10 @@ function detectFormatter(projectRoot) {
 function getFormatterCommand(formatter, filePath) {
   const npxBin = process.platform === 'win32' ? 'npx.cmd' : 'npx';
   if (formatter === 'biome') {
-    return { bin: npxBin, args: ['@biomejs/biome', 'format', '--write', filePath] };
+    return {
+      bin: npxBin,
+      args: ['@biomejs/biome', 'format', '--write', filePath],
+    };
   }
   if (formatter === 'prettier') {
     return { bin: npxBin, args: ['prettier', '--write', filePath] };
@@ -78,7 +81,9 @@ process.stdin.on('end', () => {
 
     if (filePath && /\.(ts|tsx|js|jsx)$/.test(filePath)) {
       try {
-        const projectRoot = findProjectRoot(path.dirname(path.resolve(filePath)));
+        const projectRoot = findProjectRoot(
+          path.dirname(path.resolve(filePath))
+        );
         const formatter = detectFormatter(projectRoot);
         const cmd = getFormatterCommand(formatter, filePath);
 
@@ -86,7 +91,7 @@ process.stdin.on('end', () => {
           execFileSync(cmd.bin, cmd.args, {
             cwd: projectRoot,
             stdio: ['pipe', 'pipe', 'pipe'],
-            timeout: 15000
+            timeout: 15000,
           });
         }
       } catch {

@@ -1,8 +1,9 @@
 ---
-description: "Python testing extending common rules"
-globs: ["**/*.py", "**/*.pyi"]
+description: 'Python testing extending common rules'
+globs: ['**/*.py', '**/*.pyi']
 alwaysApply: false
 ---
+
 # Python Testing
 
 > This file extends the common testing rule with Python specific content.
