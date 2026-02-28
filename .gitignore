@@ -46,6 +46,8 @@ docs/SECURITY.md
 
 # Build artifacts
 *.tsbuildinfo
+web-standalone.tar.gz
+**/web-standalone.tar.gz
 
 # Java / Maven
 target/

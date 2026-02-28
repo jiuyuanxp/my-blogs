@@ -9,6 +9,7 @@
 | [AGENTS.md](./AGENTS.md)                                       | AI 协作规范、五大原则、代码规范                          |
 | [.cursor/rules/](./.cursor/rules/)                             | Cursor 规则（安全、测试、TS/Java 风格）                  |
 | [docs/AI_DEVELOPMENT.md](./docs/AI_DEVELOPMENT.md)             | 如何使用 AI 编程构建本项目                               |
+| [docs/DEPLOY.md](./docs/DEPLOY.md)                             | 远程服务器部署指南（当前仅 Web 前端）                   |
 | [docs/SECURITY.example.md](./docs/SECURITY.example.md)         | 安全清单模板（敏感信息放本地 `SECURITY.md`，不上传）     |
 | [docs/CLAUDE_CODE_COMMANDS.md](./docs/CLAUDE_CODE_COMMANDS.md) | Everything Claude Code 中文指令手册（/review、/test 等） |
 
