@@ -10,10 +10,11 @@ const siteDescription =
   '分享技术知识和生活感悟的个人博客';
 const twitterHandle = process.env.NEXT_PUBLIC_TWITTER_HANDLE || '@yourhandle';
 
-const basePath = '/web';
+// 本地开发时设为空，直接访问 http://localhost:3000；生产环境用 /web 配合 Nginx
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? '/web';
 
 const nextConfig: NextConfig = {
-  basePath,
+  basePath: basePath || '',
   env: { NEXT_PUBLIC_BASE_PATH: basePath },
   output: 'standalone',
   images: {
