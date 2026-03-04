@@ -4,6 +4,7 @@ import { getMessages } from 'next-intl/server';
 import { locales } from '@/i18n/request';
 import { ThemeProvider } from '@/components/ThemeProvider';
 import Layout from '@/components/Layout';
+import SetHtmlLang from '@/components/SetHtmlLang';
 import '@/app/globals.css';
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
@@ -106,14 +107,11 @@ export default async function LocaleLayout({
   const messages = await getMessages({ locale });
 
   return (
-    <html lang={locale} suppressHydrationWarning>
-      <body className="min-h-screen antialiased">
-        <NextIntlClientProvider messages={messages}>
-          <ThemeProvider>
-            <Layout>{children}</Layout>
-          </ThemeProvider>
-        </NextIntlClientProvider>
-      </body>
-    </html>
+    <NextIntlClientProvider messages={messages}>
+      <SetHtmlLang />
+      <ThemeProvider>
+        <Layout>{children}</Layout>
+      </ThemeProvider>
+    </NextIntlClientProvider>
   );
 }
