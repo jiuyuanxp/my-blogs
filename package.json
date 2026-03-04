@@ -4,6 +4,7 @@
   "description": "Monorepo blog with microservices and micro-frontend architecture",
   "private": true,
   "scripts": {
+    "package:web": "node scripts/package-web.js",
     "build": "turbo run build",
     "dev": "turbo run dev --parallel",
     "lint": "turbo run lint",

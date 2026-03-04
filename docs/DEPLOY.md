@@ -69,6 +69,7 @@ chmod +x scripts/deploy.sh   # 首次需添加执行权限
 |------|------|------|
 | `NEXT_PUBLIC_SITE_URL` | 站点 URL（SEO、sitemap） | `https://blog.example.com` |
 | `NEXT_PUBLIC_SITE_NAME` | 站点名称 | `blog.example.com` |
+| `NEXT_PUBLIC_BASE_PATH` | 应用路径前缀（生产默认 `/web`，配合 Nginx） | `/web` |
 | `PORT` | 监听端口（默认 3000） | `3000` |
 
 ## Nginx 反向代理（可选）
@@ -123,6 +124,12 @@ sudo nginx -t && sudo systemctl reload nginx
 在项目根目录执行：
 
 ```bash
+pnpm run package:web
+```
+
+或手动执行：
+
+```bash
 # 构建
 pnpm --filter web build
 
@@ -157,9 +164,12 @@ pm2 startup   # 可选：按提示执行以开机自启
 
 ```bash
 cd /root/blogs
+mkdir -p standalone
 tar -xzvf web-standalone.tar.gz -C standalone
 pm2 restart blogs-web
 ```
+
+> 若 PM2 此前使用其他路径（如 `.next/standalone`），需先 `pm2 delete blogs-web`，再按「首次部署」的 `pm2 start` 命令重新启动。
 
 ### 目录结构说明
 
