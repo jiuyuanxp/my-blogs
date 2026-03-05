@@ -1,5 +1,7 @@
 server:
   port: 4300
+  error:
+    include-stacktrace: never
 
 spring:
   application:
@@ -15,6 +17,7 @@ spring:
     driver-class-name: org.postgresql.Driver
 
   jpa:
+    open-in-view: false
     hibernate:
       ddl-auto: update
       show-sql: false
@@ -22,11 +25,29 @@ spring:
       hibernate:
         format_sql: false
         dialect: org.hibernate.dialect.PostgreSQLDialect
+        jdbc:
+          batch_size: 50
 
   data:
     redis:
-      host: redis
-      port: 6379
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:}
+
+app:
+  auth:
+    admin-password: ${ADMIN_PASSWORD:admin}
+    token-ttl-hours: ${TOKEN_TTL_HOURS:168}
+
+springdoc:
+  api-docs:
+    enabled: true
+    path: /v3/api-docs
+  swagger-ui:
+    enabled: true  # 需启用以注册 swagger-config，Knife4j doc.html 依赖此端点
+
+knife4j:
+  enable: true
 
 management:
   endpoints:
@@ -36,6 +57,8 @@ management:
   endpoint:
     health:
       show-details: always
+      probes:
+        enabled: true
 
 logging:
   level:

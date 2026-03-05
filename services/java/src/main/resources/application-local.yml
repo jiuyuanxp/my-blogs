@@ -1,0 +1,8 @@
+# 本地开发配置，无需 Redis，数据库可连本地 PostgreSQL
+spring:
+  autoconfigure:
+    exclude: org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
+  datasource:
+    url: jdbc:postgresql://localhost:5432/blogdb
+    username: postgres
+    password: postgres
