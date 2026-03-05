@@ -37,6 +37,9 @@ lerna-debug.log*
 # 含服务器地址、密码等敏感信息，不上传 GitHub
 docs/SECURITY.md
 
+# 含个人 ACR 镜像仓库地址，不上传 Git
+docs/DEPLOY_ACR_COMMANDS.md
+
 # IDE
 .vscode/*
 !.vscode/extensions.json
@@ -48,6 +51,7 @@ docs/SECURITY.md
 *.tsbuildinfo
 web-standalone.tar.gz
 **/web-standalone.tar.gz
+admin-dist.tar.gz
 
 # Java / Maven
 target/

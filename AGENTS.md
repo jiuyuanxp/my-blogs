@@ -76,9 +76,7 @@ AI 生成代码时：
 | ------ | ------------------------------- |
 | 前端   | Next.js + TypeScript            |
 | 后端   | Java Spring Boot / Node.js / Go |
-| 网关   | Nginx                           |
 | 数据库 | PostgreSQL + Redis              |
-| 部署   | Docker Compose                  |
 
 ## 快速命令
 
@@ -87,7 +85,6 @@ pnpm install          # 安装依赖
 pnpm dev              # 启动所有服务
 pnpm --filter web dev # 只启动前端
 pnpm build            # 构建全部
-pnpm docker:up        # Docker 部署
 ```
 
 ## 快捷指令（提示词模板）
