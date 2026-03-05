@@ -11,14 +11,16 @@
 - SMTP 密码、第三方服务凭证
 - SSL 证书私钥（`*.pem`）
 - **服务器地址、SSH 密钥、部署凭证** — 仅保存在本地 `SECURITY.md`
+- **ACR 镜像仓库地址、登录凭证** — 仅保存在 `docs/DEPLOY_ACR_COMMANDS.md`（已加入 .gitignore）
 
 ### 1.2 配置方式
 
-| 场景     | 做法                                                                |
-| -------- | ------------------------------------------------------------------- |
-| 本地开发 | 复制 `.env.example` 为 `.env`，填入本地值，`.env` 已在 `.gitignore` |
-| Docker   | 使用 `env_file` 或 `environment` 注入，不硬编码                     |
-| 生产部署 | 使用云平台 Secret/环境变量，或 CI/CD 注入                           |
+| 场景       | 做法                                                                |
+| ---------- | ------------------------------------------------------------------- |
+| 本地开发   | 复制 `.env.example` 为 `.env`，填入本地值，`.env` 已在 `.gitignore` |
+| Docker     | 使用 `env_file` 或 `environment` 注入，不硬编码                     |
+| 生产部署   | 使用云平台 Secret/环境变量，或 CI/CD 注入                           |
+| GitHub CI  | `ACR_USERNAME`、`ACR_PASSWORD` 放在仓库 Secrets，不写进代码         |
 
 ### 1.3 当前项目中的敏感配置
 
@@ -89,14 +91,15 @@ Spring Boot Actuator 当前暴露 `health`、`info`、`metrics`：
 ## 7. 检查清单（上线前）
 
 - [ ] 所有密码、密钥通过环境变量注入
-- [ ] `.env`、`SECURITY.md` 未提交
+- [ ] `.env`、`SECURITY.md`、`docs/DEPLOY_ACR_COMMANDS.md` 未提交
 - [ ] `target/`、`node_modules` 未提交
 - [ ] `pnpm audit` 无高危漏洞
 - [ ] 写/删/改 API 有认证保护
 - [ ] CORS 配置为具体域名，非 `*`
 - [ ] 生产数据库使用强密码
 - [ ] HTTPS 已配置
+- [ ] GitHub Secrets 仅存 ACR 凭证，无其他敏感信息
 
 ---
 
-_复制为 `SECURITY.md` 后可在本地记录服务器地址、密码等，该文件不会上传。_
+_复制为 `SECURITY.md` 后可在本地记录服务器地址、SSH 密钥、ACR 凭证等，该文件不会上传。_

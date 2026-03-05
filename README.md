@@ -8,7 +8,6 @@
 | -------------------------------------------------------------- | -------------------------------------------------------- |
 | [AGENTS.md](./AGENTS.md)                                       | AI 协作规范、五大原则、代码规范                          |
 | [.cursor/rules/](./.cursor/rules/)                             | Cursor 规则（安全、测试、TS/Java 风格）                  |
-| [docs/AI_DEVELOPMENT.md](./docs/AI_DEVELOPMENT.md)             | 如何使用 AI 编程构建本项目                               |
 | [docs/SECURITY.example.md](./docs/SECURITY.example.md)         | 安全清单模板（敏感信息放本地 `SECURITY.md`，不上传）     |
 | [docs/CLAUDE_CODE_COMMANDS.md](./docs/CLAUDE_CODE_COMMANDS.md) | Everything Claude Code 中文指令手册（/review、/test 等） |
 | [docs/DEPLOY.md](./docs/DEPLOY.md)                             | 服务器部署文档（阿里云 2C2G 纯 Docker）                  |
@@ -36,7 +35,8 @@
 ```
 .
 ├── apps/                    # 应用层
-│   └── web/                # 主站前端（Next.js）
+│   ├── web/                # 主站前端（Next.js）
+│   └── admin/              # 管理后台（Vite + React）
 ├── services/               # 后端微服务
 │   └── java/               # 博客服务（Spring Boot，含文章 CRUD）
 ├── packages/               # 共享库
@@ -47,6 +47,11 @@
 ├── pnpm-workspace.yaml     # pnpm workspace 配置
 └── package.json            # 根 package.json
 ```
+
+### 部署
+
+- **镜像构建**：GitHub Actions 在 push 到 `main` 时自动构建并推送到阿里云 ACR
+- **服务器**：拉取镜像后 `docker compose up -d` 启动，详见 [docs/DEPLOY.md](./docs/DEPLOY.md)
 
 ### 架构优势
 

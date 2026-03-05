@@ -7,7 +7,7 @@
 ### 1.1 部署方式
 
 - **纯 Docker**：Nginx、web（Next.js）、admin（静态）均在容器内运行
-- **本地/CI 构建**：镜像在本地或 CI 构建，服务器只拉取并运行，不在服务器上构建
+- **GitHub Actions 构建**：镜像在 push 到 `main` 时由 CI 构建并推送到阿里云 ACR，服务器只拉取并运行
 - **Phase 1**：仅 web + admin，后续再增加 PostgreSQL、Redis、Java/Node/Go 后端
 
 ### 1.2 架构图
@@ -59,10 +59,9 @@
 - 系统：Ubuntu 24.04 LTS
 - 开放端口：80（HTTP）
 
-### 2.2 本地/CI 环境
+### 2.2 GitHub 仓库配置
 
-- Docker
-- 可访问本仓库（用于构建镜像）
+- 在仓库 Settings → Secrets 中配置 `ACR_USERNAME`、`ACR_PASSWORD`（用于 CI 推送镜像）
 
 ---
 
@@ -128,98 +127,64 @@ cd ~/blogs
 
 ## 四、构建与部署流程
 
-### 4.1 方式 A：本地构建 → 推镜像 → 服务器拉取
+### 4.1 方式 A：GitHub Actions 构建（推荐）
 
-**步骤 1：本地构建镜像**
+镜像由 `.github/workflows/build-push-acr.yml` 在 push 到 `main` 时自动构建并推送到阿里云 ACR。
 
-在项目根目录执行：
+**步骤 1：配置 GitHub Secrets**
+
+在仓库 Settings → Secrets and variables → Actions 中添加：
+
+- `ACR_USERNAME`：阿里云 ACR 登录名
+- `ACR_PASSWORD`：阿里云 ACR 密码
+
+**步骤 2：推送代码触发构建**
 
 ```bash
-# 进入项目
-cd /path/to/blogs
+git push origin main
+```
 
-# 构建镜像（构建在本地执行，不占用服务器资源）
+或手动触发：GitHub → Actions → Build and Push to ACR → Run workflow
+
+**步骤 3：服务器拉取并启动**
+
+```bash
+# SSH 登录服务器
+ssh root@你的服务器IP
+
+# 登录 ACR
+docker login crpi-znbxd9etb7oxa8ft.cn-chengdu.personal.cr.aliyuncs.com
+
+# 拉取镜像
+docker pull crpi-znbxd9etb7oxa8ft.cn-chengdu.personal.cr.aliyuncs.com/jiuyaun/blogs-nginx:latest
+docker pull crpi-znbxd9etb7oxa8ft.cn-chengdu.personal.cr.aliyuncs.com/jiuyaun/blogs-web:latest
+
+# 打回本地标签
+docker tag crpi-znbxd9etb7oxa8ft.cn-chengdu.personal.cr.aliyuncs.com/jiuyaun/blogs-nginx:latest blogs-nginx:latest
+docker tag crpi-znbxd9etb7oxa8ft.cn-chengdu.personal.cr.aliyuncs.com/jiuyaun/blogs-web:latest blogs-web:latest
+
+# 上传 docker-compose（首次或配置变更时）
+# 从本机执行：scp infra/docker/docker-compose.yml root@你的服务器IP:~/blogs/
+
+# 启动
+cd ~/blogs
+docker compose up -d
+```
+
+> ACR 地址以实际为准，含个人信息的完整命令见 `docs/DEPLOY_ACR_COMMANDS.md`（已加入 .gitignore）。
+
+### 4.2 方式 B：本地构建（备用）
+
+若需本地构建（如调试 Dockerfile）：
+
+```bash
 pnpm docker:build
 # 或：docker compose -f infra/docker/docker-compose.yml build
-
-# 可选：打标签并推送到镜像仓库（阿里云容器镜像服务 / Docker Hub 等）
-# docker tag blogs-nginx:latest your-registry/blogs-nginx:latest
-# docker tag blogs-web:latest your-registry/blogs-web:latest
-# docker push your-registry/blogs-nginx:latest
-# docker push your-registry/blogs-web:latest
 ```
 
-**步骤 2：上传到服务器**
+Mac（Apple Silicon）构建 amd64 会走 QEMU 模拟，耗时长且可能不稳定，建议使用 GitHub Actions。
 
-**方式 A：阿里云 ACR（推荐，服务器同地域拉取快）**
-
-1. 开通 [阿里云容器镜像服务 ACR](https://cr.console.aliyun.com/)，创建个人版实例
-2. 在控制台创建命名空间（如 `blogs`）和镜像仓库（如 `nginx`、`web`）
-3. 获取镜像仓库地址，格式一般为 `registry.cn-<地域>.aliyuncs.com` 或 `crpi-xxxx.cn-<地域>.personal.cr.aliyuncs.com`
-
-```bash
-# 本地：登录并推送
-docker login --username=你的登录名 registry.cn-<地域>.aliyuncs.com
-# 或新个人版：docker login crpi-xxxx.cn-<地域>.personal.cr.aliyuncs.com
-
-docker tag blogs-nginx:latest registry.cn-<地域>.aliyuncs.com/blogs/nginx:latest
-docker tag blogs-web:latest registry.cn-<地域>.aliyuncs.com/blogs/web:latest
-docker push registry.cn-<地域>.aliyuncs.com/blogs/nginx:latest
-docker push registry.cn-<地域>.aliyuncs.com/blogs/web:latest
-```
-
-```bash
-# 服务器：登录并拉取（阿里云同地域内网拉取更快）
-docker login --username=你的登录名 registry.cn-<地域>.aliyuncs.com
-docker pull registry.cn-<地域>.aliyuncs.com/blogs/nginx:latest
-docker pull registry.cn-<地域>.aliyuncs.com/blogs/web:latest
-
-# 打回本地标签，供 docker compose 使用
-docker tag registry.cn-<地域>.aliyuncs.com/blogs/nginx:latest blogs-nginx:latest
-docker tag registry.cn-<地域>.aliyuncs.com/blogs/web:latest blogs-web:latest
-```
-
-**方式 B：导出镜像文件（无需镜像仓库）**
-
-```bash
-# 本地导出
-docker save blogs-nginx:latest blogs-web:latest -o blogs-images.tar
-
-# 上传到服务器
-scp blogs-images.tar root@你的服务器IP:~/blogs/
-
-# 服务器上加载
-ssh root@你的服务器IP
-cd ~/blogs
-docker load -i blogs-images.tar
-```
-
-**步骤 3：上传 docker-compose 与配置**
-
-```bash
-# 从本地上传
-scp -r infra/docker/docker-compose.yml root@你的服务器IP:~/blogs/
-# 若修改了 nginx 配置，需重新构建 nginx 镜像
-```
-
-**步骤 4：服务器启动**
-
-```bash
-ssh root@你的服务器IP
-cd ~/blogs
-docker compose -f docker-compose.yml up -d
-
-# 查看状态
-docker compose ps
-```
-
-### 4.2 方式 B：服务器拉代码 + 本地构建产物上传
-
-若服务器上有代码但不适合在服务器构建，可：
-
-1. 本地执行 `docker compose build` 得到镜像
-2. 用 `docker save` 导出，`scp` 上传，服务器 `docker load`
-3. 在服务器放置 `docker-compose.yml` 后执行 `docker compose up -d`
+**推送到 ACR**：登录后 `docker tag` + `docker push`，或导出 `docker save` 后 `scp` 上传、服务器 `docker load`。
 
 ---
 
@@ -249,49 +214,30 @@ docker compose down
 # 重启
 docker compose restart
 
-# 更新后重新构建并启动
-docker compose build --no-cache && docker compose up -d
+# 更新后拉取新镜像并启动
+docker compose pull && docker compose up -d
 ```
 
 ---
 
 ## 七、更新部署
 
-### 7.1 代码更新后
+### 7.1 代码更新后（GitHub Actions）
 
-1. 本地重新构建：`docker compose -f infra/docker/docker-compose.yml build`
-2. 按「四、构建与部署流程」上传镜像或导出后上传
-3. 服务器执行：`docker compose down && docker compose up -d`
+1. `git push origin main` 触发 CI 构建并推送
+2. 服务器执行：`docker compose pull && docker compose up -d`（若 compose 中引用 ACR 地址）或按「四、4.1 步骤 3」拉取后 `docker compose up -d`
 
 ### 7.2 仅修改 Nginx 配置
 
-需重新构建 nginx 镜像（配置已打包进镜像）：
-
-```bash
-docker compose build nginx --no-cache
-docker compose up -d nginx
-```
+需重新构建 nginx 镜像（配置已打包进镜像），修改后 push 到 main 触发 CI 即可。
 
 ---
 
-## 八、Mac 构建部署到 x86 服务器
-
-若在 **Mac（Apple Silicon）** 上构建，部署到 **阿里云 x86 服务器**，需指定平台 `linux/amd64`。当前 Dockerfile 已包含 `--platform=linux/amd64`，直接构建即可：
-
-```bash
-pnpm docker:build
-```
-
-**构建耗时说明**：Mac 上构建 amd64 镜像会走 QEMU 模拟，首次约 8–15 分钟属正常。Dockerfile 已启用 pnpm store 缓存，二次构建会更快。
-
-**加速方案**：用 GitHub Actions 在 `ubuntu-latest`（amd64）上构建并推送，可省去模拟，约 3–5 分钟完成。见 `.github/workflows/build-push-acr.yml`。需在 GitHub 仓库 Settings → Secrets 添加 `ACR_USERNAME`、`ACR_PASSWORD`。
-
----
-
-## 九、目录与文件说明
+## 八、目录与文件说明
 
 | 路径 | 说明 |
 |------|------|
+| `.github/workflows/build-push-acr.yml` | GitHub Actions：构建并推送到 ACR |
 | `infra/docker/Dockerfile.web` | Next.js web 镜像 |
 | `infra/docker/Dockerfile.nginx` | Nginx + admin 静态镜像 |
 | `infra/docker/docker-compose.yml` | Phase 1 编排 |
@@ -300,7 +246,7 @@ pnpm docker:build
 
 ---
 
-## 十、后续阶段规划（Phase 2+）
+## 九、后续阶段规划（Phase 2+）
 
 Phase 2 将增加：
 
@@ -312,7 +258,7 @@ Phase 2 将增加：
 
 ---
 
-## 十一、故障排查
+## 十、故障排查
 
 | 现象 | 可能原因 | 处理 |
 |------|----------|------|
