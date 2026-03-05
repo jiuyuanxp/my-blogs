@@ -1,6 +1,10 @@
 package com.blog.auth;
 
 import com.blog.exception.BusinessException;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import java.util.Map;
@@ -8,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@Tag(name = "认证", description = "登录、校验、登出")
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
@@ -15,6 +20,7 @@ public class AuthController {
 
     private final TokenService tokenService;
 
+    @Operation(summary = "登录", description = "返回 token，用于后续请求 Authorization 头")
     @PostMapping("/login")
     public ResponseEntity<Map<String, String>> login(@Valid @RequestBody LoginRequest request) {
         if (!tokenService.validatePassword(request.password())) {
@@ -24,9 +30,10 @@ public class AuthController {
         return ResponseEntity.ok(Map.of("token", token));
     }
 
+    @Operation(summary = "校验 Token", description = "检查当前 Token 是否有效")
     @GetMapping("/check")
     public ResponseEntity<Map<String, Boolean>> check(
-            @RequestHeader(value = "Authorization", required = false) String auth) {
+            @Parameter(description = "Authorization: Bearer {token}") @RequestHeader(value = "Authorization", required = false) String auth) {
         String token = extractToken(auth);
         boolean valid = token != null && tokenService.isValid(token);
         if (!valid) {
@@ -35,9 +42,10 @@ public class AuthController {
         return ResponseEntity.ok(Map.of("valid", true));
     }
 
+    @Operation(summary = "登出", description = "使当前 Token 失效")
     @PostMapping("/logout")
     public ResponseEntity<Void> logout(
-            @RequestHeader(value = "Authorization", required = false) String auth) {
+            @Parameter(description = "Authorization: Bearer {token}") @RequestHeader(value = "Authorization", required = false) String auth) {
         String token = extractToken(auth);
         if (token != null) {
             tokenService.invalidate(token);
@@ -52,5 +60,7 @@ public class AuthController {
         return auth.substring(7).trim();
     }
 
-    public record LoginRequest(@NotBlank(message = "密码不能为空") String password) {}
+    @Schema(description = "登录请求")
+    public record LoginRequest(
+            @NotBlank(message = "密码不能为空") @Schema(description = "管理员密码") String password) {}
 }

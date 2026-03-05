@@ -1,6 +1,7 @@
 package com.blog.dto;
 
 import com.blog.model.Category;
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,12 +14,22 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Schema(description = "分类 DTO")
 public class CategoryDto {
 
+    @Schema(description = "分类 ID")
     private Long id;
+
+    @Schema(description = "父分类 ID，0 表示顶级")
     private Long parentId;
+
+    @Schema(description = "分类名称")
     private String name;
+
+    @Schema(description = "创建时间")
     private LocalDateTime createdAt;
+
+    @Schema(description = "子分类列表")
     @Builder.Default
     private List<CategoryDto> children = new ArrayList<>();
 

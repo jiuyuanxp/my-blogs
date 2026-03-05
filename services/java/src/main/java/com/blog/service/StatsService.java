@@ -7,8 +7,8 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -100,16 +100,35 @@ public class StatsService {
 
     @Data
     @Builder
+    @Schema(description = "统计摘要")
     public static class StatsSummary {
+        @Schema(description = "浏览量趋势")
         private List<DateCount> views;
+
+        @Schema(description = "新增文章趋势")
         private List<DateCount> adds;
+
+        @Schema(description = "删除文章趋势")
         private List<DateCount> deletes;
+
+        @Schema(description = "评论量趋势")
         private List<DateCount> comments;
     }
 
-    public record DateCount(String date, int count) {}
+    @Schema(description = "日期-数量")
+    public record DateCount(
+            @Schema(description = "日期") String date,
+            @Schema(description = "数量") int count) {}
 
-    public record PopularArticleDto(Long id, String title, Integer views) {}
+    @Schema(description = "热门文章（按浏览量）")
+    public record PopularArticleDto(
+            @Schema(description = "文章 ID") Long id,
+            @Schema(description = "文章标题") String title,
+            @Schema(description = "浏览次数") Integer views) {}
 
-    public record PopularCommentDto(Long id, String title, int commentCount) {}
+    @Schema(description = "热门文章（按评论数）")
+    public record PopularCommentDto(
+            @Schema(description = "文章 ID") Long id,
+            @Schema(description = "文章标题") String title,
+            @Schema(description = "评论数量") int commentCount) {}
 }
