@@ -6,8 +6,9 @@
 FROM --platform=linux/amd64 eclipse-temurin:21-jdk-alpine AS builder
 WORKDIR /build
 
-# 复制 Maven Wrapper 与 pom.xml（mvnw 需在 services/java/ 根目录）
-COPY services/java/mvnw services/java/.mvn services/java/
+# 复制 Maven Wrapper（mvnw 需与 .mvn/wrapper/ 同目录）
+COPY services/java/mvnw services/java/
+COPY services/java/.mvn/wrapper services/java/.mvn/wrapper
 COPY services/java/pom.xml services/java/
 RUN chmod +x services/java/mvnw
 
