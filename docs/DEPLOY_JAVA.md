@@ -194,29 +194,25 @@ location /v3/api-docs {
 # 1. SSH 登录服务器
 ssh root@你的服务器IP
 
-# 2. 登录 ACR（若使用 GitHub Actions 构建）
-docker login crpi-znbxd9etb7oxa8ft.cn-chengdu.personal.cr.aliyuncs.com
+# 2. 登录 ACR 并拉取镜像（含 Java）
+# 完整命令见 docs/DEPLOY_ACR_COMMANDS.md（已加入 .gitignore）
 
-# 3. 拉取 Java 镜像
-docker pull crpi-znbxd9etb7oxa8ft.cn-chengdu.personal.cr.aliyuncs.com/jiuyaun/blogs-java:latest
-docker tag crpi-znbxd9etb7oxa8ft.cn-chengdu.personal.cr.aliyuncs.com/jiuyaun/blogs-java:latest blogs-java:latest
-
-# 4. 创建 .env 文件（敏感信息）
+# 3. 创建 .env 文件（敏感信息，不要提交到 Git）
 cd ~/blogs
 cat > .env << 'EOF'
 DB_PASSWORD=你的PostgreSQL强密码
 ADMIN_PASSWORD=你的管理后台密码
+REDIS_PASSWORD=
 EOF
 chmod 600 .env
 
-# 5. 上传 docker-compose 和 nginx 配置
+# 4. 上传 docker-compose
 # 从本机执行：scp infra/docker/docker-compose.yml root@服务器IP:~/blogs/
-# 从本机执行：scp infra/nginx/nginx.conf root@服务器IP:~/blogs/
 
-# 6. 启动
+# 5. 启动
 docker compose up -d
 
-# 7. 验证
+# 6. 验证
 docker compose ps
 curl http://localhost/api/categories
 ```

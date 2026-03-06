@@ -8,6 +8,7 @@ name: blogs
 services:
   nginx:
     image: blogs-nginx:latest
+    pull_policy: never  # 仅用本地镜像，从 ACR 手动拉取
     build:
       context: ../..
       dockerfile: infra/docker/Dockerfile.nginx
@@ -20,6 +21,7 @@ services:
 
   web:
     image: blogs-web:latest
+    pull_policy: never  # 仅用本地镜像，从 ACR 手动拉取
     build:
       context: ../..
       dockerfile: infra/docker/Dockerfile.web
@@ -36,7 +38,7 @@ services:
     environment:
       POSTGRES_DB: blogdb
       POSTGRES_USER: bloguser
-      POSTGRES_PASSWORD: ${DB_PASSWORD:blogpass}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
     volumes:
       - postgres-data:/var/lib/postgresql/data
     restart: unless-stopped
@@ -61,6 +63,7 @@ services:
 
   java:
     image: blogs-java:latest
+    pull_policy: never  # 仅用本地镜像，从 ACR 手动拉取
     container_name: blogs-java
     environment:
       SPRING_PROFILES_ACTIVE: production
@@ -68,11 +71,11 @@ services:
       DB_PORT: 5432
       DB_NAME: blogdb
       DB_USER: bloguser
-      DB_PASSWORD: ${DB_PASSWORD:blogpass}
+      DB_PASSWORD: ${DB_PASSWORD}
       REDIS_HOST: redis
       REDIS_PORT: 6379
-      REDIS_PASSWORD: ${REDIS_PASSWORD:}
-      ADMIN_PASSWORD: ${ADMIN_PASSWORD:admin}
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD}
     depends_on:
       postgres:
         condition: service_healthy
