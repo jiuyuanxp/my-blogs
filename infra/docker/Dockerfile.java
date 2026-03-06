@@ -6,9 +6,10 @@
 FROM --platform=linux/amd64 eclipse-temurin:21-jdk-alpine AS builder
 WORKDIR /build
 
-# 复制 Maven 配置
-COPY services/java/mvnw services/java/.mvn/ services/java/.mvn/
+# 复制 Maven Wrapper 与 pom.xml（mvnw 需在 services/java/ 根目录）
+COPY services/java/mvnw services/java/.mvn services/java/
 COPY services/java/pom.xml services/java/
+RUN chmod +x services/java/mvnw
 
 # 下载依赖（利用 Docker 层缓存，加速后续构建）
 RUN cd services/java && ./mvnw dependency:resolve dependency:resolve-plugins -B
