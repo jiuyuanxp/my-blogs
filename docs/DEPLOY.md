@@ -240,9 +240,11 @@ docker compose pull && docker compose up -d
 | `.github/workflows/build-push-acr.yml` | GitHub Actions：构建并推送到 ACR |
 | `infra/docker/Dockerfile.web` | Next.js web 镜像 |
 | `infra/docker/Dockerfile.nginx` | Nginx + admin 静态镜像 |
+| `infra/docker/Dockerfile.java` | Java Spring Boot 镜像（Phase 2） |
 | `infra/docker/docker-compose.yml` | Phase 1 编排 |
 | `infra/nginx/nginx.conf` | Nginx 配置（打包进 nginx 镜像） |
 | `.dockerignore` | 构建时排除的文件 |
+| [docs/DEPLOY_JAVA.md](./DEPLOY_JAVA.md) | Java 服务部署文档 |
 
 ---
 

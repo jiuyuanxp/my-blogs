@@ -11,6 +11,7 @@
 | [docs/SECURITY.example.md](./docs/SECURITY.example.md)         | 安全清单模板（敏感信息放本地 `SECURITY.md`，不上传）     |
 | [docs/CLAUDE_CODE_COMMANDS.md](./docs/CLAUDE_CODE_COMMANDS.md) | Everything Claude Code 中文指令手册（/review、/test 等） |
 | [docs/DEPLOY.md](./docs/DEPLOY.md)                             | 服务器部署文档（阿里云 2C2G 纯 Docker）                  |
+| [docs/DEPLOY_JAVA.md](./docs/DEPLOY_JAVA.md)                   | Java 服务部署文档（PostgreSQL + Redis + Spring Boot）    |
 | [docs/DESIGN_INDEX.md](./docs/DESIGN_INDEX.md)                 | 设计文档索引（API、Admin、Web、Java、Redis）             |
 | [docs/REDIS_DEPLOY.md](./docs/REDIS_DEPLOY.md)                 | Redis 部署说明（Token 存储、缓存）                       |
 
