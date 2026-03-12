@@ -36,6 +36,9 @@ importers:
 
   apps/admin:
     dependencies:
+      '@blog/api-client':
+        specifier: workspace:*
+        version: link:../../packages/api-client
       '@tailwindcss/typography':
         specifier: ^0.5.19
         version: 0.5.19(tailwindcss@4.1.18)
@@ -103,6 +106,9 @@ importers:
 
   apps/web:
     dependencies:
+      '@blog/api-client':
+        specifier: workspace:*
+        version: link:../../packages/api-client
       '@tailwindcss/typography':
         specifier: ^0.5.19
         version: 0.5.19(tailwindcss@4.1.18)
@@ -163,6 +169,12 @@ importers:
         version: 4.1.18
       typescript:
         specifier: ^5
+        version: 5.9.3
+
+  packages/api-client:
+    devDependencies:
+      typescript:
+        specifier: ^5.3.0
         version: 5.9.3
 
   packages/types:
