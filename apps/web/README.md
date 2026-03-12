@@ -23,7 +23,7 @@
 
 - **App Router**：`app/[locale]/` 按语言路由
 - **SSR/SSG**：服务端渲染，支持静态生成
-- **数据**：当前使用 `src/data/mock.ts` 模拟，待对接 Java 后端 API
+- **数据**：通过 `@blog/api-client` 对接 Java 后端 API，`src/lib/api.ts` 封装请求
 
 ### 视觉规范
 
@@ -128,8 +128,9 @@ apps/web/
 │   │   ├── ThemeProvider.tsx
 │   │   ├── LanguageSwitcher.tsx
 │   │   └── SetHtmlLang.tsx
-│   ├── data/
-│   │   └── mock.ts
+│   ├── lib/
+│   │   ├── api.ts                 # API 封装（基于 @blog/api-client）
+│   │   └── detect-locale.ts
 │   ├── i18n/
 │   │   └── request.ts
 │   ├── types.ts

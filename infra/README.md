@@ -2,6 +2,10 @@
 
 Docker 配置、Nginx、部署相关文件。
 
+## 服务编排
+
+`docker/docker-compose.yml` 编排 Phase 2 全栈：nginx、web、admin（打包进 nginx）、java、postgres、redis。
+
 ## 文件同步规则
 
 **服务器上的配置文件应通过本地上传覆盖，而非在服务器上直接修改。**

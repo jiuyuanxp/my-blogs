@@ -20,8 +20,8 @@
 ### 架构
 
 - **SPA**：单页应用，Tab 切换无刷新
-- **状态**：本地 `useState`，认证用 `localStorage`
-- **数据**：当前使用 `src/lib/mock-data.ts` 模拟，待对接 Java 后端 API
+- **状态**：本地 `useState`，认证用 `localStorage`（`admin-token`）
+- **数据**：通过 `@blog/api-client` 对接 Java 后端 API，`src/lib/api.ts` 封装请求
 
 ### 视觉规范
 
@@ -120,7 +120,7 @@
 apps/admin/
 ├── src/
 │   ├── lib/
-│   │   ├── mock-data.ts    # 模拟数据
+│   │   ├── api.ts          # API 封装（基于 @blog/api-client）
 │   │   └── utils.ts        # cn() 等工具
 │   ├── pages/
 │   │   ├── Dashboard.tsx   # 仪表盘

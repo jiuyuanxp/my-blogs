@@ -1,43 +1,39 @@
 # 服务器部署文档
 
-适用于阿里云 2C2G 轻量服务器，纯 Docker 部署 web + admin（Phase 1）。
+适用于阿里云 2C2G 轻量服务器，纯 Docker 部署。
 
 ## 一、架构说明
 
 ### 1.1 部署方式
 
-- **纯 Docker**：Nginx、web（Next.js）、admin（静态）均在容器内运行
+- **纯 Docker**：Nginx、web（Next.js）、admin（静态）、Java 后端、PostgreSQL、Redis 均在容器内运行
 - **GitHub Actions 构建**：镜像在 push 到 `main` 时由 CI 构建并推送到阿里云 ACR，服务器只拉取并运行
-- **Phase 1**：仅 web + admin，后续再增加 PostgreSQL、Redis、Java/Node/Go 后端
+- **Phase 2**：web + admin + Java + PostgreSQL + Redis 全栈
 
 ### 1.2 架构图
 
 ```
                     阿里云 2C2G 轻量服务器
-    ┌─────────────────────────────────────────────────────┐
-    │                                                       │
-    │   用户请求 (IP:80)                                     │
-    │        │                                               │
-    │        ▼                                               │
-    │   ┌─────────────┐                                      │
-    │   │   nginx     │  :80                                 │
-    │   │  (容器)     │                                      │
-    │   └──────┬──────┘                                      │
-    │          │                                              │
-    │    ┌─────┴─────┐                                       │
-    │    │           │                                        │
-    │    ▼           ▼                                        │
-    │  /admin     /web                                       │
-    │  (静态)     (反向代理)                                   │
-    │    │           │                                        │
-    │    │           ▼                                        │
-    │    │     ┌──────────┐                                  │
-    │    │     │   web    │  Next.js :3000                   │
-    │    │     │  (容器)  │                                   │
-    │    │     └──────────┘                                  │
-    │    │                                                    │
-    │    └── admin 静态文件已打包进 nginx 镜像                  │
-    └─────────────────────────────────────────────────────┘
+    ┌─────────────────────────────────────────────────────────────┐
+    │                                                               │
+    │   用户请求 (IP:80)                                            │
+    │        │                                                       │
+    │        ▼                                                       │
+    │   ┌─────────────┐                                             │
+    │   │   nginx     │  :80                                         │
+    │   │  (容器)     │                                              │
+    │   └──────┬──────┘                                              │
+    │          │                                                      │
+    │    ┌─────┼─────┬─────────────┐                                 │
+    │    │     │     │             │                                  │
+    │    ▼     ▼     ▼             ▼                                  │
+    │  /admin  /web  /api         postgres / redis                   │
+    │  (静态)  (代理) (代理→java)   (数据层)                           │
+    │    │     │     │                                                │
+    │    │     │     └── java :4300 (Spring Boot)                    │
+    │    │     └── web :3000 (Next.js)                               │
+    │    └── admin 静态文件已打包进 nginx 镜像                         │
+    └─────────────────────────────────────────────────────────────┘
 ```
 
 ### 1.3 路由说明
@@ -155,17 +151,20 @@ ssh root@你的服务器IP
 # 登录 ACR
 docker login crpi-znbxd9etb7oxa8ft.cn-chengdu.personal.cr.aliyuncs.com
 
-# 拉取镜像
+# 拉取镜像（Phase 2 含 java）
 docker pull crpi-znbxd9etb7oxa8ft.cn-chengdu.personal.cr.aliyuncs.com/jiuyaun/blogs-nginx:latest
 docker pull crpi-znbxd9etb7oxa8ft.cn-chengdu.personal.cr.aliyuncs.com/jiuyaun/blogs-web:latest
+docker pull crpi-znbxd9etb7oxa8ft.cn-chengdu.personal.cr.aliyuncs.com/jiuyaun/blogs-java:latest
 
 # 打回本地标签
 docker tag crpi-znbxd9etb7oxa8ft.cn-chengdu.personal.cr.aliyuncs.com/jiuyaun/blogs-nginx:latest blogs-nginx:latest
 docker tag crpi-znbxd9etb7oxa8ft.cn-chengdu.personal.cr.aliyuncs.com/jiuyaun/blogs-web:latest blogs-web:latest
+docker tag crpi-znbxd9etb7oxa8ft.cn-chengdu.personal.cr.aliyuncs.com/jiuyaun/blogs-java:latest blogs-java:latest
 
 # 上传 docker-compose（首次或配置变更时）
 # 从本机执行：scp infra/docker/docker-compose.yml root@你的服务器IP:~/blogs/
 
+# Phase 2 需创建 .env 配置 DB_PASSWORD、REDIS_PASSWORD、ADMIN_PASSWORD
 # 启动
 cd ~/blogs
 docker compose up -d
@@ -235,28 +234,28 @@ docker compose pull && docker compose up -d
 
 ## 八、目录与文件说明
 
-| 路径                                    | 说明                             |
-| --------------------------------------- | -------------------------------- |
-| `.github/workflows/build-push-acr.yml`  | GitHub Actions：构建并推送到 ACR |
-| `infra/docker/Dockerfile.web`           | Next.js web 镜像                 |
-| `infra/docker/Dockerfile.nginx`         | Nginx + admin 静态镜像           |
-| `infra/docker/Dockerfile.java`          | Java Spring Boot 镜像（Phase 2） |
-| `infra/docker/docker-compose.yml`       | Phase 1 编排                     |
-| `infra/nginx/nginx.conf`                | Nginx 配置（打包进 nginx 镜像）  |
-| `.dockerignore`                         | 构建时排除的文件                 |
-| [docs/DEPLOY_JAVA.md](./DEPLOY_JAVA.md) | Java 服务部署文档                |
+| 路径                                    | 说明                                       |
+| --------------------------------------- | ------------------------------------------ |
+| `.github/workflows/build-push-acr.yml`  | GitHub Actions：构建并推送到 ACR           |
+| `infra/docker/Dockerfile.web`           | Next.js web 镜像                           |
+| `infra/docker/Dockerfile.nginx`         | Nginx + admin 静态镜像                     |
+| `infra/docker/Dockerfile.java`          | Java Spring Boot 镜像（Phase 2）           |
+| `infra/docker/docker-compose.yml`       | Phase 2 全栈编排（含 java/postgres/redis） |
+| `infra/nginx/nginx.conf`                | Nginx 配置（打包进 nginx 镜像）            |
+| `.dockerignore`                         | 构建时排除的文件                           |
+| [docs/DEPLOY_JAVA.md](./DEPLOY_JAVA.md) | Java 服务部署文档                          |
 
 ---
 
-## 九、后续阶段规划（Phase 2+）
+## 九、Phase 2 全栈说明
 
-Phase 2 将增加：
+当前 `docker-compose.yml` 已包含：
 
 - PostgreSQL（Docker）
 - Redis（Docker）
-- Java/Node/Go 后端服务（Docker）
+- Java Spring Boot 后端服务（Docker）
 
-届时会更新 `docker-compose.yml` 与本文档，并设置各服务内存限制，避免 2C2G 内存不足。
+部署时需配置环境变量：`DB_PASSWORD`、`REDIS_PASSWORD`、`ADMIN_PASSWORD`。详见 [docs/DEPLOY_JAVA.md](./DEPLOY_JAVA.md)。
 
 ---
 

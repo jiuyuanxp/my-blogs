@@ -44,7 +44,8 @@
 │   └── java/               # 博客服务（Spring Boot，含文章 CRUD）
 ├── packages/               # 共享库
 │   ├── types/              # TypeScript 类型定义
-│   └── utils/              # 工具函数
+│   ├── utils/              # 工具函数
+│   └── api-client/         # 统一 API 客户端（web/admin 共用）
 ├── docs/                   # 设计文档
 ├── turbo.json              # Turborepo 配置
 ├── pnpm-workspace.yaml     # pnpm workspace 配置

@@ -24,7 +24,7 @@ SPRING_PROFILES_ACTIVE=dev ./mvnw spring-boot:run
 
 - Java 21
 - **local-h2**：H2 内存库，无需任何外部服务
-- **local**：PostgreSQL（localhost:5432/blogdb）
+- **local**：PostgreSQL（localhost:5433/blogdb，宿主机 5433 映射容器 5432）
 - Redis 可选（local/dev 已排除）
 
 ## API 文档

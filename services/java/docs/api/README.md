@@ -2,7 +2,7 @@
 
 本目录存放博客服务 API 设计文档，为服务端实现的契约来源。设计遵循 api-design 规范。
 
-**文档生成**：实现时建议集成 SpringDoc OpenAPI / Swagger，运行时可通过 `/api-docs` 或 `/swagger-ui` 获取可交互文档，前端对接以 Swagger 为准。
+**文档生成**：项目已集成 Knife4j（基于 OpenAPI 3），启动后访问 `/doc.html` 获取可交互文档，OpenAPI JSON 见 `/v3/api-docs`。
 
 ## 设计决策汇总
 
