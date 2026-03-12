@@ -1,4 +1,5 @@
 /** @type {import('@commitlint/types').UserConfig} */
+// 提交信息使用中文描述，如：feat: 添加用户登录
 module.exports = {
   extends: ['@commitlint/config-conventional'],
   rules: {

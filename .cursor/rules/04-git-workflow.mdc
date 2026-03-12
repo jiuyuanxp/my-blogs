@@ -13,7 +13,8 @@ alwaysApply: false
 <optional body>
 ```
 
-类型：feat, fix, refactor, docs, test, chore, perf, ci
+- **描述使用中文**
+- 类型：feat, fix, refactor, docs, test, chore, perf, ci
 
 ## PR 流程
 
