@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 const { readStdin, runExistingHook, transformToClaude } = require('./adapter');
 readStdin()
-  .then(raw => {
+  .then((raw) => {
     try {
       const input = JSON.parse(raw);
       const claudeInput = transformToClaude(input, {

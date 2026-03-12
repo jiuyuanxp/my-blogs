@@ -18,7 +18,7 @@ const MAX_STDIN = 1024 * 1024; // 1MB limit
 let data = '';
 process.stdin.setEncoding('utf8');
 
-process.stdin.on('data', chunk => {
+process.stdin.on('data', (chunk) => {
   if (data.length < MAX_STDIN) {
     const remaining = MAX_STDIN - data.length;
     data += chunk.substring(0, remaining);
@@ -81,9 +81,7 @@ process.stdin.on('end', () => {
 
     if (filePath && /\.(ts|tsx|js|jsx)$/.test(filePath)) {
       try {
-        const projectRoot = findProjectRoot(
-          path.dirname(path.resolve(filePath))
-        );
+        const projectRoot = findProjectRoot(path.dirname(path.resolve(filePath)));
         const formatter = detectFormatter(projectRoot);
         const cmd = getFormatterCommand(formatter, filePath);
 

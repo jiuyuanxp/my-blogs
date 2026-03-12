@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 const { readStdin } = require('./adapter');
 readStdin()
-  .then(raw => {
+  .then((raw) => {
     try {
       const input = JSON.parse(raw);
       const server = input.server || input.mcp_server || 'unknown';

@@ -174,11 +174,7 @@ function getPackageManager(options = {}) {
   }
 
   // 2. Check project-specific config
-  const projectConfigPath = path.join(
-    projectDir,
-    '.claude',
-    'package-manager.json'
-  );
+  const projectConfigPath = path.join(projectDir, '.claude', 'package-manager.json');
   const projectConfig = readFile(projectConfigPath);
   if (projectConfig) {
     try {
@@ -258,9 +254,7 @@ function setPreferredPackageManager(pmName) {
   try {
     saveConfig(config);
   } catch (err) {
-    throw new Error(
-      `Failed to save package manager preference: ${err.message}`
-    );
+    throw new Error(`Failed to save package manager preference: ${err.message}`);
   }
 
   return config;
@@ -285,9 +279,7 @@ function setProjectPackageManager(pmName, projectDir = process.cwd()) {
   try {
     writeFile(configPath, JSON.stringify(config, null, 2));
   } catch (err) {
-    throw new Error(
-      `Failed to save package manager config to ${configPath}: ${err.message}`
-    );
+    throw new Error(`Failed to save package manager config to ${configPath}: ${err.message}`);
   }
   return config;
 }
@@ -360,14 +352,10 @@ function getExecCommand(binary, args = '', options = {}) {
  */
 function getSelectionPrompt() {
   let message = '[PackageManager] No package manager preference detected.\n';
-  message +=
-    'Supported package managers: ' +
-    Object.keys(PACKAGE_MANAGERS).join(', ') +
-    '\n';
+  message += 'Supported package managers: ' + Object.keys(PACKAGE_MANAGERS).join(', ') + '\n';
   message += '\nTo set your preferred package manager:\n';
   message += '  - Global: Set CLAUDE_PACKAGE_MANAGER environment variable\n';
-  message +=
-    '  - Or add to ~/.claude/package-manager.json: {"packageManager": "pnpm"}\n';
+  message += '  - Or add to ~/.claude/package-manager.json: {"packageManager": "pnpm"}\n';
   message += '  - Or add to package.json: {"packageManager": "pnpm@8"}\n';
   message += '  - Or add a lock file to your project (e.g., pnpm-lock.yaml)\n';
 
@@ -392,21 +380,11 @@ function getCommandPattern(action) {
   if (trimmedAction === 'dev') {
     patterns.push('npm run dev', 'pnpm( run)? dev', 'yarn dev', 'bun run dev');
   } else if (trimmedAction === 'install') {
-    patterns.push(
-      'npm install',
-      'pnpm install',
-      'yarn( install)?',
-      'bun install'
-    );
+    patterns.push('npm install', 'pnpm install', 'yarn( install)?', 'bun install');
   } else if (trimmedAction === 'test') {
     patterns.push('npm test', 'pnpm test', 'yarn test', 'bun test');
   } else if (trimmedAction === 'build') {
-    patterns.push(
-      'npm run build',
-      'pnpm( run)? build',
-      'yarn build',
-      'bun run build'
-    );
+    patterns.push('npm run build', 'pnpm( run)? build', 'yarn build', 'bun run build');
   } else {
     // Generic run command — escape regex metacharacters in action
     const escaped = escapeRegex(trimmedAction);

@@ -25,9 +25,7 @@ async function main() {
   const counterFile = path.join(getTempDir(), `claude-tool-count-${sessionId}`);
   const rawThreshold = parseInt(process.env.COMPACT_THRESHOLD || '50', 10);
   const threshold =
-    Number.isFinite(rawThreshold) && rawThreshold > 0 && rawThreshold <= 10000
-      ? rawThreshold
-      : 50;
+    Number.isFinite(rawThreshold) && rawThreshold > 0 && rawThreshold <= 10000 ? rawThreshold : 50;
 
   let count = 1;
 
@@ -43,10 +41,7 @@ async function main() {
         const parsed = parseInt(buf.toString('utf8', 0, bytesRead).trim(), 10);
         // Clamp to reasonable range — corrupted files could contain huge values
         // that pass Number.isFinite() (e.g., parseInt('9'.repeat(30)) => 1e+29)
-        count =
-          Number.isFinite(parsed) && parsed > 0 && parsed <= 1000000
-            ? parsed + 1
-            : 1;
+        count = Number.isFinite(parsed) && parsed > 0 && parsed <= 1000000 ? parsed + 1 : 1;
       }
       // Truncate and write new value
       fs.ftruncateSync(fd, 0);
@@ -76,7 +71,7 @@ async function main() {
   process.exit(0);
 }
 
-main().catch(err => {
+main().catch((err) => {
   console.error('[StrategicCompact] Error:', err.message);
   process.exit(0);
 });

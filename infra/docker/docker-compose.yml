@@ -8,12 +8,12 @@ name: blogs
 services:
   nginx:
     image: blogs-nginx:latest
-    pull_policy: never  # 仅用本地镜像，从 ACR 手动拉取
+    pull_policy: never # 仅用本地镜像，从 ACR 手动拉取
     build:
       context: ../..
       dockerfile: infra/docker/Dockerfile.nginx
     ports:
-      - "80:80"
+      - '80:80'
     depends_on:
       - web
       - java
@@ -21,7 +21,7 @@ services:
 
   web:
     image: blogs-web:latest
-    pull_policy: never  # 仅用本地镜像，从 ACR 手动拉取
+    pull_policy: never # 仅用本地镜像，从 ACR 手动拉取
     build:
       context: ../..
       dockerfile: infra/docker/Dockerfile.web
@@ -36,7 +36,7 @@ services:
     image: postgres:16
     container_name: blogs-postgres
     ports:
-      - "5433:5432"  # 宿主机 5433，避免与本地其他 PostgreSQL 冲突
+      - '5433:5432' # 宿主机 5433，避免与本地其他 PostgreSQL 冲突
     environment:
       POSTGRES_DB: blogdb
       POSTGRES_USER: bloguser
@@ -45,7 +45,7 @@ services:
       - postgres-data:/var/lib/postgresql/data
     restart: unless-stopped
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U bloguser -d blogdb"]
+      test: ['CMD-SHELL', 'pg_isready -U bloguser -d blogdb']
       interval: 5s
       timeout: 5s
       retries: 5
@@ -58,14 +58,14 @@ services:
       - redis-data:/data
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
+      test: ['CMD', 'redis-cli', 'ping']
       interval: 5s
       timeout: 3s
       retries: 5
 
   java:
     image: blogs-java:latest
-    pull_policy: never  # 仅用本地镜像，从 ACR 手动拉取
+    pull_policy: never # 仅用本地镜像，从 ACR 手动拉取
     container_name: blogs-java
     environment:
       SPRING_PROFILES_ACTIVE: production

@@ -63,9 +63,7 @@ export interface GetPackageManagerOptions {
  * 5. Global user preference (~/.claude/package-manager.json)
  * 6. Default to npm (no child processes spawned)
  */
-export function getPackageManager(
-  options?: GetPackageManagerOptions
-): PackageManagerResult;
+export function getPackageManager(options?: GetPackageManagerOptions): PackageManagerResult;
 
 /**
  * Set the user's globally preferred package manager.
@@ -95,23 +93,16 @@ export function setProjectPackageManager(
 export function getAvailablePackageManagers(): PackageManagerName[];
 
 /** Detect package manager from lock file in the given directory */
-export function detectFromLockFile(
-  projectDir?: string
-): PackageManagerName | null;
+export function detectFromLockFile(projectDir?: string): PackageManagerName | null;
 
 /** Detect package manager from package.json `packageManager` field */
-export function detectFromPackageJson(
-  projectDir?: string
-): PackageManagerName | null;
+export function detectFromPackageJson(projectDir?: string): PackageManagerName | null;
 
 /**
  * Get the full command string to run a script.
  * @param script - Script name: "install", "test", "build", "dev", or custom
  */
-export function getRunCommand(
-  script: string,
-  options?: GetPackageManagerOptions
-): string;
+export function getRunCommand(script: string, options?: GetPackageManagerOptions): string;
 
 /**
  * Get the full command string to execute a package binary.

@@ -45,18 +45,14 @@ function extractSessionSummary(transcriptPath) {
       const entry = JSON.parse(line);
 
       // Collect user messages (first 200 chars each)
-      if (
-        entry.type === 'user' ||
-        entry.role === 'user' ||
-        entry.message?.role === 'user'
-      ) {
+      if (entry.type === 'user' || entry.role === 'user' || entry.message?.role === 'user') {
         // Support both direct content and nested message.content (Claude Code JSONL format)
         const rawContent = entry.message?.content ?? entry.content;
         const text =
           typeof rawContent === 'string'
             ? rawContent
             : Array.isArray(rawContent)
-              ? rawContent.map(c => (c && c.text) || '').join(' ')
+              ? rawContent.map((c) => (c && c.text) || '').join(' ')
               : '';
         if (text.trim()) {
           userMessages.push(text.trim().slice(0, 200));
@@ -68,8 +64,7 @@ function extractSessionSummary(transcriptPath) {
         const toolName = entry.tool_name || entry.name || '';
         if (toolName) toolsUsed.add(toolName);
 
-        const filePath =
-          entry.tool_input?.file_path || entry.input?.file_path || '';
+        const filePath = entry.tool_input?.file_path || entry.input?.file_path || '';
         if (filePath && (toolName === 'Edit' || toolName === 'Write')) {
           filesModified.add(filePath);
         }
@@ -95,9 +90,7 @@ function extractSessionSummary(transcriptPath) {
   }
 
   if (parseErrors > 0) {
-    log(
-      `[SessionEnd] Skipped ${parseErrors}/${lines.length} unparseable transcript lines`
-    );
+    log(`[SessionEnd] Skipped ${parseErrors}/${lines.length} unparseable transcript lines`);
   }
 
   if (userMessages.length === 0) return null;
@@ -115,7 +108,7 @@ const MAX_STDIN = 1024 * 1024;
 let stdinData = '';
 process.stdin.setEncoding('utf8');
 
-process.stdin.on('data', chunk => {
+process.stdin.on('data', (chunk) => {
   if (stdinData.length < MAX_STDIN) {
     const remaining = MAX_STDIN - stdinData.length;
     stdinData += chunk.substring(0, remaining);
@@ -127,7 +120,7 @@ process.stdin.on('end', () => {
 });
 
 function runMain() {
-  main().catch(err => {
+  main().catch((err) => {
     console.error('[SessionEnd] Error:', err.message);
     process.exit(0);
   });

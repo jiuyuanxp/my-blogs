@@ -15,7 +15,7 @@ const MAX_STDIN = 1024 * 1024; // 1MB limit
 let data = '';
 process.stdin.setEncoding('utf8');
 
-process.stdin.on('data', chunk => {
+process.stdin.on('data', (chunk) => {
   if (data.length < MAX_STDIN) {
     const remaining = MAX_STDIN - data.length;
     data += chunk.substring(0, remaining);
@@ -44,7 +44,7 @@ process.stdin.on('end', () => {
 
       if (matches.length > 0) {
         console.error('[Hook] WARNING: console.log found in ' + filePath);
-        matches.slice(0, 5).forEach(m => console.error(m));
+        matches.slice(0, 5).forEach((m) => console.error(m));
         console.error('[Hook] Remove console.log before committing');
       }
     }

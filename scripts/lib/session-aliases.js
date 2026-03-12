@@ -187,11 +187,7 @@ function setAlias(alias, sessionPath, title = null) {
   }
 
   // Validate session path
-  if (
-    !sessionPath ||
-    typeof sessionPath !== 'string' ||
-    sessionPath.trim().length === 0
-  ) {
+  if (!sessionPath || typeof sessionPath !== 'string' || sessionPath.trim().length === 0) {
     return { success: false, error: 'Session path cannot be empty' };
   }
 
@@ -202,8 +198,7 @@ function setAlias(alias, sessionPath, title = null) {
   if (!/^[a-zA-Z0-9_-]+$/.test(alias)) {
     return {
       success: false,
-      error:
-        'Alias name must contain only letters, numbers, dashes, and underscores',
+      error: 'Alias name must contain only letters, numbers, dashes, and underscores',
     };
   }
 
@@ -267,7 +262,7 @@ function listAliases(options = {}) {
   if (search) {
     const searchLower = search.toLowerCase();
     aliases = aliases.filter(
-      a =>
+      (a) =>
         a.name.toLowerCase().includes(searchLower) ||
         (a.title && a.title.toLowerCase().includes(searchLower))
     );
@@ -335,8 +330,7 @@ function renameAlias(oldAlias, newAlias) {
   if (!/^[a-zA-Z0-9_-]+$/.test(newAlias)) {
     return {
       success: false,
-      error:
-        'New alias name must contain only letters, numbers, dashes, and underscores',
+      error: 'New alias name must contain only letters, numbers, dashes, and underscores',
     };
   }
 

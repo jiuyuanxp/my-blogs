@@ -34,7 +34,7 @@ docker compose up -d <服务名> --force-recreate   # 如 postgres、nginx
 
 ### 目录说明
 
-| 路径 | 说明 |
-|------|------|
+| 路径      | 说明                           |
+| --------- | ------------------------------ |
 | `docker/` | Dockerfile、docker-compose.yml |
-| `nginx/` | Nginx 配置 |
+| `nginx/`  | Nginx 配置                     |

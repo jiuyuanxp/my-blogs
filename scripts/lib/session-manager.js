@@ -15,8 +15,7 @@ const { getSessionsDir, readFile, log } = require('./utils');
 // Session filename pattern: YYYY-MM-DD-[short-id]-session.tmp
 // The short-id is optional (old format) and can be 8+ alphanumeric characters
 // Matches: "2026-02-01-session.tmp" or "2026-02-01-a1b2c3d4-session.tmp"
-const SESSION_FILENAME_REGEX =
-  /^(\d{4}-\d{2}-\d{2})(?:-([a-z0-9]{8,}))?-session\.tmp$/;
+const SESSION_FILENAME_REGEX = /^(\d{4}-\d{2}-\d{2})(?:-([a-z0-9]{8,}))?-session\.tmp$/;
 
 /**
  * Parse session filename to extract metadata
@@ -113,43 +112,31 @@ function parseSessionMetadata(content) {
   }
 
   // Extract completed items
-  const completedSection = content.match(
-    /### Completed\s*\n([\s\S]*?)(?=###|\n\n|$)/
-  );
+  const completedSection = content.match(/### Completed\s*\n([\s\S]*?)(?=###|\n\n|$)/);
   if (completedSection) {
     const items = completedSection[1].match(/- \[x\]\s*(.+)/g);
     if (items) {
-      metadata.completed = items.map(item =>
-        item.replace(/- \[x\]\s*/, '').trim()
-      );
+      metadata.completed = items.map((item) => item.replace(/- \[x\]\s*/, '').trim());
     }
   }
 
   // Extract in-progress items
-  const progressSection = content.match(
-    /### In Progress\s*\n([\s\S]*?)(?=###|\n\n|$)/
-  );
+  const progressSection = content.match(/### In Progress\s*\n([\s\S]*?)(?=###|\n\n|$)/);
   if (progressSection) {
     const items = progressSection[1].match(/- \[ \]\s*(.+)/g);
     if (items) {
-      metadata.inProgress = items.map(item =>
-        item.replace(/- \[ \]\s*/, '').trim()
-      );
+      metadata.inProgress = items.map((item) => item.replace(/- \[ \]\s*/, '').trim());
     }
   }
 
   // Extract notes
-  const notesSection = content.match(
-    /### Notes for Next Session\s*\n([\s\S]*?)(?=###|\n\n|$)/
-  );
+  const notesSection = content.match(/### Notes for Next Session\s*\n([\s\S]*?)(?=###|\n\n|$)/);
   if (notesSection) {
     metadata.notes = notesSection[1].trim();
   }
 
   // Extract context to load
-  const contextSection = content.match(
-    /### Context to Load\s*\n```\n([\s\S]*?)```/
-  );
+  const contextSection = content.match(/### Context to Load\s*\n```\n([\s\S]*?)```/);
   if (contextSection) {
     metadata.context = contextSection[1].trim();
   }
@@ -173,11 +160,8 @@ function getSessionStats(sessionPathOrContent) {
     typeof sessionPathOrContent === 'string' &&
     !sessionPathOrContent.includes('\n') &&
     sessionPathOrContent.endsWith('.tmp') &&
-    (sessionPathOrContent.startsWith('/') ||
-      /^[A-Za-z]:[/\\]/.test(sessionPathOrContent));
-  const content = looksLikePath
-    ? getSessionContent(sessionPathOrContent)
-    : sessionPathOrContent;
+    (sessionPathOrContent.startsWith('/') || /^[A-Za-z]:[/\\]/.test(sessionPathOrContent));
+  const content = looksLikePath ? getSessionContent(sessionPathOrContent) : sessionPathOrContent;
 
   const metadata = parseSessionMetadata(content);
 
@@ -201,21 +185,14 @@ function getSessionStats(sessionPathOrContent) {
  * @returns {object} Object with sessions array and pagination info
  */
 function getAllSessions(options = {}) {
-  const {
-    limit: rawLimit = 50,
-    offset: rawOffset = 0,
-    date = null,
-    search = null,
-  } = options;
+  const { limit: rawLimit = 50, offset: rawOffset = 0, date = null, search = null } = options;
 
   // Clamp offset and limit to safe non-negative integers.
   // Without this, negative offset causes slice() to count from the end,
   // and NaN values cause slice() to return empty or unexpected results.
   // Note: cannot use `|| default` because 0 is falsy — use isNaN instead.
   const offsetNum = Number(rawOffset);
-  const offset = Number.isNaN(offsetNum)
-    ? 0
-    : Math.max(0, Math.floor(offsetNum));
+  const offset = Number.isNaN(offsetNum) ? 0 : Math.max(0, Math.floor(offsetNum));
   const limitNum = Number(rawLimit);
   const limit = Number.isNaN(limitNum) ? 50 : Math.max(1, Math.floor(limitNum));
 
@@ -311,10 +288,8 @@ function getSessionById(sessionId, includeContent = false) {
       sessionId.length > 0 &&
       metadata.shortId !== 'no-id' &&
       metadata.shortId.startsWith(sessionId);
-    const filenameMatch =
-      filename === sessionId || filename === `${sessionId}.tmp`;
-    const noIdMatch =
-      metadata.shortId === 'no-id' && filename === `${sessionId}-session.tmp`;
+    const filenameMatch = filename === sessionId || filename === `${sessionId}.tmp`;
+    const noIdMatch = metadata.shortId === 'no-id' && filename === `${sessionId}-session.tmp`;
 
     if (!shortIdMatch && !filenameMatch && !noIdMatch) {
       continue;

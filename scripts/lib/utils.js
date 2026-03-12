@@ -62,9 +62,7 @@ function ensureDir(dirPath) {
   } catch (err) {
     // EEXIST is fine (race condition with another process creating it)
     if (err.code !== 'EEXIST') {
-      throw new Error(
-        `Failed to create directory '${dirPath}': ${err.message}`
-      );
+      throw new Error(`Failed to create directory '${dirPath}': ${err.message}`);
     }
   }
   return dirPath;
@@ -176,8 +174,7 @@ function findFiles(dir, pattern, options = {}) {
           }
 
           if (maxAge !== null) {
-            const ageInDays =
-              (Date.now() - stats.mtimeMs) / (1000 * 60 * 60 * 24);
+            const ageInDays = (Date.now() - stats.mtimeMs) / (1000 * 60 * 60 * 24);
             if (ageInDays <= maxAge) {
               results.push({ path: fullPath, mtime: stats.mtimeMs });
             }
@@ -211,7 +208,7 @@ function findFiles(dir, pattern, options = {}) {
 async function readStdinJson(options = {}) {
   const { timeoutMs = 5000, maxSize = 1024 * 1024 } = options;
 
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     let data = '';
     let settled = false;
 
@@ -233,7 +230,7 @@ async function readStdinJson(options = {}) {
     }, timeoutMs);
 
     process.stdin.setEncoding('utf8');
-    process.stdin.on('data', chunk => {
+    process.stdin.on('data', (chunk) => {
       if (data.length < maxSize) {
         data += chunk;
       }
@@ -387,7 +384,7 @@ function getGitModifiedFiles(patterns = []) {
       }
     }
     if (compiled.length > 0) {
-      files = files.filter(file => compiled.some(regex => regex.test(file)));
+      files = files.filter((file) => compiled.some((regex) => regex.test(file)));
     }
   }
 
