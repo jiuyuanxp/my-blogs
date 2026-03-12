@@ -13,16 +13,24 @@
     "format": "prettier --write \"apps/**/*.{ts,tsx,js,jsx,json,md}\" \"packages/**/*.{ts,tsx,js,jsx,json}\" \"*.{json,md}\"",
     "docker:build": "docker compose -f infra/docker/docker-compose.yml build",
     "docker:up": "docker compose -f infra/docker/docker-compose.yml up -d",
-    "docker:down": "docker compose -f infra/docker/docker-compose.yml down"
+    "docker:down": "docker compose -f infra/docker/docker-compose.yml down",
+    "prepare": "husky"
   },
   "devDependencies": {
+    "@commitlint/cli": "^20.4.3",
+    "@commitlint/config-conventional": "^20.4.3",
     "@types/node": "^20.19.33",
     "@typescript-eslint/eslint-plugin": "^6.0.0",
     "@typescript-eslint/parser": "^6.0.0",
-    "eslint": "^8.56.0",
+    "eslint": "^9.39.2",
+    "eslint-config-next": "16.1.6",
+    "eslint-config-prettier": "^10.1.8",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.3.3",
     "prettier": "^3.2.0",
     "turbo": "^2.0.0",
-    "typescript": "^5.3.0"
+    "typescript": "^5.3.0",
+    "typescript-eslint": "^8.55.0"
   },
   "packageManager": "pnpm@10.29.3",
   "pnpm": {
@@ -42,5 +50,17 @@
     "blog"
   ],
   "author": "",
-  "license": "MIT"
+  "license": "MIT",
+  "lint-staged": {
+    "apps/**/*.{ts,tsx,js,jsx,mjs}": [
+      "prettier --write",
+      "eslint --fix"
+    ],
+    "apps/**/*.{json,md}": [
+      "prettier --write"
+    ],
+    "*.{json,md}": [
+      "prettier --write"
+    ]
+  }
 }
