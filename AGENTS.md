@@ -92,7 +92,7 @@ pnpm build            # 构建全部
 
 ## 快捷指令（提示词模板）
 
-在对话中输入以下指令触发对应工作流，详见 [docs/CLAUDE_CODE_COMMANDS.md](./docs/CLAUDE_CODE_COMMANDS.md)：
+在对话中输入以下指令触发对应工作流，详见 [docs/development/CLAUDE_CODE_COMMANDS.md](./docs/development/CLAUDE_CODE_COMMANDS.md)：
 
 | 指令        | 动作           | 场景                 |
 | ----------- | -------------- | -------------------- |

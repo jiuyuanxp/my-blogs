@@ -32,7 +32,7 @@ alwaysApply: true
 
 - **技能（Skills）**：使用 `Read` 读取 `.cursor/skills/` 或用户附加的技能
 - **项目规则**：读取 `.cursor/rules/` 下对应文件（按需触发的规则需主动 Read）
-- **项目文档**：`docs/COMPLIANCE_REVIEW.md`、`docs/INTEGRATION.md` 等
+- **项目文档**：`docs/development/COMPLIANCE_REVIEW.md`、各 app 的 `docs/INTEGRATION.md` 等
 
 ## 按需规则触发
 

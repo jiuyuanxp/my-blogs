@@ -170,7 +170,7 @@ cd ~/blogs
 docker compose up -d
 ```
 
-> ACR 地址以实际为准，含个人信息的完整命令见 `docs/DEPLOY_ACR_COMMANDS.md`（已加入 .gitignore）。
+> ACR 地址以实际为准，含个人信息的完整命令见 `../DEPLOY_ACR_COMMANDS.md`（已加入 .gitignore）。
 
 ### 4.2 方式 B：本地构建（备用）
 
@@ -234,16 +234,16 @@ docker compose pull && docker compose up -d
 
 ## 八、目录与文件说明
 
-| 路径                                    | 说明                                       |
-| --------------------------------------- | ------------------------------------------ |
-| `.github/workflows/build-push-acr.yml`  | GitHub Actions：构建并推送到 ACR           |
-| `infra/docker/Dockerfile.web`           | Next.js web 镜像                           |
-| `infra/docker/Dockerfile.nginx`         | Nginx + admin 静态镜像                     |
-| `infra/docker/Dockerfile.java`          | Java Spring Boot 镜像（Phase 2）           |
-| `infra/docker/docker-compose.yml`       | Phase 2 全栈编排（含 java/postgres/redis） |
-| `infra/nginx/nginx.conf`                | Nginx 配置（打包进 nginx 镜像）            |
-| `.dockerignore`                         | 构建时排除的文件                           |
-| [docs/DEPLOY_JAVA.md](./DEPLOY_JAVA.md) | Java 服务部署文档                          |
+| 路径                                   | 说明                                       |
+| -------------------------------------- | ------------------------------------------ |
+| `.github/workflows/build-push-acr.yml` | GitHub Actions：构建并推送到 ACR           |
+| `infra/docker/Dockerfile.web`          | Next.js web 镜像                           |
+| `infra/docker/Dockerfile.nginx`        | Nginx + admin 静态镜像                     |
+| `infra/docker/Dockerfile.java`         | Java Spring Boot 镜像（Phase 2）           |
+| `infra/docker/docker-compose.yml`      | Phase 2 全栈编排（含 java/postgres/redis） |
+| `infra/nginx/nginx.conf`               | Nginx 配置（打包进 nginx 镜像）            |
+| `.dockerignore`                        | 构建时排除的文件                           |
+| [DEPLOY_JAVA.md](./DEPLOY_JAVA.md)     | Java 服务部署文档                          |
 
 ---
 
@@ -255,7 +255,7 @@ docker compose pull && docker compose up -d
 - Redis（Docker）
 - Java Spring Boot 后端服务（Docker）
 
-部署时需配置环境变量：`DB_PASSWORD`、`REDIS_PASSWORD`、`ADMIN_PASSWORD`。详见 [docs/DEPLOY_JAVA.md](./DEPLOY_JAVA.md)。
+部署时需配置环境变量：`DB_PASSWORD`、`REDIS_PASSWORD`、`ADMIN_PASSWORD`。详见 [DEPLOY_JAVA.md](./DEPLOY_JAVA.md)。
 
 ---
 

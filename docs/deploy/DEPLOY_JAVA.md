@@ -195,7 +195,7 @@ location /v3/api-docs {
 ssh root@你的服务器IP
 
 # 2. 登录 ACR 并拉取镜像（含 Java）
-# 完整命令见 docs/DEPLOY_ACR_COMMANDS.md（已加入 .gitignore）
+# 完整命令见 ../DEPLOY_ACR_COMMANDS.md（已加入 .gitignore）
 
 # 3. 创建 .env 文件（敏感信息，不要提交到 Git）
 cd ~/blogs

@@ -10,15 +10,20 @@ Spring Boot 博客后端服务。
 # 编译
 ./mvnw compile
 
-# 启动方式一：H2 内存数据库（无需 PostgreSQL，推荐本地快速验证）
+# 推荐：使用脚本加载根目录 .env 后启动（ADMIN_PASSWORD 等会生效）
+./run-with-env.sh local      # PostgreSQL
+./run-with-env.sh local-h2   # H2 内存库
+
+# 或手动传入环境变量
+ADMIN_PASSWORD=你的密码 SPRING_PROFILES_ACTIVE=local ./mvnw spring-boot:run
+
+# 直接启动（不加载 .env，密码为默认 admin）
 SPRING_PROFILES_ACTIVE=local-h2 ./mvnw spring-boot:run
-
-# 启动方式二：PostgreSQL（需先启动 PostgreSQL）
 SPRING_PROFILES_ACTIVE=local ./mvnw spring-boot:run
-
-# 启动方式三：dev profile（排除 Redis）
 SPRING_PROFILES_ACTIVE=dev ./mvnw spring-boot:run
 ```
+
+> **注意**：Java 不会自动读取 `.env`。若在根目录 `.env` 中配置了 `ADMIN_PASSWORD`，请用 `./run-with-env.sh` 启动，或手动 `export ADMIN_PASSWORD=xxx` 后再运行。
 
 ## 环境
 

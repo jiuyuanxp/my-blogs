@@ -36,9 +36,14 @@ lerna-debug.log*
 
 # 含服务器地址、密码等敏感信息，不上传 GitHub
 docs/SECURITY.md
+docs/security/SECURITY.md
 
 # 含个人 ACR 镜像仓库地址，不上传 Git
 docs/DEPLOY_ACR_COMMANDS.md
+
+# 超级管理员初始化脚本（含密码等敏感信息，仅本地使用，模板见 docs/design/RBAC_DESIGN.md）
+services/java/scripts/init-super-admin.sh
+services/java/scripts/init-super-admin.sql
 
 # IDE
 .vscode/*

@@ -80,7 +80,7 @@ com.blog
   - 分类树 `GET /api/categories`
   - 文章详情 `GET /api/articles/:id`（更新/删除时失效）
 - 配置：`@EnableCaching`，`@Cacheable` / `@CacheEvict`
-- Redis 部署见 [docs/REDIS_DEPLOY.md](../../docs/REDIS_DEPLOY.md)
+- Redis 部署见 [docs/deploy/REDIS_DEPLOY.md](../../docs/deploy/REDIS_DEPLOY.md)
 
 ## 依赖
 
