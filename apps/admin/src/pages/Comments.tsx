@@ -1,16 +1,87 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import type { Comment, Category } from '@/types';
 import { format, parseISO } from 'date-fns';
 import { Trash2, MessageSquare } from 'lucide-react';
-import { MOCK_COMMENTS, MOCK_CATEGORIES } from '@/lib/mock-data';
+import {
+  fetchComments,
+  fetchCategories,
+  deleteComment,
+  isApiError,
+} from '@/lib/api';
 
 export default function Comments() {
-  const [comments] = useState<Comment[]>(MOCK_COMMENTS);
-  const [categories] = useState<Category[]>(MOCK_CATEGORIES);
-  const [selectedCatId, setSelectedCatId] = useState<number | 'all'>('all');
+  const [comments, setComments] = useState<Comment[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [selectedCatId, setSelectedCatId] = useState<string | 'all'>('all');
 
-  // 静态演示：按分类筛选需文章-分类关联，此处暂展示全部
-  const filteredComments = comments;
+  function flattenCategories(cats: Category[]): Category[] {
+    const result: Category[] = [];
+    for (const c of cats) {
+      result.push({ ...c, children: undefined });
+      if (c.children?.length) {
+        result.push(...flattenCategories(c.children));
+      }
+    }
+    return result;
+  }
+
+  const flatCats = flattenCategories(categories);
+
+  const loadCategories = async () => {
+    try {
+      const cats = await fetchCategories();
+      setCategories(cats);
+    } catch {
+      // ignore
+    }
+  };
+
+  const loadComments = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const comRes = await fetchComments({
+        categoryId: selectedCatId === 'all' ? undefined : selectedCatId,
+      });
+      setComments(comRes.data);
+    } catch (err) {
+      setError(isApiError(err) || err instanceof Error ? err.message : '加载失败');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadCategories();
+  }, []);
+
+  useEffect(() => {
+    loadComments();
+  }, [selectedCatId]);
+
+  const handleDelete = async (comment: Comment) => {
+    if (!window.confirm('确定要删除这条评论吗？')) return;
+    setError(null);
+    try {
+      await deleteComment(comment.id);
+      await loadComments();
+    } catch (err) {
+      setError(isApiError(err) || err instanceof Error ? err.message : '删除失败');
+    }
+  };
+
+  if (loading && comments.length === 0) {
+    return (
+      <div className="space-y-6 max-w-5xl">
+        <h2 className="text-4xl font-serif font-bold tracking-tight text-zinc-900">
+          评论管理
+        </h2>
+        <p className="text-zinc-500">加载中…</p>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6 max-w-5xl">
@@ -27,14 +98,14 @@ export default function Comments() {
             value={selectedCatId}
             onChange={e =>
               setSelectedCatId(
-                e.target.value === 'all' ? 'all' : Number(e.target.value)
+                e.target.value === 'all' ? 'all' : e.target.value
               )
             }
             className="px-3 py-1.5 bg-white border border-zinc-200 rounded-lg text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-zinc-900 focus-visible:ring-2 focus-visible:ring-zinc-900"
             aria-label="按分类筛选评论"
           >
             <option value="all">所有分类</option>
-            {categories.map(cat => (
+            {flatCats.map(cat => (
               <option key={cat.id} value={cat.id}>
                 {cat.name}
               </option>
@@ -43,10 +114,19 @@ export default function Comments() {
         </div>
       </div>
 
+      {error && (
+        <div
+          className="px-4 py-3 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm"
+          role="alert"
+        >
+          {error}
+        </div>
+      )}
+
       <div className="bg-white rounded-2xl border border-zinc-200 shadow-sm overflow-hidden">
         <div className="divide-y divide-zinc-200">
-          {filteredComments.length > 0 ? (
-            filteredComments.map(comment => (
+          {comments.length > 0 ? (
+            comments.map(comment => (
               <div
                 key={comment.id}
                 className="p-6 hover:bg-zinc-50 transition-colors"
@@ -59,14 +139,14 @@ export default function Comments() {
                     <div className="min-w-0">
                       <div className="flex items-center gap-2 mb-1 flex-wrap">
                         <span className="font-medium text-zinc-900 text-sm">
-                          匿名用户
+                          {comment.authorName}
                         </span>
                         <span className="text-zinc-400 text-xs" aria-hidden>
                           •
                         </span>
                         <span className="text-zinc-500 text-sm">
                           {format(
-                            parseISO(comment.created_at),
+                            parseISO(comment.createdAt),
                             'yyyy-MM-dd HH:mm'
                           )}
                         </span>
@@ -77,14 +157,14 @@ export default function Comments() {
                       <div className="text-xs text-zinc-500 bg-zinc-100 inline-flex px-2 py-1 rounded max-w-full">
                         来自文章：
                         <span className="font-medium text-zinc-700 ml-1 truncate">
-                          {comment.article_title}
+                          {comment.articleTitle}
                         </span>
                       </div>
                     </div>
                   </div>
                   <button
                     type="button"
-                    onClick={() => window.confirm('确定要删除这条评论吗？')}
+                    onClick={() => handleDelete(comment)}
                     className="p-2 text-zinc-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors shrink-0 focus-visible:ring-2 focus-visible:ring-red-600 focus-visible:ring-offset-2"
                     title="删除评论"
                     aria-label={`删除评论：${comment.content.slice(0, 20)}…`}

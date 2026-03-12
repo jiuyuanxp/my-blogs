@@ -1,44 +1,79 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import type { Category } from '@/types';
 import { ChevronRight, ChevronDown, Plus, Edit2, Trash2 } from 'lucide-react';
-import { MOCK_CATEGORIES } from '@/lib/mock-data';
+import {
+  fetchCategories,
+  createCategory,
+  updateCategory,
+  deleteCategory,
+  isApiError,
+} from '@/lib/api';
 
 export default function Categories() {
-  const [categories] = useState<Category[]>(MOCK_CATEGORIES);
-  const [expanded, setExpanded] = useState<Set<number>>(new Set());
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [expanded, setExpanded] = useState<Set<string>>(new Set());
   const [isEditing, setIsEditing] = useState<Category | null>(null);
-  const [isAdding, setIsAdding] = useState<{ parentId: number | null } | null>(
+  const [isAdding, setIsAdding] = useState<{ parentId: string | null } | null>(
     null
   );
   const [formName, setFormName] = useState('');
 
-  const toggleExpand = (id: number) => {
-    const next = new Set(expanded);
-    if (next.has(id)) next.delete(id);
-    else next.add(id);
-    setExpanded(next);
+  const load = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const data = await fetchCategories();
+      setCategories(data);
+    } catch (err) {
+      setError(isApiError(err) || err instanceof Error ? err.message : '加载失败');
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const buildTree = (
-    items: Category[],
-    parentId: number | null = null
-  ): Category[] => {
-    return items
-      .filter(item => item.parent_id === parentId)
-      .map(item => ({
-        ...item,
-        children: buildTree(items, item.id),
-      }));
+  useEffect(() => {
+    load();
+  }, []);
+
+  const toggleExpand = (id: string) => {
+    setExpanded(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!formName.trim()) return;
-    setFormName('');
-    setIsEditing(null);
-    setIsAdding(null);
+    setError(null);
+    try {
+      if (isEditing) {
+        await updateCategory(isEditing.id, formName, isEditing.parentId);
+      } else if (isAdding) {
+        await createCategory(formName, isAdding.parentId);
+      }
+      setFormName('');
+      setIsEditing(null);
+      setIsAdding(null);
+      await load();
+    } catch (err) {
+      setError(isApiError(err) || err instanceof Error ? err.message : '保存失败');
+    }
   };
 
-  const tree = buildTree(categories);
+  const handleDelete = async (node: Category) => {
+    if (!window.confirm(`确定要删除分类「${node.name}」吗？`)) return;
+    setError(null);
+    try {
+      await deleteCategory(node.id);
+      await load();
+    } catch (err) {
+      setError(isApiError(err) || err instanceof Error ? err.message : '删除失败');
+    }
+  };
 
   const renderTree = (nodes: Category[], level = 0) => {
     return nodes.map(node => {
@@ -127,7 +162,7 @@ export default function Categories() {
               </button>
               <button
                 type="button"
-                onClick={() => window.confirm('确定要删除这个分类吗？')}
+                onClick={() => handleDelete(node)}
                 className="p-1.5 text-zinc-500 hover:text-red-600 hover:bg-red-50 rounded focus-visible:ring-2 focus-visible:ring-red-600 focus-visible:ring-offset-2"
                 title="删除"
                 aria-label={`删除分类「${node.name}」`}
@@ -144,6 +179,17 @@ export default function Categories() {
       );
     });
   };
+
+  if (loading) {
+    return (
+      <div className="space-y-6">
+        <h2 className="text-4xl font-serif font-bold tracking-tight text-zinc-900">
+          分类管理
+        </h2>
+        <p className="text-zinc-500">加载中…</p>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6 max-w-3xl">
@@ -163,6 +209,15 @@ export default function Categories() {
           添加根分类
         </button>
       </div>
+
+      {error && (
+        <div
+          className="px-4 py-3 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm"
+          role="alert"
+        >
+          {error}
+        </div>
+      )}
 
       <div className="bg-white rounded-2xl border border-zinc-200 shadow-sm p-4">
         {isAdding?.parentId === null && (
@@ -196,8 +251,8 @@ export default function Categories() {
           </div>
         )}
 
-        {tree.length > 0 ? (
-          <div className="space-y-1">{renderTree(tree)}</div>
+        {categories.length > 0 ? (
+          <div className="space-y-1">{renderTree(categories)}</div>
         ) : (
           <div className="text-center py-8 text-zinc-500">
             暂无分类，请先创建一个分类。

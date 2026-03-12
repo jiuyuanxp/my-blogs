@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import {
   BarChart,
   Bar,
@@ -13,15 +13,53 @@ import {
 import { format, parseISO } from 'date-fns';
 import { Eye, FilePlus, MessageCircle, Trash2 } from 'lucide-react';
 import {
-  MOCK_STATS,
-  MOCK_POPULAR_VIEWS,
-  MOCK_POPULAR_COMMENTS,
-} from '@/lib/mock-data';
+  fetchStatsSummary,
+  fetchPopularViews,
+  fetchPopularComments,
+  isApiError,
+} from '@/lib/api';
 
 export default function Dashboard() {
   const [period, setPeriod] = useState<'day' | 'month' | 'year'>('day');
+  const [stats, setStats] = useState<{
+    views: { date: string; count: number }[];
+    adds: { date: string; count: number }[];
+    deletes: { date: string; count: number }[];
+    comments: { date: string; count: number }[];
+  } | null>(null);
+  const [popularViews, setPopularViews] = useState<
+    { id: string; title: string; views: number }[]
+  >([]);
+  const [popularComments, setPopularComments] = useState<
+    { id: string; title: string; commentCount: number }[]
+  >([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const load = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const [summary, views, comments] = await Promise.all([
+          fetchStatsSummary(period),
+          fetchPopularViews(10),
+          fetchPopularComments(10),
+        ]);
+        setStats(summary);
+        setPopularViews(views);
+        setPopularComments(comments);
+      } catch (err) {
+        setError(isApiError(err) || err instanceof Error ? err.message : '加载失败');
+      } finally {
+        setLoading(false);
+    }
+    };
+    load();
+  }, [period]);
 
   const chartData = useMemo(() => {
+    if (!stats) return [];
     type ChartPoint = {
       date: string;
       views?: number;
@@ -40,14 +78,14 @@ export default function Dashboard() {
         map.set(item.date, existing);
       });
     };
-    process(MOCK_STATS.views, 'views');
-    process(MOCK_STATS.adds, 'adds');
-    process(MOCK_STATS.deletes, 'deletes');
-    process(MOCK_STATS.comments, 'comments');
+    process(stats.views, 'views');
+    process(stats.adds, 'adds');
+    process(stats.deletes, 'deletes');
+    process(stats.comments, 'comments');
     return Array.from(map.values()).sort((a, b) =>
       a.date.localeCompare(b.date)
     );
-  }, []);
+  }, [stats]);
 
   const totals = useMemo(
     () =>
@@ -107,6 +145,17 @@ export default function Dashboard() {
     return null;
   };
 
+  if (loading && !stats) {
+    return (
+      <div className="space-y-8">
+        <h2 className="text-4xl font-serif font-bold tracking-tight text-zinc-900">
+          仪表盘
+        </h2>
+        <p className="text-zinc-500">加载中…</p>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-8">
       <div className="flex items-center justify-between">
@@ -128,6 +177,15 @@ export default function Dashboard() {
           <option value="year">按年统计</option>
         </select>
       </div>
+
+      {error && (
+        <div
+          className="px-4 py-3 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm"
+          role="alert"
+        >
+          {error}
+        </div>
+      )}
 
       {/* KPI Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -393,8 +451,8 @@ export default function Dashboard() {
             热门文章浏览排行
           </h3>
           <div className="space-y-4">
-            {MOCK_POPULAR_VIEWS.length > 0 ? (
-              MOCK_POPULAR_VIEWS.map((article, i) => (
+            {popularViews.length > 0 ? (
+              popularViews.map((article, i) => (
                 <div
                   key={article.id}
                   className="flex items-center justify-between gap-3"
@@ -426,8 +484,8 @@ export default function Dashboard() {
             热门文章评论排行
           </h3>
           <div className="space-y-4">
-            {MOCK_POPULAR_COMMENTS.length > 0 ? (
-              MOCK_POPULAR_COMMENTS.map((article, i) => (
+            {popularComments.length > 0 ? (
+              popularComments.map((article, i) => (
                 <div
                   key={article.id}
                   className="flex items-center justify-between gap-3"
@@ -441,7 +499,7 @@ export default function Dashboard() {
                     </span>
                   </div>
                   <span className="text-sm text-zinc-500 bg-zinc-100 px-2 py-1 rounded-md shrink-0 tabular-nums">
-                    {article.comment_count} 条评论
+                    {article.commentCount} 条评论
                   </span>
                 </div>
               ))

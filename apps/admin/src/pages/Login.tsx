@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Lock, ArrowRight } from 'lucide-react';
+import { login, setToken, isApiError } from '@/lib/api';
 
 interface LoginProps {
   onLogin: () => void;
@@ -8,15 +9,26 @@ interface LoginProps {
 export default function Login({ onLogin }: LoginProps) {
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError(null);
     setIsLoading(true);
-    // 静态演示：任意密码即可进入
-    setTimeout(() => {
+    try {
+      const { token } = await login(password);
+      setToken(token);
       onLogin();
+    } catch (err) {
+      const msg = isApiError(err)
+        ? err.message
+        : err instanceof Error
+          ? err.message
+          : '登录失败';
+      setError(msg);
+    } finally {
       setIsLoading(false);
-    }, 300);
+    }
   };
 
   return (
@@ -57,11 +69,19 @@ export default function Login({ onLogin }: LoginProps) {
               欢迎回来
             </h2>
             <p className="mt-3 text-zinc-500">
-              请输入管理密码以继续访问控制台（演示模式：任意密码）
+              请输入管理密码以继续访问控制台
             </p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
+            {error && (
+              <div
+                className="px-4 py-3 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm"
+                role="alert"
+              >
+                {error}
+              </div>
+            )}
             <div className="space-y-2">
               <label
                 htmlFor="admin-password"
@@ -76,7 +96,10 @@ export default function Login({ onLogin }: LoginProps) {
                 autoComplete="current-password"
                 required
                 value={password}
-                onChange={e => setPassword(e.target.value)}
+                onChange={e => {
+                  setPassword(e.target.value);
+                  setError(null);
+                }}
                 className="w-full px-4 py-3.5 bg-white border border-zinc-200 rounded-xl focus:ring-2 focus:ring-zinc-900 focus:border-zinc-900 focus:outline-none transition-all shadow-sm focus-visible:ring-2 focus-visible:ring-zinc-900"
                 placeholder="请输入密码…"
               />

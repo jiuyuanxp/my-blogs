@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   LayoutDashboard,
   FolderTree,
@@ -18,6 +18,7 @@ import Login from './pages/Login';
 import DesignSystem from './pages/DesignSystem';
 import ProjectInfo from './pages/ProjectInfo';
 import { cn } from './lib/utils';
+import { getToken, logout as apiLogout, checkAuth } from './lib/api';
 
 type Tab =
   | 'dashboard'
@@ -27,25 +28,41 @@ type Tab =
   | 'design'
   | 'about';
 
-const AUTH_KEY = 'admin-auth-demo';
-
 export default function App() {
   const [activeTab, setActiveTab] = useState<Tab>('dashboard');
   const [isAuthenticated, setIsAuthenticated] = useState(() =>
-    Boolean(typeof window !== 'undefined' && localStorage.getItem(AUTH_KEY))
+    Boolean(typeof window !== 'undefined' && getToken())
   );
+  const [isCheckingAuth, setIsCheckingAuth] = useState(isAuthenticated);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
+  useEffect(() => {
+    if (isAuthenticated && getToken()) {
+      checkAuth().then(valid => {
+        setIsCheckingAuth(false);
+        if (!valid) setIsAuthenticated(false);
+      });
+    } else {
+      setIsCheckingAuth(false);
+    }
+  }, [isAuthenticated]);
+
   const handleLogin = () => {
-    localStorage.setItem(AUTH_KEY, 'demo');
     setIsAuthenticated(true);
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem(AUTH_KEY);
+  const handleLogout = async () => {
+    await apiLogout();
     setIsAuthenticated(false);
   };
 
+  if (isCheckingAuth) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-[#fcfcfc]">
+        <p className="text-zinc-500">验证登录状态…</p>
+      </div>
+    );
+  }
   if (!isAuthenticated) {
     return <Login onLogin={handleLogin} />;
   }

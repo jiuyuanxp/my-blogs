@@ -1,27 +1,35 @@
+/**
+ * 类型定义，以 Java 后端 DTO 为准
+ * ID 字段统一为 string，避免 JS 精度丢失
+ */
+
 export interface Category {
-  id: number;
-  parent_id: number | null;
+  id: string;
+  parentId: string | null;
   name: string;
-  created_at: string;
+  createdAt: string;
   children?: Category[];
 }
 
 export interface Article {
-  id: number;
-  category_id: number;
-  category_name?: string;
+  id: string;
+  categoryId: string;
+  categoryName?: string;
   title: string;
+  summary?: string;
   content: string;
   status: 'draft' | 'published';
   views: number;
-  created_at: string;
-  updated_at: string;
+  isPinned?: number;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface Comment {
-  id: number;
-  article_id: number;
-  article_title?: string;
+  id: string;
+  articleId: string;
+  articleTitle?: string;
+  authorName: string;
   content: string;
-  created_at: string;
+  createdAt: string;
 }
