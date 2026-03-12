@@ -60,8 +60,7 @@ public class CategoryService {
 
     @Transactional
     public Category update(Long id, String name, Long newParentId) {
-        Category category =
-                categoryRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("分类不存在"));
+        Category category = categoryRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("分类不存在"));
         if (newParentId != null && newParentId.equals(id)) {
             throw new BusinessException("invalid_parent", "不能将父级设为自己");
         }
@@ -86,8 +85,7 @@ public class CategoryService {
 
     @Transactional
     public void delete(Long id) {
-        Category category =
-                categoryRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("分类不存在"));
+        Category category = categoryRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("分类不存在"));
         if (categoryRepository.existsByParentId(id)) {
             throw new BusinessException("category_in_use", "该分类下存在子分类，无法删除");
         }

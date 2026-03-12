@@ -35,10 +35,12 @@ services:
   postgres:
     image: postgres:16
     container_name: blogs-postgres
+    ports:
+      - "5433:5432"  # 宿主机 5433，避免与本地其他 PostgreSQL 冲突
     environment:
       POSTGRES_DB: blogdb
       POSTGRES_USER: bloguser
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-blogpass}
     volumes:
       - postgres-data:/var/lib/postgresql/data
     restart: unless-stopped

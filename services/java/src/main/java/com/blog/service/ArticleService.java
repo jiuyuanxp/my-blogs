@@ -30,22 +30,20 @@ public class ArticleService {
     public PageResponse<ArticleDto> list(
             Long categoryId, String status, boolean all, int page, int pageSize) {
         int size = Math.min(Math.max(pageSize, 1), MAX_PAGE_SIZE);
-        Pageable pageable =
-                PageRequest.of(Math.max(page - 1, 0), size, Sort.by("isPinned").descending().and(Sort.by("createdAt").descending()));
+        Pageable pageable = PageRequest.of(Math.max(page - 1, 0), size,
+                Sort.by("isPinned").descending().and(Sort.by("createdAt").descending()));
 
         String effectiveStatus = status;
         if (effectiveStatus == null && !all) {
             effectiveStatus = "published";
         }
 
-        Page<Article> articlePage =
-                articleRepository.findByCategoryAndStatus(categoryId, effectiveStatus, pageable);
+        Page<Article> articlePage = articleRepository.findByCategoryAndStatus(categoryId, effectiveStatus, pageable);
 
         Map<Long, String> categoryNames = loadCategoryNames(articlePage.getContent());
-        List<ArticleDto> dtos =
-                articlePage.getContent().stream()
-                        .map(a -> ArticleDto.from(a, categoryNames.getOrDefault(a.getCategoryId(), "")))
-                        .collect(Collectors.toList());
+        List<ArticleDto> dtos = articlePage.getContent().stream()
+                .map(a -> ArticleDto.from(a, categoryNames.getOrDefault(a.getCategoryId(), "")))
+                .collect(Collectors.toList());
 
         return PageResponse.of(articlePage, dtos);
     }
@@ -59,8 +57,7 @@ public class ArticleService {
         if (requirePublished && !"published".equals(article.getStatus())) {
             throw new ResourceNotFoundException("文章不存在");
         }
-        String categoryName =
-                categoryRepository.findById(article.getCategoryId()).map(c -> c.getName()).orElse("");
+        String categoryName = categoryRepository.findById(article.getCategoryId()).map(c -> c.getName()).orElse("");
         return ArticleDto.from(article, categoryName);
     }
 
@@ -75,8 +72,7 @@ public class ArticleService {
         }
         article.setViewCount(article.getViewCount() + 1);
         articleRepository.save(article);
-        String categoryName =
-                categoryRepository.findById(article.getCategoryId()).map(c -> c.getName()).orElse("");
+        String categoryName = categoryRepository.findById(article.getCategoryId()).map(c -> c.getName()).orElse("");
         return ArticleDto.from(article, categoryName);
     }
 
@@ -86,15 +82,13 @@ public class ArticleService {
             throw new com.blog.exception.BusinessException("category_not_found", "分类不存在");
         }
         Article saved = articleRepository.save(article);
-        String categoryName =
-                categoryRepository.findById(saved.getCategoryId()).map(c -> c.getName()).orElse("");
+        String categoryName = categoryRepository.findById(saved.getCategoryId()).map(c -> c.getName()).orElse("");
         return ArticleDto.from(saved, categoryName);
     }
 
     @Transactional
     public ArticleDto update(Long id, Article article) {
-        Article existing =
-                articleRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("文章不存在"));
+        Article existing = articleRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("文章不存在"));
         if (article.getTitle() != null) {
             existing.setTitle(article.getTitle());
         }
@@ -117,8 +111,7 @@ public class ArticleService {
             existing.setIsPinned(article.getIsPinned());
         }
         Article saved = articleRepository.save(existing);
-        String categoryName =
-                categoryRepository.findById(saved.getCategoryId()).map(c -> c.getName()).orElse("");
+        String categoryName = categoryRepository.findById(saved.getCategoryId()).map(c -> c.getName()).orElse("");
         return ArticleDto.from(saved, categoryName);
     }
 
@@ -131,8 +124,7 @@ public class ArticleService {
     }
 
     private Map<Long, String> loadCategoryNames(List<Article> articles) {
-        List<Long> categoryIds =
-                articles.stream().map(Article::getCategoryId).distinct().collect(Collectors.toList());
+        List<Long> categoryIds = articles.stream().map(Article::getCategoryId).distinct().collect(Collectors.toList());
         return categoryRepository.findAllById(categoryIds).stream()
                 .collect(Collectors.toMap(com.blog.model.Category::getId, com.blog.model.Category::getName));
     }

@@ -1,8 +1,9 @@
-# 本地开发配置，无需 Redis，数据库可连本地 PostgreSQL
+# 本地开发配置，无需 Redis，数据库可连本地 PostgreSQL（Docker 或本机安装）
+# Docker: bloguser/blogpass；本机安装: 可改为 postgres/postgres
 spring:
   autoconfigure:
     exclude: org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
   datasource:
-    url: jdbc:postgresql://localhost:5432/blogdb
-    username: postgres
-    password: postgres
+    url: jdbc:postgresql://localhost:5433/blogdb
+    username: bloguser
+    password: ${DB_PASSWORD:blogpass}
