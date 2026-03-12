@@ -1,6 +1,6 @@
 ---
-description: 'Testing requirements: 80% coverage, TDD workflow, test types'
-alwaysApply: true
+description: 'Testing requirements - 与 03-testing.mdc 重复，按需查阅'
+alwaysApply: false
 ---
 
 # Testing Requirements

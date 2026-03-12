@@ -1,6 +1,6 @@
 ---
-description: 强制性安全检查 - 提交前必过
-alwaysApply: true
+description: 强制性安全检查 - 鉴权/敏感数据/输入校验时查阅，或 /shield
+alwaysApply: false
 ---
 
 # 安全规范

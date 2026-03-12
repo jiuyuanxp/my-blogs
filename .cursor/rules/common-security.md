@@ -1,6 +1,6 @@
 ---
-description: 'Security: mandatory checks, secret management, response protocol'
-alwaysApply: true
+description: 'Security: mandatory checks, secret management - 与 01-security.mdc 重复，按需查阅'
+alwaysApply: false
 ---
 
 # Security Guidelines

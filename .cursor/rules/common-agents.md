@@ -1,6 +1,6 @@
 ---
-description: 'Agent orchestration: available agents, parallel execution, multi-perspective analysis'
-alwaysApply: true
+description: 'Agent orchestration - 与 12-task-orchestration 相关，复杂任务时查阅'
+alwaysApply: false
 ---
 
 # Agent Orchestration

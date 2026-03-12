@@ -1,0 +1,44 @@
+# Cursor Rules 索引
+
+## 触发方式
+
+| 方式 | 说明 |
+|------|------|
+| **每次触发** | `alwaysApply: true`，每条对话都会加载 |
+| **按文件触发** | `globs: "**/*.ts"`，编辑/打开匹配文件时加载 |
+| **按需触发** | `alwaysApply: false`，需用户提到或 15-spec-first 指导查阅 |
+
+## 每次触发的规则（核心 4 条）
+
+| 规则 | 说明 |
+|------|------|
+| 00-core-principles | AI 协作五大原则、保持简单、并行执行 |
+| 15-spec-first | 先看规范再写代码，领域→规范映射 |
+| 02-coding-style | 不可变性、错误处理、文件组织 |
+| 14-workflow-commands | /review /test /fix /refactor /doc /shield 指令 |
+
+## 按文件触发的规则（globs）
+
+| 规则 | 触发条件 |
+|------|----------|
+| 10-typescript-patterns | `**/*.ts`, `**/*.tsx`, `**/*.js`, `**/*.jsx` |
+| 11-java-patterns | `**/*.java` |
+| typescript-* | TS 相关 |
+| golang-*, python-*, swift-* | 对应语言（本项目未使用） |
+
+## 按需触发的规则（提到或场景触发）
+
+| 规则 | 何时查阅 |
+|------|----------|
+| 01-security | 鉴权、敏感数据、用户输入校验、/shield |
+| 03-testing | 写测试、/test、TDD |
+| 04-git-workflow | 提交、PR、分支操作 |
+| 12-task-orchestration | 复杂任务、需子代理、TodoWrite |
+| 13-automation | 构建前、测试失败、格式化 |
+
+## 查阅方式
+
+- 用户输入 `/review` → 14 触发，按 14 流程执行
+- 用户说「写测试」→ 15 指导查阅 03-testing
+- 用户说「提交」→ 14/15 指导查阅 04-git-workflow
+- 15-spec-first 的领域映射会指向上述规则

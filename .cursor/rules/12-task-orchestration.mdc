@@ -1,6 +1,6 @@
 ---
-description: 任务编排 - 何时使用子代理、并行执行
-alwaysApply: true
+description: 任务编排 - 复杂任务、需子代理、TodoWrite 时查阅
+alwaysApply: false
 ---
 
 # 任务编排

@@ -1,6 +1,6 @@
 ---
-description: 'Development workflow: plan, TDD, review, commit pipeline'
-alwaysApply: true
+description: 'Development workflow - 与 14-workflow-commands 相关，按需查阅'
+alwaysApply: false
 ---
 
 # Development Workflow

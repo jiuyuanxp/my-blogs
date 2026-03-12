@@ -1,6 +1,6 @@
 ---
-description: 'Performance: model selection, context management, build troubleshooting'
-alwaysApply: true
+description: 'Performance - 性能优化、构建排查时查阅'
+alwaysApply: false
 ---
 
 # Performance Optimization

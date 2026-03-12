@@ -1,6 +1,6 @@
 ---
-description: 测试要求 - TDD、80% 覆盖率
-alwaysApply: true
+description: 测试要求 - 写测试、/test 时查阅
+alwaysApply: false
 ---
 
 # 测试规范

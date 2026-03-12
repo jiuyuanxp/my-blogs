@@ -1,6 +1,6 @@
 ---
-description: 自动化钩子 - 保存后美化、构建前自检、测试失败回溯
-alwaysApply: true
+description: 自动化钩子 - 构建、测试失败、格式化时查阅
+alwaysApply: false
 ---
 
 # 自动化工作流钩子

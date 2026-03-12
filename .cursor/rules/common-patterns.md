@@ -1,6 +1,6 @@
 ---
-description: 'Common patterns: repository, API response, skeleton projects'
-alwaysApply: true
+description: 'Common patterns - 架构/模式设计时查阅'
+alwaysApply: false
 ---
 
 # Common Patterns

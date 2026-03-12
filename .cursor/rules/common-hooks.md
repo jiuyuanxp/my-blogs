@@ -1,6 +1,6 @@
 ---
-description: 'Hooks system: types, auto-accept permissions, TodoWrite best practices'
-alwaysApply: true
+description: 'Hooks system - 配置 hooks 时查阅'
+alwaysApply: false
 ---
 
 # Hooks System

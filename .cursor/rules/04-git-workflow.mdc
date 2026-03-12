@@ -1,6 +1,6 @@
 ---
-description: Git 提交格式与 PR 流程
-alwaysApply: true
+description: Git 提交格式与 PR 流程 - 提交、PR 时查阅
+alwaysApply: false
 ---
 
 # Git 工作流

@@ -1,6 +1,6 @@
 ---
-description: 'ECC coding style: immutability, file organization, error handling, validation'
-alwaysApply: true
+description: 'ECC coding style - 与 02-coding-style.mdc 重复，按需查阅'
+alwaysApply: false
 ---
 
 # Coding Style

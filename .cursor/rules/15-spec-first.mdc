@@ -1,0 +1,59 @@
+---
+description: 先看规范再写代码 - 书写新代码前必须审查相关规范
+alwaysApply: true
+---
+
+# 先看规范再写代码
+
+书写新代码或修改现有逻辑时，**必须先查阅相关规范，再动手实现**。
+
+## 工作流
+
+```
+1. 识别任务涉及的领域（API、UI、安全、测试等）
+2. 查阅该领域的规范/技能
+3. 按规范实现代码
+4. 完成后自检是否符合规范
+```
+
+## 领域 → 规范映射
+
+| 领域 | 规范来源 | 何时查阅 |
+|------|----------|----------|
+| **REST API** | api-design 技能 | 设计/实现 API、请求封装、错误处理、分页 |
+| **Web UI** | web-design-guidelines 技能 | 组件、表单、无障碍、动画、焦点 |
+| **安全** | 01-security.mdc | 鉴权、敏感数据、输入校验 |
+| **TypeScript** | 10-typescript-patterns.mdc | TS/React 代码 |
+| **Java** | 11-java-patterns.mdc | Spring Boot 后端 |
+| **测试** | 03-testing.mdc | 单元/集成/E2E 测试 |
+| **Git** | 04-git-workflow.mdc | 提交信息、PR 流程 |
+
+## 查阅方式
+
+- **技能（Skills）**：使用 `Read` 读取 `.cursor/skills/` 或用户附加的技能
+- **项目规则**：读取 `.cursor/rules/` 下对应文件（按需触发的规则需主动 Read）
+- **项目文档**：`docs/COMPLIANCE_REVIEW.md`、`docs/INTEGRATION.md` 等
+
+## 按需规则触发
+
+| 场景 | 需查阅的规则 |
+|------|--------------|
+| 鉴权、敏感数据、/shield | 01-security.mdc |
+| 写测试、/test | 03-testing.mdc |
+| 提交、PR | 04-git-workflow.mdc |
+| 复杂任务、子代理 | 12-task-orchestration.mdc |
+| 构建、测试失败 | 13-automation.mdc |
+
+## 禁止
+
+- 不查阅规范直接写代码
+- 写完代码不核对规范
+- 忽略规范中的明确要求（如错误格式、aria-label、状态码语义）
+
+## 适用场景
+
+- 新增 API 客户端/请求封装
+- 新增或修改 UI 组件
+- 新增后端接口
+- 处理认证/授权
+- 新增表单或交互

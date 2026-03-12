@@ -1,6 +1,6 @@
 ---
-description: 'Git workflow: conventional commits, PR process'
-alwaysApply: true
+description: 'Git workflow - 与 04-git-workflow.mdc 重复，按需查阅'
+alwaysApply: false
 ---
 
 # Git Workflow
