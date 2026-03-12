@@ -8,13 +8,13 @@
 
 **Query 参数：**
 
-| 参数 | 类型 | 默认 | 说明 |
-|------|------|------|------|
-| articleId | number | - | 按文章筛选 |
-| categoryId | number | - | 按分类筛选（该分类下文章的评论） |
-| includeDeleted | boolean | false | 是否包含已软删评论 |
-| page | number | 1 | 页码 |
-| pageSize | number | 20 | 每页条数 |
+| 参数           | 类型    | 默认  | 说明                             |
+| -------------- | ------- | ----- | -------------------------------- |
+| articleId      | number  | -     | 按文章筛选                       |
+| categoryId     | number  | -     | 按分类筛选（该分类下文章的评论） |
+| includeDeleted | boolean | false | 是否包含已软删评论               |
+| page           | number  | 1     | 页码                             |
+| pageSize       | number  | 20    | 每页条数                         |
 
 **Response (200):**
 

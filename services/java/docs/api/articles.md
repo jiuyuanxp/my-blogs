@@ -11,13 +11,13 @@
 
 **Query 参数：**
 
-| 参数 | 类型 | 默认 | 说明 |
-|------|------|------|------|
-| categoryId | number | - | 按分类筛选（含子分类文章） |
-| status | string | - | `draft` \| `published`，仅认证时有效 |
-| all | boolean | false | 仅认证时有效，true 返回全部 |
-| page | number | 1 | 页码 |
-| pageSize | number | 20 | 每页条数，最大 100 |
+| 参数       | 类型    | 默认  | 说明                                 |
+| ---------- | ------- | ----- | ------------------------------------ |
+| categoryId | number  | -     | 按分类筛选（含子分类文章）           |
+| status     | string  | -     | `draft` \| `published`，仅认证时有效 |
+| all        | boolean | false | 仅认证时有效，true 返回全部          |
+| page       | number  | 1     | 页码                                 |
+| pageSize   | number  | 20    | 每页条数，最大 100                   |
 
 **Response (200):**
 

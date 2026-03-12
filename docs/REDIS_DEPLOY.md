@@ -4,10 +4,10 @@
 
 ## 一、Redis 的作用
 
-| 用途 | 说明 |
-|------|------|
-| 认证 Token | 简单 Token 方案下，登录后的 token 存 Redis，TTL 过期自动失效 |
-| 缓存（可选） | 分类树、文章详情等可缓存，减轻数据库压力 |
+| 用途         | 说明                                                         |
+| ------------ | ------------------------------------------------------------ |
+| 认证 Token   | 简单 Token 方案下，登录后的 token 存 Redis，TTL 过期自动失效 |
+| 缓存（可选） | 分类树、文章详情等可缓存，减轻数据库压力                     |
 
 ## 二、部署方式
 
@@ -50,7 +50,7 @@ services:
     image: redis:7-alpine
     container_name: redis
     ports:
-      - "6379:6379"
+      - '6379:6379'
     volumes:
       - redis-data:/data
     command: redis-server --appendonly yes
@@ -87,17 +87,17 @@ spring:
     redis:
       host: ${REDIS_HOST:localhost}
       port: ${REDIS_PORT:6379}
-      password: ${REDIS_PASSWORD:}   # 无密码时留空
+      password: ${REDIS_PASSWORD:} # 无密码时留空
       database: 0
 ```
 
 **环境变量**：
 
-| 变量 | 默认 | 说明 |
-|------|------|------|
-| REDIS_HOST | localhost | Redis 地址 |
-| REDIS_PORT | 6379 | 端口 |
-| REDIS_PASSWORD | 空 | 密码（云 Redis 通常需要） |
+| 变量           | 默认      | 说明                      |
+| -------------- | --------- | ------------------------- |
+| REDIS_HOST     | localhost | Redis 地址                |
+| REDIS_PORT     | 6379      | 端口                      |
+| REDIS_PASSWORD | 空        | 密码（云 Redis 通常需要） |
 
 ## 四、与现有部署架构集成
 
@@ -152,7 +152,7 @@ location /api/ {
 ```yaml
 app:
   auth:
-    token-store: redis  # redis | memory
+    token-store: redis # redis | memory
   cache:
-    enabled: false      # 是否启用缓存
+    enabled: false # 是否启用缓存
 ```

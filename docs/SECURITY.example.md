@@ -15,12 +15,12 @@
 
 ### 1.2 配置方式
 
-| 场景       | 做法                                                                |
-| ---------- | ------------------------------------------------------------------- |
-| 本地开发   | 复制 `.env.example` 为 `.env`，填入本地值，`.env` 已在 `.gitignore` |
-| Docker     | 使用 `env_file` 或 `environment` 注入，不硬编码                     |
-| 生产部署   | 使用云平台 Secret/环境变量，或 CI/CD 注入                           |
-| GitHub CI  | `ACR_USERNAME`、`ACR_PASSWORD` 放在仓库 Secrets，不写进代码         |
+| 场景      | 做法                                                                |
+| --------- | ------------------------------------------------------------------- |
+| 本地开发  | 复制 `.env.example` 为 `.env`，填入本地值，`.env` 已在 `.gitignore` |
+| Docker    | 使用 `env_file` 或 `environment` 注入，不硬编码                     |
+| 生产部署  | 使用云平台 Secret/环境变量，或 CI/CD 注入                           |
+| GitHub CI | `ACR_USERNAME`、`ACR_PASSWORD` 放在仓库 Secrets，不写进代码         |
 
 ### 1.3 当前项目中的敏感配置
 

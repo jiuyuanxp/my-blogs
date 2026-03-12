@@ -10,12 +10,12 @@
 
 ### 已改进
 
-| 规范项 | 改进内容 |
-|--------|----------|
-| **错误格式** | 新增 `ApiError` 类，解析后端 `{ error: { code, message, details? } }`，透传 `code`、`message`、`details` |
-| **请求超时** | 使用 `AbortController`，默认 10s 超时，超时抛出 `ApiError`（code: `timeout`） |
-| **401 处理** | 401 时自动调用 `onUnauthorized`（清除 token），并抛出结构化 `ApiError` |
-| **类型安全** | 抽离 `@blog/api-client` 共享包，`createClient` 返回 `get/post/put/delete` 方法 |
+| 规范项       | 改进内容                                                                                                            |
+| ------------ | ------------------------------------------------------------------------------------------------------------------- |
+| **错误格式** | 新增 `ApiError` 类，解析后端 `{ error: { code, message, details? } }`，透传 `code`、`message`、`details`            |
+| **请求超时** | 使用 `AbortController`，默认 10s 超时，超时抛出 `ApiError`（code: `timeout`）                                       |
+| **401 处理** | 401 时自动调用 `onUnauthorized`（清除 token），并抛出结构化 `ApiError`                                              |
+| **类型安全** | 抽离 `@blog/api-client` 共享包，`createClient` 返回 `get/post/put/delete` 方法                                      |
 | **错误透传** | 页面使用 `isApiError(err)` 获取后端返回的 `message`，业务错误（如 `invalid_password`、`category_in_use`）可正确展示 |
 
 ### 共享包结构

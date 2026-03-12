@@ -42,12 +42,12 @@
 
 ### 1.3 路由说明
 
-| 路径 | 处理方式 |
-|------|----------|
-| `/` | 重定向到 `/web/zh` |
-| `/web`、`/web/*` | 反向代理到 web 容器（Next.js） |
-| `/admin` | 重定向到 `/admin/` |
-| `/admin/`、`/admin/*` | Nginx 直接提供 admin 静态文件 |
+| 路径                  | 处理方式                       |
+| --------------------- | ------------------------------ |
+| `/`                   | 重定向到 `/web/zh`             |
+| `/web`、`/web/*`      | 反向代理到 web 容器（Next.js） |
+| `/admin`              | 重定向到 `/admin/`             |
+| `/admin/`、`/admin/*` | Nginx 直接提供 admin 静态文件  |
 
 ---
 
@@ -235,16 +235,16 @@ docker compose pull && docker compose up -d
 
 ## 八、目录与文件说明
 
-| 路径 | 说明 |
-|------|------|
-| `.github/workflows/build-push-acr.yml` | GitHub Actions：构建并推送到 ACR |
-| `infra/docker/Dockerfile.web` | Next.js web 镜像 |
-| `infra/docker/Dockerfile.nginx` | Nginx + admin 静态镜像 |
-| `infra/docker/Dockerfile.java` | Java Spring Boot 镜像（Phase 2） |
-| `infra/docker/docker-compose.yml` | Phase 1 编排 |
-| `infra/nginx/nginx.conf` | Nginx 配置（打包进 nginx 镜像） |
-| `.dockerignore` | 构建时排除的文件 |
-| [docs/DEPLOY_JAVA.md](./DEPLOY_JAVA.md) | Java 服务部署文档 |
+| 路径                                    | 说明                             |
+| --------------------------------------- | -------------------------------- |
+| `.github/workflows/build-push-acr.yml`  | GitHub Actions：构建并推送到 ACR |
+| `infra/docker/Dockerfile.web`           | Next.js web 镜像                 |
+| `infra/docker/Dockerfile.nginx`         | Nginx + admin 静态镜像           |
+| `infra/docker/Dockerfile.java`          | Java Spring Boot 镜像（Phase 2） |
+| `infra/docker/docker-compose.yml`       | Phase 1 编排                     |
+| `infra/nginx/nginx.conf`                | Nginx 配置（打包进 nginx 镜像）  |
+| `.dockerignore`                         | 构建时排除的文件                 |
+| [docs/DEPLOY_JAVA.md](./DEPLOY_JAVA.md) | Java 服务部署文档                |
 
 ---
 
@@ -262,10 +262,10 @@ Phase 2 将增加：
 
 ## 十、故障排查
 
-| 现象 | 可能原因 | 处理 |
-|------|----------|------|
-| 502 Bad Gateway | web 容器未启动或崩溃 | `docker compose logs web` 查看日志 |
-| 404 on /admin | admin 构建失败或路径错误 | 检查 nginx 镜像构建，确认 dist 已复制 |
-| 无法访问 | 防火墙未放行 80 | 阿里云控制台 → 防火墙 → 放行 80 |
-| 构建失败 | 依赖或网络问题 | 检查 `.dockerignore`，确保 `node_modules` 等被排除 |
+| 现象              | 可能原因                             | 处理                                               |
+| ----------------- | ------------------------------------ | -------------------------------------------------- |
+| 502 Bad Gateway   | web 容器未启动或崩溃                 | `docker compose logs web` 查看日志                 |
+| 404 on /admin     | admin 构建失败或路径错误             | 检查 nginx 镜像构建，确认 dist 已复制              |
+| 无法访问          | 防火墙未放行 80                      | 阿里云控制台 → 防火墙 → 放行 80                    |
+| 构建失败          | 依赖或网络问题                       | 检查 `.dockerignore`，确保 `node_modules` 等被排除 |
 | exec format error | Mac(ARM) 构建的镜像在 x86 服务器运行 | 重新构建，Dockerfile 已含 `--platform=linux/amd64` |

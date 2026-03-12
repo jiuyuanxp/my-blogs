@@ -8,10 +8,10 @@
 
 Java 服务依赖：
 
-| 服务 | 用途 | 默认端口 |
-|------|------|----------|
-| PostgreSQL | 文章、分类、评论等持久化 | 5432 |
-| Redis | Token 存储、可选缓存 | 6379 |
+| 服务       | 用途                     | 默认端口 |
+| ---------- | ------------------------ | -------- |
+| PostgreSQL | 文章、分类、评论等持久化 | 5432     |
+| Redis      | Token 存储、可选缓存     | 6379     |
 
 ### 1.2 部署后架构
 
@@ -42,14 +42,14 @@ Java 服务依赖：
 
 ### 1.3 API 路由
 
-| 路径 | 处理方式 |
-|------|----------|
-| `/api/*` | 反向代理到 Java 容器（Spring Boot :4300） |
-| `/api/auth/login` | 登录 |
-| `/api/articles` | 文章 CRUD |
-| `/api/categories` | 分类管理 |
-| `/api/comments` | 评论 |
-| `/doc.html` | Knife4j API 文档 |
+| 路径              | 处理方式                                  |
+| ----------------- | ----------------------------------------- |
+| `/api/*`          | 反向代理到 Java 容器（Spring Boot :4300） |
+| `/api/auth/login` | 登录                                      |
+| `/api/articles`   | 文章 CRUD                                 |
+| `/api/categories` | 分类管理                                  |
+| `/api/comments`   | 评论                                      |
+| `/doc.html`       | Knife4j API 文档                          |
 
 ---
 
@@ -65,10 +65,10 @@ Java 服务依赖：
 
 以下变量含敏感信息，建议通过 `.env` 或服务器环境配置，**不要提交到 Git**：
 
-| 变量 | 说明 | 示例 |
-|------|------|------|
-| `DB_PASSWORD` | PostgreSQL 密码 | 强密码 |
-| `ADMIN_PASSWORD` | 管理后台登录密码 | 强密码 |
+| 变量             | 说明               | 示例         |
+| ---------------- | ------------------ | ------------ |
+| `DB_PASSWORD`    | PostgreSQL 密码    | 强密码       |
+| `ADMIN_PASSWORD` | 管理后台登录密码   | 强密码       |
 | `REDIS_PASSWORD` | Redis 密码（可选） | 空表示无密码 |
 
 ---
@@ -113,7 +113,7 @@ services:
       - postgres-data:/var/lib/postgresql/data
     restart: unless-stopped
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U bloguser -d blogdb"]
+      test: ['CMD-SHELL', 'pg_isready -U bloguser -d blogdb']
       interval: 5s
       timeout: 5s
       retries: 5
@@ -126,7 +126,7 @@ services:
       - redis-data:/data
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
+      test: ['CMD', 'redis-cli', 'ping']
       interval: 5s
       timeout: 3s
       retries: 5
@@ -292,38 +292,38 @@ build-java:
 
 ## 七、环境变量一览
 
-| 变量 | 默认 | 说明 |
-|------|------|------|
-| `SPRING_PROFILES_ACTIVE` | production | 激活的 Spring 配置 |
-| `DB_HOST` | postgres | PostgreSQL 主机 |
-| `DB_PORT` | 5432 | PostgreSQL 端口 |
-| `DB_NAME` | blogdb | 数据库名 |
-| `DB_USER` | bloguser | 数据库用户 |
-| `DB_PASSWORD` | blogpass | 数据库密码（**必须修改**） |
-| `REDIS_HOST` | localhost | Redis 主机 |
-| `REDIS_PORT` | 6379 | Redis 端口 |
-| `REDIS_PASSWORD` | 空 | Redis 密码 |
-| `ADMIN_PASSWORD` | admin | 管理后台密码（**必须修改**） |
-| `TOKEN_TTL_HOURS` | 168 | Token 有效期（小时） |
-| `LOG_LEVEL` | INFO | 日志级别 |
+| 变量                     | 默认       | 说明                         |
+| ------------------------ | ---------- | ---------------------------- |
+| `SPRING_PROFILES_ACTIVE` | production | 激活的 Spring 配置           |
+| `DB_HOST`                | postgres   | PostgreSQL 主机              |
+| `DB_PORT`                | 5432       | PostgreSQL 端口              |
+| `DB_NAME`                | blogdb     | 数据库名                     |
+| `DB_USER`                | bloguser   | 数据库用户                   |
+| `DB_PASSWORD`            | blogpass   | 数据库密码（**必须修改**）   |
+| `REDIS_HOST`             | localhost  | Redis 主机                   |
+| `REDIS_PORT`             | 6379       | Redis 端口                   |
+| `REDIS_PASSWORD`         | 空         | Redis 密码                   |
+| `ADMIN_PASSWORD`         | admin      | 管理后台密码（**必须修改**） |
+| `TOKEN_TTL_HOURS`        | 168        | Token 有效期（小时）         |
+| `LOG_LEVEL`              | INFO       | 日志级别                     |
 
 ---
 
 ## 八、故障排查
 
-| 现象 | 可能原因 | 处理 |
-|------|----------|------|
-| 502 on /api/* | Java 容器未启动或崩溃 | `docker compose logs java` |
-| 数据库连接失败 | PostgreSQL 未就绪或密码错误 | 检查 `depends_on`、`.env` |
-| Redis 连接失败 | Redis 未启动 | `docker compose logs redis` |
-| 内存不足 OOM | 2C2G 运行多服务 | 升级到 2C4G，或为各容器设置 `mem_limit` |
+| 现象           | 可能原因                    | 处理                                    |
+| -------------- | --------------------------- | --------------------------------------- |
+| 502 on /api/\* | Java 容器未启动或崩溃       | `docker compose logs java`              |
+| 数据库连接失败 | PostgreSQL 未就绪或密码错误 | 检查 `depends_on`、`.env`               |
+| Redis 连接失败 | Redis 未启动                | `docker compose logs redis`             |
+| 内存不足 OOM   | 2C2G 运行多服务             | 升级到 2C4G，或为各容器设置 `mem_limit` |
 
 ---
 
 ## 九、相关文档
 
-| 文档 | 说明 |
-|------|------|
-| [DEPLOY.md](./DEPLOY.md) | 主部署文档（Nginx + web） |
-| [DEPLOY_ACR_COMMANDS.md](./DEPLOY_ACR_COMMANDS.md) | ACR 拉取命令（本地使用） |
-| [REDIS_DEPLOY.md](./REDIS_DEPLOY.md) | Redis 部署说明 |
+| 文档                                               | 说明                      |
+| -------------------------------------------------- | ------------------------- |
+| [DEPLOY.md](./DEPLOY.md)                           | 主部署文档（Nginx + web） |
+| [DEPLOY_ACR_COMMANDS.md](./DEPLOY_ACR_COMMANDS.md) | ACR 拉取命令（本地使用）  |
+| [REDIS_DEPLOY.md](./REDIS_DEPLOY.md)               | Redis 部署说明            |
