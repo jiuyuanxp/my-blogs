@@ -1,13 +1,13 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
 import { format } from 'date-fns';
 import { zhCN, enUS } from 'date-fns/locale';
+import { usePathname } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import CategoryTree from '@/components/CategoryTree';
-import { MOCK_ARTICLES, MOCK_CATEGORIES } from '@/data/mock';
+import CategoryTree, { type CategoryNode } from '@/components/CategoryTree';
+import { fetchArticles, fetchCategories } from '@/lib/api';
 import type { Article } from '@/types';
 import { Menu, Pin } from 'lucide-react';
 
@@ -15,6 +15,35 @@ function getLocaleFromPath(pathname: string): 'zh' | 'en' {
   const segments = pathname.split('/');
   const loc = segments[1];
   return loc === 'en' ? 'en' : 'zh';
+}
+
+function toCategoryNodes(cats: { id: string; name: string; children?: unknown[] }[]): CategoryNode[] {
+  return cats.map(c => ({
+    id: c.id,
+    name: c.name,
+    children: c.children?.length ? toCategoryNodes(c.children as { id: string; name: string; children?: unknown[] }[]) : undefined,
+  }));
+}
+
+function findCategoryById(nodes: CategoryNode[], id: string): CategoryNode | undefined {
+  for (const n of nodes) {
+    if (n.id === id) return n;
+    if (n.children?.length) {
+      const found = findCategoryById(n.children, id);
+      if (found) return found;
+    }
+  }
+  return undefined;
+}
+
+function getCategoryIdsIncludingChildren(node: CategoryNode): string[] {
+  const result = [node.id];
+  if (node.children?.length) {
+    for (const child of node.children) {
+      result.push(...getCategoryIdsIncludingChildren(child));
+    }
+  }
+  return result;
 }
 
 export default function HomePage() {
@@ -25,29 +54,55 @@ export default function HomePage() {
   const dateLocale = locale === 'zh' ? zhCN : enUS;
   const dateFormat = tCommon('dateFormat');
 
-  const [selectedCategory, setSelectedCategory] = useState('All');
+  const [articles, setArticles] = useState<Article[]>([]);
+  const [categories, setCategories] = useState<CategoryNode[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedCategoryId, setSelectedCategoryId] = useState('all');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
+  const categoryTree = categories;
+
+  useEffect(() => {
+    const load = async () => {
+      setLoading(true);
+      try {
+        const [artsRes, cats] = await Promise.all([
+          fetchArticles({ status: 'published' }),
+          fetchCategories(),
+        ]);
+        setArticles(artsRes.data);
+        setCategories(toCategoryNodes(cats));
+      } catch {
+        setArticles([]);
+        setCategories([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    load();
+  }, []);
+
   const filteredArticles =
-    selectedCategory === 'All'
-      ? MOCK_ARTICLES
-      : MOCK_ARTICLES.filter(
-          a =>
-            a.category === selectedCategory ||
-            a.category.startsWith(selectedCategory + '/')
-        );
+    selectedCategoryId === 'all'
+      ? articles
+      : articles.filter(a => {
+          const cat = findCategoryById(categories, selectedCategoryId);
+          if (!cat) return a.categoryId === selectedCategoryId;
+          const ids = getCategoryIdsIncludingChildren(cat);
+          return ids.includes(a.categoryId);
+        });
 
   const sortedArticles = [...filteredArticles].sort((a, b) => {
-    if (a.is_pinned !== b.is_pinned) return b.is_pinned - a.is_pinned;
-    return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+    if (a.isPinned !== b.isPinned) return b.isPinned - a.isPinned;
+    return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
   });
 
   const articleLink = (article: Article) => `/${locale}/article/${article.id}`;
 
   const displayCategory =
-    selectedCategory === 'All'
+    selectedCategoryId === 'all'
       ? tCommon('all')
-      : selectedCategory.split('/').pop();
+      : findCategoryById(categories, selectedCategoryId)?.name ?? selectedCategoryId;
 
   return (
     <div className="space-y-12">
@@ -90,10 +145,10 @@ export default function HomePage() {
             </h2>
             <div className="min-w-max">
               <CategoryTree
-                categories={MOCK_CATEGORIES}
-                selectedCategory={selectedCategory}
-                onSelectCategory={cat => {
-                  setSelectedCategory(cat);
+                categories={categoryTree}
+                selectedCategoryId={selectedCategoryId}
+                onSelectCategory={id => {
+                  setSelectedCategoryId(id);
                   setIsSidebarOpen(false);
                 }}
                 allLabel={tCommon('all')}
@@ -103,7 +158,11 @@ export default function HomePage() {
         </aside>
 
         <div className="grid gap-8">
-          {sortedArticles.length === 0 ? (
+          {loading ? (
+            <div className="text-center py-32 text-stone-400 dark:text-stone-600">
+              {tCommon('loading') || '加载中…'}
+            </div>
+          ) : sortedArticles.length === 0 ? (
             <div className="text-center py-32 text-stone-400 dark:text-stone-600 bg-stone-50 dark:bg-stone-900/30 rounded-3xl border border-dashed border-stone-200 dark:border-stone-800">
               <p className="text-lg font-serif italic">
                 {tCommon('noArticlesInCategory')}
@@ -116,13 +175,13 @@ export default function HomePage() {
                 href={articleLink(article)}
                 className={`group block p-8 rounded-3xl transition-all duration-300 relative overflow-hidden
                   ${
-                    article.is_pinned
+                    article.isPinned
                       ? 'bg-stone-50 dark:bg-stone-900/80 border border-indigo-100 dark:border-indigo-900/30 hover:border-indigo-200 dark:hover:border-indigo-800/50 hover:shadow-lg hover:shadow-indigo-500/5'
                       : 'bg-white dark:bg-stone-900 border border-stone-100 dark:border-stone-800 hover:border-stone-300 dark:hover:border-stone-700 hover:shadow-xl hover:shadow-stone-200/50 dark:hover:shadow-none hover:-translate-y-1'
                   }
                 `}
               >
-                {article.is_pinned === 1 && (
+                {article.isPinned === 1 && (
                   <div className="absolute top-6 right-6 flex items-center gap-1.5 text-indigo-500 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-900/20 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">
                     <Pin size={12} className="fill-current" aria-hidden />
                     <span>Pinned</span>
@@ -131,11 +190,11 @@ export default function HomePage() {
 
                 <div className="flex items-center gap-3 text-xs font-medium text-stone-400 dark:text-stone-500 mb-4 font-mono">
                   <span className="text-indigo-500 dark:text-indigo-400 uppercase tracking-wider">
-                    {article.category.split('/').pop()}
+                    {article.categoryName ?? ''}
                   </span>
                   <span aria-hidden>•</span>
-                  <time dateTime={article.created_at}>
-                    {format(new Date(article.created_at), dateFormat, {
+                  <time dateTime={article.createdAt}>
+                    {format(new Date(article.createdAt), dateFormat, {
                       locale: dateLocale,
                     })}
                   </time>

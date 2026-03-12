@@ -4,14 +4,16 @@ import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { format } from 'date-fns';
 import { zhCN, enUS } from 'date-fns/locale';
+import { usePathname } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeHighlight from 'rehype-highlight';
 import 'highlight.js/styles/atom-one-dark.css';
-import { usePathname } from 'next/navigation';
-import { useTranslations } from 'next-intl';
 import { ArrowLeft } from 'lucide-react';
-import { MOCK_ARTICLES, MOCK_COMMENTS } from '@/data/mock';
+import { useState, useEffect } from 'react';
+import { fetchArticle, fetchCommentsByArticle } from '@/lib/api';
+import type { Article, Comment } from '@/types';
 
 function getLocaleFromPath(pathname: string): 'zh' | 'en' {
   const segments = pathname.split('/');
@@ -24,16 +26,36 @@ export default function ArticlePage() {
   const router = useRouter();
   const pathname = usePathname();
   const id = params.id as string;
-  const articleId = parseInt(id, 10);
   const t = useTranslations('common');
   const dateFormat = t('dateFormat');
   const dateTimeFormat = t('dateTimeFormat');
 
-  const article = MOCK_ARTICLES.find(a => a.id === articleId);
-  const comments = article ? (MOCK_COMMENTS[article.id] ?? []) : [];
+  const [article, setArticle] = useState<Article | null>(null);
+  const [comments, setComments] = useState<Comment[]>([]);
+  const [loading, setLoading] = useState(true);
 
   const locale = getLocaleFromPath(pathname);
   const dateLocale = locale === 'zh' ? zhCN : enUS;
+
+  useEffect(() => {
+    const load = async () => {
+      setLoading(true);
+      try {
+        const [art, coms] = await Promise.all([
+          fetchArticle(id, true),
+          fetchCommentsByArticle(id),
+        ]);
+        setArticle(art);
+        setComments(coms);
+      } catch {
+        setArticle(null);
+        setComments([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    load();
+  }, [id]);
 
   return (
     <article className="max-w-3xl mx-auto relative">
@@ -58,7 +80,11 @@ export default function ArticlePage() {
         </button>
       </div>
 
-      {!article ? (
+      {loading ? (
+        <div className="text-center py-20 text-stone-500">
+          {t('loadingArticle')}
+        </div>
+      ) : !article ? (
         <div className="text-center py-20 text-red-500">
           {t('articleNotFound')}
         </div>
@@ -67,16 +93,16 @@ export default function ArticlePage() {
           <header className="mb-12 text-center">
             <div className="flex items-center justify-center gap-3 text-sm text-stone-500 dark:text-stone-400 mb-6 font-mono">
               <Link
-                href={`/${locale}/category/${article.category}`}
+                href={`/${locale}/category/${article.categoryId}`}
                 className="text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 transition-colors uppercase tracking-wider font-medium focus-visible:outline focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 rounded"
               >
-                {article.category}
+                {article.categoryName ?? ''}
               </Link>
               <span className="text-stone-300 dark:text-stone-700" aria-hidden>
                 •
               </span>
-              <time dateTime={article.created_at}>
-                {format(new Date(article.created_at), dateFormat, {
+              <time dateTime={article.createdAt}>
+                {format(new Date(article.createdAt), dateFormat, {
                   locale: dateLocale,
                 })}
               </time>
@@ -115,10 +141,10 @@ export default function ArticlePage() {
                   >
                     <div className="flex items-center justify-between mb-2">
                       <span className="font-bold text-stone-900 dark:text-stone-100 text-sm">
-                        {comment.author_name}
+                        {comment.authorName}
                       </span>
                       <span className="text-xs text-stone-400">
-                        {format(new Date(comment.created_at), dateTimeFormat, {
+                        {format(new Date(comment.createdAt), dateTimeFormat, {
                           locale: dateLocale,
                         })}
                       </span>
