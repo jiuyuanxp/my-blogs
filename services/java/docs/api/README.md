@@ -41,32 +41,7 @@
 
 ## 通用规范
 
-### 请求
-
-- Content-Type: `application/json`
-- 认证: `Authorization: Bearer <token>`
-
-### 成功响应
-
-- 单资源: 直接返回对象
-- 列表: `{ "data": [...], "meta": { "total", "page", "pageSize", "totalPages" } }`
-
-### 错误响应
-
-```json
-{
-  "error": {
-    "code": "validation_error",
-    "message": "请求校验失败",
-    "details": [{ "field": "title", "message": "标题不能为空", "code": "required" }]
-  }
-}
-```
-
-### 分页
-
-- 参数: `page`（从 1 起）、`pageSize`（默认 20，最大 100）
-- 响应 meta: `total`, `page`, `pageSize`, `totalPages`
+请求/响应格式、状态码、错误码、分页等详见 [docs/api-contract.md](../../../docs/api-contract.md)。
 
 ## 详细设计
 

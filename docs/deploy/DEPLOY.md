@@ -4,46 +4,9 @@
 
 ## 一、架构说明
 
-### 1.1 部署方式
-
-- **纯 Docker**：Nginx、web（Next.js）、admin（静态）、Java 后端、PostgreSQL、Redis 均在容器内运行
-- **GitHub Actions 构建**：镜像在 push 到 `main` 时由 CI 构建并推送到阿里云 ACR，服务器只拉取并运行
-- **Phase 2**：web + admin + Java + PostgreSQL + Redis 全栈
-
-### 1.2 架构图
-
-```
-                    阿里云 2C2G 轻量服务器
-    ┌─────────────────────────────────────────────────────────────┐
-    │                                                               │
-    │   用户请求 (IP:80)                                            │
-    │        │                                                       │
-    │        ▼                                                       │
-    │   ┌─────────────┐                                             │
-    │   │   nginx     │  :80                                         │
-    │   │  (容器)     │                                              │
-    │   └──────┬──────┘                                              │
-    │          │                                                      │
-    │    ┌─────┼─────┬─────────────┐                                 │
-    │    │     │     │             │                                  │
-    │    ▼     ▼     ▼             ▼                                  │
-    │  /admin  /web  /api         postgres / redis                   │
-    │  (静态)  (代理) (代理→java)   (数据层)                           │
-    │    │     │     │                                                │
-    │    │     │     └── java :4300 (Spring Boot)                    │
-    │    │     └── web :3000 (Next.js)                               │
-    │    └── admin 静态文件已打包进 nginx 镜像                         │
-    └─────────────────────────────────────────────────────────────┘
-```
-
-### 1.3 路由说明
-
-| 路径                  | 处理方式                       |
-| --------------------- | ------------------------------ |
-| `/`                   | 重定向到 `/web/zh`             |
-| `/web`、`/web/*`      | 反向代理到 web 容器（Next.js） |
-| `/admin`              | 重定向到 `/admin/`             |
-| `/admin/`、`/admin/*` | Nginx 直接提供 admin 静态文件  |
+- **纯 Docker**：Nginx、web、admin、Java、PostgreSQL、Redis 均在容器内运行
+- **GitHub Actions 构建**：镜像在 push 到 `main` 时由 CI 构建并推送到阿里云 ACR
+- **架构图与路由**：详见 [docs/deployment-plan.md](../deployment-plan.md)
 
 ---
 
@@ -170,7 +133,7 @@ cd ~/blogs
 docker compose up -d
 ```
 
-> ACR 地址以实际为准，含个人信息的完整命令见 `../DEPLOY_ACR_COMMANDS.md`（已加入 .gitignore）。
+> ACR 地址以实际为准，含个人信息的完整命令见 `DEPLOY_ACR_COMMANDS.md`（已加入 .gitignore）。
 
 ### 4.2 方式 B：本地构建（备用）
 

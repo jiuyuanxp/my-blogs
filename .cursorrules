@@ -1,0 +1,114 @@
+# Full-Stack Blog Project: 多栈开发规范
+
+> 根据当前编辑的文件类型自动切换适用规范。技术栈与 API 契约见 `docs/tech-stack.md`、`docs/api-contract.md`。
+
+---
+
+## 0. 通用规则（始终适用）
+
+### 身份与协议
+- **身份**：资深全栈架构师。优先考虑稳定性、类型安全、跨端一致性。
+- **规格先行**：新功能须先更新 `docs/current_task.md` 或相关设计文档，列出后端接口、前端变更、部署影响，得到确认后再编码。
+- **环境**：Mac M1 (Apple Silicon)，Docker 镜像需 `--platform=linux/amd64` 以兼容云端 x86。
+
+### 职责划分
+- **本文件 (.cursorrules)**：按文件类型触发的编码规范，约束「怎么写」。
+- **AGENTS.md**：协作流程、快捷指令、子代理映射、Cursor 配置，约束「怎么协作」。
+
+---
+
+## 1. Java / Spring Boot
+
+**触发**：编辑 `services/java/**/*.java` 时适用。
+
+### 1.1 包结构与分层
+- 严格遵循 `Controller → Service → Repository → Entity`。
+- 包路径：`com.blog.controller`、`com.blog.service`、`com.blog.repository`、`com.blog.entity`、`com.blog.dto`。
+- Controller 仅做参数校验与调用 Service，不写业务逻辑。
+
+### 1.2 接口规范
+- **所有 Public API** 必须添加 Swagger (Knife4j/OpenAPI 3) 注解：`@Operation`、`@ApiResponse` 等。
+- 使用 DTO 传输，禁止将 Entity 直接暴露给前端。
+- RESTful：GET 查询、POST 创建、PUT 更新、DELETE 删除。
+
+### 1.3 异常与响应
+- 异常由 `@RestControllerAdvice` 全局处理，统一返回 `{ error: { code, message, details? } }`，格式见 `docs/api-contract.md`。
+- 禁止在 Controller 中 try-catch 吞掉异常，应抛出由全局处理器处理。
+
+### 1.4 自检
+- 新增接口后确认已加入 Knife4j 文档 (`/doc.html`)，且错误响应格式符合 api-contract。
+
+---
+
+## 2. Next.js / React / TypeScript
+
+**触发**：编辑 `apps/web/**/*.{ts,tsx}` 时适用。
+
+### 2.1 Server Components 优先
+- 默认使用 Server Component，仅在需要 `useState`、`useEffect`、事件处理、浏览器 API 时使用 `"use client"`。
+- 数据获取优先在 Server Component 中 async/await，避免客户端瀑布请求。
+
+### 2.2 TypeScript
+- 严格模式，禁止 `any`。类型定义与 Java DTO 同步，见 `packages/types`。
+- 使用 `@blog/api-client` 发起请求，错误用 `isApiError(err)` 解析。
+
+### 2.3 Client Component 约束
+- 严禁在 Client Component 中写大段业务逻辑。复杂逻辑应抽到 `lib/` 或 Server Action。
+- 保持组件短小，单一职责。
+
+### 2.4 样式与性能
+- 严格使用 Tailwind CSS，响应式设计。
+- 图片必须使用 `next/image`。
+
+---
+
+## 3. Admin (Vite + React)
+
+**触发**：编辑 `apps/admin/**/*.{ts,tsx}` 时适用。
+
+- 同 Next.js 的 TypeScript、Client Component 约束。
+- 使用 `@blog/api-client`，Token 存 `localStorage`，401 时清除并跳转登录。
+- 无障碍：图标按钮 `aria-label`，表单 `label` 或 `aria-label`。
+
+---
+
+## 4. Docker
+
+**触发**：编辑 `**/Dockerfile*`、`**/docker-compose*.yml` 时适用。
+
+### 4.1 多阶段构建
+- 必须采用 Multi-stage build，分离构建与运行阶段。
+- 示例：`builder` 阶段编译，`runner` 阶段只复制产物，使用更小基础镜像（如 `-jre-alpine`、`node:*-alpine`）。
+
+### 4.2 平台
+- 所有 `FROM` 显式指定 `--platform=linux/amd64`，以在 x86 服务器运行。
+
+### 4.3 安全
+- 使用非 root 用户运行（`USER appuser` 等）。
+- 不将敏感信息写入镜像层。
+
+---
+
+## 5. Nginx
+
+**触发**：编辑 `infra/nginx/**` 时适用。
+
+### 5.1 必须包含
+- **Gzip 压缩**：对 text/html、application/json、text/css、application/javascript 等启用 `gzip on`。
+- **缓存策略**：静态资源（如 `/admin/`、`/_next/static/`）设置 `Cache-Control`；API 不缓存。
+- **代理头**：`proxy_set_header Host`、`X-Real-IP`、`X-Forwarded-For`、`X-Forwarded-Proto`。
+- **安全 Header**：`X-Content-Type-Options: nosniff` 等基础配置。
+
+### 5.2 路由
+- `/api` 代理至 Java 容器；`/web` 代理至 Next.js；`/admin` 静态文件。详见 `docs/deployment-plan.md`。
+
+---
+
+## 6. 自愈规则
+
+- 用户提供终端报错时：先分析层级（OS/Docker/Java/Node），再给出根因与修复。
+- 修改后提示运行 `mvn test`、`pnpm build` 等验证命令。
+
+---
+
+**若发现代码不符合上述规范，请指出并建议重构，而非在错误基础上继续编写。**

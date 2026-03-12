@@ -1,21 +1,6 @@
 # 博客前台 (web)
 
-博客系统的读者端前端，用于文章浏览、分类筛选、评论展示与发表。
-
-## 技术栈
-
-| 技术             | 版本 | 说明          |
-| ---------------- | ---- | ------------- |
-| Next.js          | 16   | 全栈框架      |
-| React            | 19   | UI 框架       |
-| TypeScript       | 5    | 类型安全      |
-| Tailwind CSS     | 4    | 样式          |
-| next-intl        | 4    | 国际化        |
-| React Markdown   | 10   | Markdown 渲染 |
-| remark-gfm       | -    | GFM 扩展      |
-| rehype-highlight | -    | 代码高亮      |
-| Motion           | 12   | 动画          |
-| Lucide React     | -    | 图标          |
+博客系统的读者端前端，用于文章浏览、分类筛选、评论展示与发表。技术栈见 [docs/tech-stack.md](../../docs/tech-stack.md)。
 
 ## 详细设计
 
@@ -150,21 +135,7 @@ apps/web/
 
 ## API 对接
 
-| 页面      | 接口                                             |
-| --------- | ------------------------------------------------ |
-| 首页/分类 | GET /api/articles, GET /api/categories           |
-| 文章详情  | GET /api/articles/:id                            |
-| 评论      | GET /api/comments?articleId=, POST /api/comments |
-
-环境变量：`NEXT_PUBLIC_API_BASE`（如 `http://localhost:4300`）。详见 [docs/INTEGRATION.md](./docs/INTEGRATION.md)。
-
----
-
-## 评论作者
-
-- 前端随机生成昵称（如 `User_xxxx`）
-- 可修改，存 `localStorage` key: `blog_comment_author`
-- 发表评论时读取，若无则生成并写入
+详见 [docs/INTEGRATION.md](./docs/INTEGRATION.md)。
 
 ---
 

@@ -4,52 +4,7 @@
 
 ## 一、架构说明
 
-### 1.1 服务依赖
-
-Java 服务依赖：
-
-| 服务       | 用途                     | 默认端口 |
-| ---------- | ------------------------ | -------- |
-| PostgreSQL | 文章、分类、评论等持久化 | 5432     |
-| Redis      | Token 存储、可选缓存     | 6379     |
-
-### 1.2 部署后架构
-
-```
-                    阿里云 2C2G 轻量服务器
-    ┌─────────────────────────────────────────────────────┐
-    │                                                       │
-    │   用户请求 (IP:80)                                     │
-    │        │                                               │
-    │        ▼                                               │
-    │   ┌─────────────┐                                      │
-    │   │   nginx     │  :80                                 │
-    │   └──────┬──────┘                                      │
-    │          │                                              │
-    │    ┌─────┼─────┬─────────────┐                         │
-    │    │     │     │             │                          │
-    │    ▼     ▼     ▼             ▼                          │
-    │  /admin /web  /api/*     (静态)                         │
-    │    │     │     │                                        │
-    │    │     │     └── 反向代理 → Java :4300                │
-    │    │     │                    │                          │
-    │    │     │                    ├── PostgreSQL :5432       │
-    │    │     │                    └── Redis :6379           │
-    │    │     └── Next.js :3000                              │
-    │    └── 静态文件                                           │
-    └─────────────────────────────────────────────────────┘
-```
-
-### 1.3 API 路由
-
-| 路径              | 处理方式                                  |
-| ----------------- | ----------------------------------------- |
-| `/api/*`          | 反向代理到 Java 容器（Spring Boot :4300） |
-| `/api/auth/login` | 登录                                      |
-| `/api/articles`   | 文章 CRUD                                 |
-| `/api/categories` | 分类管理                                  |
-| `/api/comments`   | 评论                                      |
-| `/doc.html`       | Knife4j API 文档                          |
+Java 依赖 PostgreSQL（5432）、Redis（6379）。Docker 网络与 Nginx 路由详见 [docs/deployment-plan.md](../deployment-plan.md)。
 
 ---
 
@@ -195,7 +150,7 @@ location /v3/api-docs {
 ssh root@你的服务器IP
 
 # 2. 登录 ACR 并拉取镜像（含 Java）
-# 完整命令见 ../DEPLOY_ACR_COMMANDS.md（已加入 .gitignore）
+# 完整命令见 DEPLOY_ACR_COMMANDS.md（已加入 .gitignore）
 
 # 3. 创建 .env 文件（敏感信息，不要提交到 Git）
 cd ~/blogs
@@ -322,8 +277,8 @@ build-java:
 
 ## 九、相关文档
 
-| 文档                                               | 说明                      |
-| -------------------------------------------------- | ------------------------- |
-| [DEPLOY.md](./DEPLOY.md)                           | 主部署文档（Nginx + web） |
-| [DEPLOY_ACR_COMMANDS.md](./DEPLOY_ACR_COMMANDS.md) | ACR 拉取命令（本地使用）  |
-| [REDIS_DEPLOY.md](./REDIS_DEPLOY.md)               | Redis 部署说明            |
+| 文档                                               | 说明                                    |
+| -------------------------------------------------- | --------------------------------------- |
+| [DEPLOY.md](./DEPLOY.md)                           | 主部署文档（Nginx + web）               |
+| [DEPLOY_ACR_COMMANDS.md](./DEPLOY_ACR_COMMANDS.md) | ACR 拉取命令（本地使用，已 .gitignore） |
+| [REDIS_DEPLOY.md](./REDIS_DEPLOY.md)               | Redis 部署说明                          |

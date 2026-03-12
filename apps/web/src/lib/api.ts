@@ -4,7 +4,9 @@
  * 以 Java 后端字段为准（camelCase），ID 统一为 string 避免精度丢失
  */
 
-import { createClient, normalizeIds } from '@blog/api-client';
+import { createClient, normalizeIds, isApiError } from '@blog/api-client';
+
+export { isApiError };
 
 const API_BASE =
   (typeof process !== 'undefined' && process.env?.NEXT_PUBLIC_API_BASE) || 'http://localhost:4300';

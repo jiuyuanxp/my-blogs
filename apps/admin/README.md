@@ -1,19 +1,6 @@
 # 博客管理后台 (admin)
 
-博客系统的管理端前端，用于内容管理、分类管理、评论管理与数据统计。
-
-## 技术栈
-
-| 技术           | 版本 | 说明          |
-| -------------- | ---- | ------------- |
-| React          | 19   | UI 框架       |
-| TypeScript     | 5    | 类型安全      |
-| Vite           | 6    | 构建工具      |
-| Tailwind CSS   | 4    | 样式          |
-| Recharts       | 3    | 图表          |
-| Lucide React   | -    | 图标          |
-| React Markdown | -    | Markdown 渲染 |
-| remark-gfm     | -    | GFM 扩展      |
+博客系统的管理端前端，用于内容管理、分类管理、评论管理与数据统计。技术栈见 [docs/tech-stack.md](../../docs/tech-stack.md)。
 
 ## 详细设计
 
@@ -104,14 +91,6 @@
 | 排版     | Display/Serif、Body/Sans、Data/Mono |
 | 组件     | 卡片、按钮示例                      |
 
-### 7. 项目说明
-
-| 功能     | 说明                                              |
-| -------- | ------------------------------------------------- |
-| 技术栈   | React、Tailwind、Lucide、Recharts、React Markdown |
-| 交互体验 | 响应式、沉浸式编辑、微交互动画、状态反馈          |
-| 设计理念 | 内容优先、优雅排版、深浅对比、圆润亲和            |
-
 ---
 
 ## 目录结构
@@ -148,15 +127,7 @@ apps/admin/
 
 ## API 对接
 
-| 页面       | 接口                                                    |
-| ---------- | ------------------------------------------------------- |
-| Login      | POST /api/auth/login, GET /api/auth/check               |
-| Dashboard  | GET /api/stats/summary, popular-views, popular-comments |
-| Articles   | GET/POST/PUT/DELETE /api/articles                       |
-| Categories | GET/POST/PUT/DELETE /api/categories                     |
-| Comments   | GET /api/comments, DELETE /api/comments/:id             |
-
-环境变量：`VITE_API_BASE`（如 `http://localhost:4300`）。详见 [docs/INTEGRATION.md](./docs/INTEGRATION.md)。
+详见 [docs/INTEGRATION.md](./docs/INTEGRATION.md)。
 
 ---
 

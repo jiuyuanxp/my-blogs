@@ -3,9 +3,17 @@
 > 本项目用于学习 Java、Nginx 等技术。AI 协助开发时遵循以下规范。
 > 参考 [Everything Claude Code](https://github.com/affaan-m/everything-claude-code) 与 [精简指南](https://x.com/affaanmustafa/status/2012378465664745795)。
 
+## 职责划分
+
+| 文档             | 职责                                                         |
+| ---------------- | ------------------------------------------------------------ |
+| **.cursorrules** | 按文件类型触发的编码规范（Java/Next.js/Docker/Nginx 怎么写） |
+| **AGENTS.md**    | 协作流程、快捷指令、子代理、Cursor 配置（怎么协作）          |
+| **docs/**        | 技术栈、API 契约、部署规划等 SSOT                            |
+
 ## 核心原则
 
-1. **先看规范再写代码** - 书写新代码前必须查阅相关规范（api-design、web-design-guidelines、安全规则等），按规范实现后再自检
+1. **先看规范再写代码** - 查阅 `.cursorrules` 对应栈、api-design、安全规则等
 2. **代码即文档** - 命名自解释，避免冗余注释
 3. **注释写 Why** - 只注释业务原因、技术权衡、复杂逻辑
 4. **文档可执行** - 优先维护可运行的示例代码和架构图
@@ -19,39 +27,6 @@
 | **并行执行**       | 独立任务用 `mcp_task` 并行启动子代理 |
 | **自动化重复**     | 编辑后格式化、类型检查、提交前 lint  |
 | **限制子代理范围** | 给子代理明确且狭窄的任务边界         |
-
-## 代码规范
-
-### 通用
-
-- 变量/函数命名见名知意
-- 小函数，单一职责
-- 避免魔法数字，使用具名常量
-
-### TypeScript/React
-
-```ts
-// ✅ 使用 TypeScript strict 模式
-// ✅ 服务端组件优先，客户端组件按需使用
-// ✅ 避免 any，使用接口/类型定义
-```
-
-### Java/Spring Boot
-
-```java
-// ✅ 分层架构：Controller → Service → Repository
-// ✅ RESTful 风格：GET 查询，POST 创建，PUT 更新，DELETE 删除
-// ✅ 使用 Lombok @Data @Builder 减少样板代码
-// ✅ 接口命名：findAllById, createArticle, deleteById
-```
-
-### Nginx
-
-```nginx
-# ✅ 每个 location 注释说明目标服务和端口
-# ✅ 跨域配置统一放在 cors.conf 引入
-# ✅ 反向代理保留原始 IP: proxy_set_header X-Real-IP
-```
 
 ## Git 提交
 
@@ -75,11 +50,7 @@ AI 生成代码时：
 
 ## 技术栈
 
-| 领域   | 技术                            |
-| ------ | ------------------------------- |
-| 前端   | Next.js + TypeScript            |
-| 后端   | Java Spring Boot / Node.js / Go |
-| 数据库 | PostgreSQL + Redis              |
+详见 [docs/tech-stack.md](./docs/tech-stack.md)。
 
 ## 快速命令
 
