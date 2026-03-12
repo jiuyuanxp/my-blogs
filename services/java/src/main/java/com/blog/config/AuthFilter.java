@@ -33,7 +33,9 @@ public class AuthFilter extends OncePerRequestFilter {
 
         if (isPublic(request, path, method)) {
             if (validToken) {
+                Long userId = tokenService.getUserId(token);
                 request.setAttribute("authenticated", true);
+                request.setAttribute("userId", userId);
             }
             filterChain.doFilter(request, response);
             return;
@@ -49,11 +51,17 @@ public class AuthFilter extends OncePerRequestFilter {
             return;
         }
 
+        Long userId = tokenService.getUserId(token);
         request.setAttribute("authenticated", true);
+        request.setAttribute("userId", userId);
         filterChain.doFilter(request, response);
     }
 
     private boolean isPublic(HttpServletRequest request, String path, String method) {
+        // CORS 预检请求不含 Authorization，必须放行
+        if ("OPTIONS".equals(method)) {
+            return true;
+        }
         if (path.startsWith("/api/auth/")) {
             return true;
         }

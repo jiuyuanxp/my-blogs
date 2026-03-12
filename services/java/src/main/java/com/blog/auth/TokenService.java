@@ -10,45 +10,44 @@ import org.springframework.stereotype.Service;
 @Service
 public class TokenService {
 
-    private final Map<String, Long> tokens = new ConcurrentHashMap<>();
-
-    @Value("${app.auth.admin-password:admin}")
-    private String adminPassword;
+    private final Map<String, TokenInfo> tokens = new ConcurrentHashMap<>();
 
     @Value("${app.auth.token-ttl-hours:168}")
     private long tokenTtlHours;
 
-    public boolean validatePassword(String password) {
-        String expected = System.getenv("ADMIN_PASSWORD");
-        if (expected == null || expected.isBlank()) {
-            expected = adminPassword;
-        }
-        return expected.equals(password);
-    }
+    @Value("${app.auth.token-ttl-remember-me-hours:720}")
+    private long tokenTtlRememberMeHours;
 
-    public String createToken() {
+    public String createToken(Long userId, boolean rememberMe) {
+        long hours = rememberMe ? tokenTtlRememberMeHours : tokenTtlHours;
+        long expiresAt = System.currentTimeMillis() + Duration.ofHours(hours).toMillis();
         String token = UUID.randomUUID().toString().replace("-", "");
-        long expiresAt = System.currentTimeMillis() + Duration.ofHours(tokenTtlHours).toMillis();
-        tokens.put(token, expiresAt);
+        tokens.put(token, new TokenInfo(userId, expiresAt));
         return token;
     }
 
-    public boolean isValid(String token) {
+    public Long getUserId(String token) {
         if (token == null || token.isBlank()) {
-            return false;
+            return null;
         }
-        Long expiresAt = tokens.get(token);
-        if (expiresAt == null) {
-            return false;
+        TokenInfo info = tokens.get(token);
+        if (info == null) {
+            return null;
         }
-        if (System.currentTimeMillis() > expiresAt) {
+        if (System.currentTimeMillis() > info.getExpiresAt()) {
             tokens.remove(token);
-            return false;
+            return null;
         }
-        return true;
+        return info.getUserId();
+    }
+
+    public boolean isValid(String token) {
+        return getUserId(token) != null;
     }
 
     public void invalidate(String token) {
-        tokens.remove(token);
+        if (token != null) {
+            tokens.remove(token);
+        }
     }
 }

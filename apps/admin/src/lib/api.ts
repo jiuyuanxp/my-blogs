@@ -44,8 +44,28 @@ function normalizeList<T extends object>(arr: T[]): T[] {
 
 // --- Auth ---
 
-export async function login(password: string): Promise<{ token: string }> {
-  return api.post<{ token: string }>('/api/auth/login', { password });
+export interface MeResponse {
+  id: number;
+  username: string;
+  nickname: string;
+  role: string;
+  permissions: string[];
+}
+
+export async function login(
+  username: string,
+  password: string,
+  rememberMe?: boolean
+): Promise<{ token: string }> {
+  return api.post<{ token: string }>('/api/auth/login', {
+    username,
+    password,
+    rememberMe: rememberMe ?? false,
+  });
+}
+
+export async function getMe(): Promise<MeResponse> {
+  return api.get<MeResponse>('/api/auth/me');
 }
 
 export async function checkAuth(): Promise<boolean> {
@@ -275,4 +295,157 @@ export async function fetchPopularViews(limit = 10): Promise<PopularArticle[]> {
 export async function fetchPopularComments(limit = 10): Promise<PopularComment[]> {
   const list = await api.get<PopularComment[]>(`/api/stats/popular-comments?limit=${limit}`);
   return normalizeList(list);
+}
+
+// --- Users ---
+
+export interface User {
+  id: string;
+  username: string;
+  nickname?: string;
+  roleCode: string;
+  roleName: string;
+  status: string;
+  createdAt: string;
+  updatedAt?: string;
+}
+
+export async function fetchUsers(params?: {
+  page?: number;
+  pageSize?: number;
+}): Promise<PageResponse<User>> {
+  const q = new URLSearchParams();
+  if (params?.page) q.set('page', String(params.page));
+  if (params?.pageSize) q.set('pageSize', String(params.pageSize ?? 20));
+  const res = await api.get<PageResponse<User>>(`/api/users?${q}`);
+  return { ...res, data: normalizeList(res.data) };
+}
+
+export async function fetchUser(id: string): Promise<User> {
+  const res = await api.get<User>(`/api/users/${id}`);
+  return normalizeIds(res);
+}
+
+export async function createUser(data: {
+  username: string;
+  password: string;
+  nickname?: string;
+  roleId: string;
+}): Promise<User> {
+  const res = await api.post<User>('/api/users', {
+    ...data,
+    roleId: Number(data.roleId),
+  });
+  return normalizeIds(res);
+}
+
+export async function updateUser(
+  id: string,
+  data: Partial<{ nickname: string; roleId: string; status: string }>
+): Promise<User> {
+  const body = { ...data };
+  if (data?.roleId !== undefined) {
+    (body as Record<string, unknown>).roleId = Number(data.roleId);
+  }
+  const res = await api.put<User>(`/api/users/${id}`, body);
+  return normalizeIds(res);
+}
+
+export async function deleteUser(id: string): Promise<void> {
+  await api.delete(`/api/users/${id}`);
+}
+
+export async function resetUserPassword(id: string, newPassword: string): Promise<void> {
+  await api.post(`/api/users/${id}/reset-password`, { newPassword });
+}
+
+// --- Roles ---
+
+export interface Role {
+  id: string;
+  code: string;
+  name: string;
+  description?: string;
+  permissionIds?: string[];
+  createdAt: string;
+  updatedAt?: string;
+}
+
+export async function fetchRoles(): Promise<Role[]> {
+  const list = await api.get<Role[]>('/api/roles');
+  return normalizeList(list);
+}
+
+export async function fetchRole(id: string): Promise<Role> {
+  const res = await api.get<Role>(`/api/roles/${id}`);
+  return normalizeIds(res);
+}
+
+export async function createRole(data: {
+  code: string;
+  name: string;
+  description?: string;
+}): Promise<Role> {
+  const res = await api.post<Role>('/api/roles', data);
+  return normalizeIds(res);
+}
+
+export async function updateRole(
+  id: string,
+  data: Partial<{ name: string; description: string }>
+): Promise<Role> {
+  const res = await api.put<Role>(`/api/roles/${id}`, data);
+  return normalizeIds(res);
+}
+
+export async function assignRolePermissions(id: string, permissionIds: string[]): Promise<void> {
+  await api.put(`/api/roles/${id}/permissions`, {
+    permissionIds: permissionIds.map(Number),
+  });
+}
+
+export async function deleteRole(id: string): Promise<void> {
+  await api.delete(`/api/roles/${id}`);
+}
+
+// --- Permissions ---
+
+export interface Permission {
+  id: string;
+  code: string;
+  name: string;
+  type: 'menu' | 'button';
+  parentId?: string | null;
+  sortOrder: number;
+  children?: Permission[];
+  createdAt?: string;
+}
+
+export async function fetchPermissions(type?: 'menu' | 'button'): Promise<Permission[]> {
+  const q = type ? `?type=${type}` : '';
+  const list = await api.get<Permission[]>(`/api/permissions${q}`);
+  return normalizeList(list);
+}
+
+export async function createPermission(data: {
+  code: string;
+  name: string;
+  type?: 'menu' | 'button';
+  parentId?: number;
+  sortOrder?: number;
+}): Promise<Permission> {
+  const res = await api.post<Permission>('/api/permissions', data);
+  return normalizeIds(res);
+}
+
+export async function updatePermission(
+  id: string,
+  data: Partial<{ name: string; type: string; parentId?: number; sortOrder: number }>
+): Promise<Permission> {
+  const res = await api.put<Permission>(`/api/permissions/${id}`, data);
+  return normalizeIds(res);
+}
+
+export async function deletePermission(id: string): Promise<void> {
+  await api.delete(`/api/permissions/${id}`);
 }

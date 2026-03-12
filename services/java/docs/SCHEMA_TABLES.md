@@ -2,19 +2,65 @@
 
 本仓库数据表设计说明，对应 `com.blog.repository` 包下的 JPA Entity 与 Repository。开发时参考此文档理解表结构、索引与业务约束。
 
-## 认证与密码说明
+## 认证说明
 
-**当前无用户表**。Admin 登录采用单密码方案：
+Admin 登录已改为 **RBAC 用户表** 方案：
 
-- 密码来源：环境变量 `ADMIN_PASSWORD`，或配置 `app.auth.admin-password`（默认 `admin`）
-- 校验逻辑：`TokenService.validatePassword()` 与配置/环境变量比对
-- **不需要写入数据库**：密码不存库，仅通过环境变量或配置文件配置
-
-若需修改密码，在部署时设置环境变量 `ADMIN_PASSWORD` 即可，无需操作数据库。
+- 用户表 `users` 存储用户名、BCrypt 密码哈希、角色
+- 登录：`POST /api/auth/login` 传入 `{ username, password, rememberMe? }`
+- 超级管理员：仅能通过 `services/java/scripts/init-super-admin.sh` 手动创建，见 [RBAC 设计](../../docs/design/RBAC_DESIGN.md)
 
 ---
 
 ## 现有表结构
+
+### users（用户）
+
+| 列名          | 类型         | 约束            | 说明               |
+| ------------- | ------------ | --------------- | ------------------ |
+| id            | BIGSERIAL    | PK              | 主键               |
+| username      | VARCHAR(50)  | NOT NULL UNIQUE | 登录名             |
+| password_hash | VARCHAR(255) | NOT NULL        | BCrypt 哈希        |
+| nickname      | VARCHAR(100) | nullable        | 昵称               |
+| role_id       | BIGINT       | NOT NULL FK     | 角色 ID            |
+| status        | VARCHAR(20)  | NOT NULL        | active \| disabled |
+| created_at    | TIMESTAMP    | NOT NULL        | 创建时间           |
+| updated_at    | TIMESTAMP    | nullable        | 更新时间           |
+
+### roles（角色）
+
+| 列名        | 类型         | 约束            | 说明     |
+| ----------- | ------------ | --------------- | -------- |
+| id          | BIGSERIAL    | PK              | 主键     |
+| code        | VARCHAR(50)  | NOT NULL UNIQUE | 角色编码 |
+| name        | VARCHAR(100) | NOT NULL        | 角色名称 |
+| description | VARCHAR(255) | nullable        | 描述     |
+| created_at  | TIMESTAMP    | NOT NULL        | 创建时间 |
+| updated_at  | TIMESTAMP    | nullable        | 更新时间 |
+
+### permissions（权限）
+
+| 列名       | 类型         | 约束            | 说明           |
+| ---------- | ------------ | --------------- | -------------- |
+| id         | BIGSERIAL    | PK              | 主键           |
+| code       | VARCHAR(100) | NOT NULL UNIQUE | 权限编码       |
+| name       | VARCHAR(100) | NOT NULL        | 权限名称       |
+| type       | VARCHAR(20)  | NOT NULL        | menu \| button |
+| parent_id  | BIGINT       | nullable        | 父权限 ID      |
+| sort_order | INTEGER      | NOT NULL        | 排序           |
+| created_at | TIMESTAMP    | NOT NULL        | 创建时间       |
+| updated_at | TIMESTAMP    | nullable        | 更新时间       |
+
+### role_permissions（角色-权限关联）
+
+| 列名          | 类型      | 约束        | 说明     |
+| ------------- | --------- | ----------- | -------- |
+| id            | BIGSERIAL | PK          | 主键     |
+| role_id       | BIGINT    | NOT NULL FK | 角色 ID  |
+| permission_id | BIGINT    | NOT NULL FK | 权限 ID  |
+| created_at    | TIMESTAMP | NOT NULL    | 创建时间 |
+
+---
 
 ### categories（分类）
 

@@ -1,9 +1,12 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import {
   LayoutDashboard,
   FolderTree,
   FileText,
   MessageSquare,
+  Users,
+  Shield,
+  Key,
   LogOut,
   Palette,
   Info,
@@ -14,61 +17,71 @@ import Dashboard from './pages/Dashboard';
 import Categories from './pages/Categories';
 import Articles from './pages/Articles';
 import Comments from './pages/Comments';
+import UsersPage from './pages/Users';
+import RolesPage from './pages/Roles';
+import PermissionsPage from './pages/Permissions';
 import Login from './pages/Login';
 import DesignSystem from './pages/DesignSystem';
 import ProjectInfo from './pages/ProjectInfo';
 import { cn } from './lib/utils';
-import { getToken, logout as apiLogout, checkAuth } from './lib/api';
+import { getToken, logout as apiLogout } from './lib/api';
+import { AuthProvider, useAuth } from './contexts/AuthContext';
 
-type Tab = 'dashboard' | 'categories' | 'articles' | 'comments' | 'design' | 'about';
+type Tab =
+  | 'dashboard'
+  | 'categories'
+  | 'articles'
+  | 'comments'
+  | 'users'
+  | 'roles'
+  | 'permissions'
+  | 'design'
+  | 'about';
 
-export default function App() {
+const ALL_NAV_ITEMS: {
+  id: Tab;
+  label: string;
+  icon: typeof LayoutDashboard;
+  menuPermission: string;
+}[] = [
+  { id: 'dashboard', label: '仪表盘', icon: LayoutDashboard, menuPermission: 'dashboard' },
+  { id: 'categories', label: '分类管理', icon: FolderTree, menuPermission: 'categories' },
+  { id: 'articles', label: '文章管理', icon: FileText, menuPermission: 'articles' },
+  { id: 'comments', label: '评论管理', icon: MessageSquare, menuPermission: 'comments' },
+  { id: 'users', label: '用户管理', icon: Users, menuPermission: 'users' },
+  { id: 'roles', label: '角色管理', icon: Shield, menuPermission: 'roles' },
+  { id: 'permissions', label: '权限管理', icon: Key, menuPermission: 'permissions' },
+  { id: 'design', label: '设计规范', icon: Palette, menuPermission: 'design' },
+  { id: 'about', label: '项目说明', icon: Info, menuPermission: 'about' },
+];
+
+function AppContent() {
   const [activeTab, setActiveTab] = useState<Tab>('dashboard');
-  const [isAuthenticated, setIsAuthenticated] = useState(() =>
-    Boolean(typeof window !== 'undefined' && getToken())
-  );
-  const [isCheckingAuth, setIsCheckingAuth] = useState(isAuthenticated);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { user, isLoading, refresh, hasMenu } = useAuth();
 
-  useEffect(() => {
-    if (isAuthenticated && getToken()) {
-      checkAuth().then((valid) => {
-        setIsCheckingAuth(false);
-        if (!valid) setIsAuthenticated(false);
-      });
-    } else {
-      setIsCheckingAuth(false);
-    }
-  }, [isAuthenticated]);
-
-  const handleLogin = () => {
-    setIsAuthenticated(true);
+  const handleLogin = async () => {
+    await refresh();
   };
 
   const handleLogout = async () => {
     await apiLogout();
-    setIsAuthenticated(false);
+    window.location.reload();
   };
 
-  if (isCheckingAuth) {
+  if (!getToken()) {
+    return <Login onLogin={handleLogin} />;
+  }
+
+  if (isLoading || !user) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-[#fcfcfc]">
         <p className="text-zinc-500">验证登录状态…</p>
       </div>
     );
   }
-  if (!isAuthenticated) {
-    return <Login onLogin={handleLogin} />;
-  }
 
-  const navItems = [
-    { id: 'dashboard' as const, label: '仪表盘', icon: LayoutDashboard },
-    { id: 'categories' as const, label: '分类管理', icon: FolderTree },
-    { id: 'articles' as const, label: '文章管理', icon: FileText },
-    { id: 'comments' as const, label: '评论管理', icon: MessageSquare },
-    { id: 'design' as const, label: '设计规范', icon: Palette },
-    { id: 'about' as const, label: '项目说明', icon: Info },
-  ];
+  const navItems = ALL_NAV_ITEMS.filter((item) => hasMenu(item.menuPermission));
 
   return (
     <div className="flex h-screen bg-[#fcfcfc] text-zinc-900 font-sans overflow-hidden">
@@ -156,10 +169,21 @@ export default function App() {
           {activeTab === 'categories' && <Categories />}
           {activeTab === 'articles' && <Articles />}
           {activeTab === 'comments' && <Comments />}
+          {activeTab === 'users' && <UsersPage />}
+          {activeTab === 'roles' && <RolesPage />}
+          {activeTab === 'permissions' && <PermissionsPage />}
           {activeTab === 'design' && <DesignSystem />}
           {activeTab === 'about' && <ProjectInfo />}
         </div>
       </main>
     </div>
+  );
+}
+
+export default function App() {
+  return (
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
   );
 }

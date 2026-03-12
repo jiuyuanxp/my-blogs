@@ -18,16 +18,28 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class AuthController {
 
+    private final AuthService authService;
     private final TokenService tokenService;
 
-    @Operation(summary = "登录", description = "返回 token，用于后续请求 Authorization 头")
+    @Operation(summary = "登录", description = "用户名+密码登录，返回 token")
     @PostMapping("/login")
     public ResponseEntity<Map<String, String>> login(@Valid @RequestBody LoginRequest request) {
-        if (!tokenService.validatePassword(request.password())) {
-            throw new BusinessException("invalid_password", "密码错误");
-        }
-        String token = tokenService.createToken();
+        String token = authService.login(
+                request.username(),
+                request.password(),
+                request.rememberMe() != null && request.rememberMe());
         return ResponseEntity.ok(Map.of("token", token));
+    }
+
+    @Operation(summary = "当前用户", description = "返回当前用户信息及权限列表")
+    @GetMapping("/me")
+    public ResponseEntity<AuthService.MeResponse> me(
+            @Parameter(description = "Authorization: Bearer {token}") @RequestHeader(value = "Authorization", required = false) String auth) {
+        String token = extractToken(auth);
+        if (token == null) {
+            throw new BusinessException("invalid_token", "Token 无效或已过期");
+        }
+        return ResponseEntity.ok(authService.getCurrentUser(token));
     }
 
     @Operation(summary = "校验 Token", description = "检查当前 Token 是否有效")
@@ -62,5 +74,7 @@ public class AuthController {
 
     @Schema(description = "登录请求")
     public record LoginRequest(
-            @NotBlank(message = "密码不能为空") @Schema(description = "管理员密码") String password) {}
+            @NotBlank(message = "用户名不能为空") @Schema(description = "用户名") String username,
+            @NotBlank(message = "密码不能为空") @Schema(description = "密码") String password,
+            @Schema(description = "记住我，延长 Token 有效期") Boolean rememberMe) {}
 }

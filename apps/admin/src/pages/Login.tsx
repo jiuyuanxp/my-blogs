@@ -7,7 +7,9 @@ interface LoginProps {
 }
 
 export default function Login({ onLogin }: LoginProps) {
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [rememberMe, setRememberMe] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -16,7 +18,7 @@ export default function Login({ onLogin }: LoginProps) {
     setError(null);
     setIsLoading(true);
     try {
-      const { token } = await login(password);
+      const { token } = await login(username, password, rememberMe);
       setToken(token);
       onLogin();
     } catch (err) {
@@ -60,7 +62,7 @@ export default function Login({ onLogin }: LoginProps) {
         <div className="w-full max-w-md space-y-12">
           <div className="text-center lg:text-left">
             <h2 className="text-4xl font-serif font-bold text-zinc-900 tracking-tight">欢迎回来</h2>
-            <p className="mt-3 text-zinc-500">请输入管理密码以继续访问控制台</p>
+            <p className="mt-3 text-zinc-500">请输入用户名和密码以继续访问控制台</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
@@ -73,8 +75,27 @@ export default function Login({ onLogin }: LoginProps) {
               </div>
             )}
             <div className="space-y-2">
+              <label htmlFor="admin-username" className="text-sm font-medium text-zinc-700">
+                用户名
+              </label>
+              <input
+                id="admin-username"
+                name="username"
+                type="text"
+                autoComplete="username"
+                required
+                value={username}
+                onChange={(e) => {
+                  setUsername(e.target.value);
+                  setError(null);
+                }}
+                className="w-full px-4 py-3.5 bg-white border border-zinc-200 rounded-xl focus:ring-2 focus:ring-zinc-900 focus:border-zinc-900 focus:outline-none transition-all shadow-sm focus-visible:ring-2 focus-visible:ring-zinc-900"
+                placeholder="请输入用户名…"
+              />
+            </div>
+            <div className="space-y-2">
               <label htmlFor="admin-password" className="text-sm font-medium text-zinc-700">
-                管理密码
+                密码
               </label>
               <input
                 id="admin-password"
@@ -90,6 +111,19 @@ export default function Login({ onLogin }: LoginProps) {
                 className="w-full px-4 py-3.5 bg-white border border-zinc-200 rounded-xl focus:ring-2 focus:ring-zinc-900 focus:border-zinc-900 focus:outline-none transition-all shadow-sm focus-visible:ring-2 focus-visible:ring-zinc-900"
                 placeholder="请输入密码…"
               />
+            </div>
+            <div className="flex items-center gap-2">
+              <input
+                id="admin-remember"
+                name="rememberMe"
+                type="checkbox"
+                checked={rememberMe}
+                onChange={(e) => setRememberMe(e.target.checked)}
+                className="rounded border-zinc-300 text-zinc-900 focus:ring-zinc-900"
+              />
+              <label htmlFor="admin-remember" className="text-sm text-zinc-600">
+                记住我
+              </label>
             </div>
 
             <button

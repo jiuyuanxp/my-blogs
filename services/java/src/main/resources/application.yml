@@ -36,8 +36,8 @@ spring:
 
 app:
   auth:
-    admin-password: ${ADMIN_PASSWORD:admin}
     token-ttl-hours: ${TOKEN_TTL_HOURS:168}
+    token-ttl-remember-me-hours: ${TOKEN_TTL_REMEMBER_ME_HOURS:720}
 
 springdoc:
   api-docs:
