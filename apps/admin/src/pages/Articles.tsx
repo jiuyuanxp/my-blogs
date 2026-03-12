@@ -31,34 +31,29 @@ export default function Articles() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeTabId, setActiveTabId] = useState<string | 'all'>('all');
-  const [selectedSubCatId, setSelectedSubCatId] = useState<string | 'all'>(
-    'all'
-  );
-  const [isEditing, setIsEditing] = useState<Article | Partial<Article> | null>(
-    null
-  );
+  const [selectedSubCatId, setSelectedSubCatId] = useState<string | 'all'>('all');
+  const [isEditing, setIsEditing] = useState<Article | Partial<Article> | null>(null);
   const [isPreviewMode, setIsPreviewMode] = useState(false);
 
   const flatCats = flattenCategories(categories);
   const rootCategories = categories;
   const getSubCategories = (parentId: string): Category[] => {
-    const subs = flatCats.filter(c => c.parentId === parentId);
+    const subs = flatCats.filter((c) => c.parentId === parentId);
     let allSubs = [...subs];
-    subs.forEach(s => {
+    subs.forEach((s) => {
       allSubs = [...allSubs, ...getSubCategories(s.id)];
     });
     return allSubs;
   };
-  const activeSubCategories =
-    activeTabId !== 'all' ? getSubCategories(activeTabId) : [];
+  const activeSubCategories = activeTabId !== 'all' ? getSubCategories(activeTabId) : [];
 
   const filteredArticles =
     activeTabId === 'all' && selectedSubCatId === 'all'
       ? articles
-      : articles.filter(a => {
+      : articles.filter((a) => {
           if (selectedSubCatId !== 'all') return a.categoryId === selectedSubCatId;
           if (activeTabId !== 'all') {
-            const subIds = getSubCategories(activeTabId).map(c => c.id);
+            const subIds = getSubCategories(activeTabId).map((c) => c.id);
             return subIds.includes(a.categoryId) || a.categoryId === activeTabId;
           }
           return true;
@@ -68,10 +63,7 @@ export default function Articles() {
     setLoading(true);
     setError(null);
     try {
-      const [artsRes, cats] = await Promise.all([
-        fetchArticles({ all: true }),
-        fetchCategories(),
-      ]);
+      const [artsRes, cats] = await Promise.all([fetchArticles({ all: true }), fetchCategories()]);
       setArticles(artsRes.data);
       setCategories(cats);
     } catch (err) {
@@ -159,26 +151,21 @@ export default function Articles() {
         )}
 
         <form
-          onSubmit={e => {
+          onSubmit={(e) => {
             e.preventDefault();
             handleSaveArticle();
           }}
           className="bg-white p-6 rounded-2xl border border-zinc-200 shadow-sm space-y-6"
         >
           <div className="space-y-2">
-            <label
-              htmlFor="article-title"
-              className="text-sm font-medium text-zinc-700"
-            >
+            <label htmlFor="article-title" className="text-sm font-medium text-zinc-700">
               标题
             </label>
             <input
               id="article-title"
               required
               value={isEditing.title || ''}
-              onChange={e =>
-                setIsEditing({ ...isEditing, title: e.target.value })
-              }
+              onChange={(e) => setIsEditing({ ...isEditing, title: e.target.value })}
               className="w-full px-3 py-2 border border-zinc-300 rounded-lg focus:ring-2 focus:ring-zinc-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-900"
               placeholder="输入文章标题…"
             />
@@ -186,17 +173,14 @@ export default function Articles() {
 
           <div className="grid grid-cols-2 gap-6">
             <div className="space-y-2">
-              <label
-                htmlFor="article-category"
-                className="text-sm font-medium text-zinc-700"
-              >
+              <label htmlFor="article-category" className="text-sm font-medium text-zinc-700">
                 分类
               </label>
               <select
                 id="article-category"
                 required
                 value={isEditing.categoryId || ''}
-                onChange={e =>
+                onChange={(e) =>
                   setIsEditing({
                     ...isEditing,
                     categoryId: e.target.value,
@@ -207,7 +191,7 @@ export default function Articles() {
                 <option value="" disabled>
                   选择一个分类
                 </option>
-                {flatCats.map(c => (
+                {flatCats.map((c) => (
                   <option key={c.id} value={c.id}>
                     {c.name}
                   </option>
@@ -215,16 +199,13 @@ export default function Articles() {
               </select>
             </div>
             <div className="space-y-2">
-              <label
-                htmlFor="article-status"
-                className="text-sm font-medium text-zinc-700"
-              >
+              <label htmlFor="article-status" className="text-sm font-medium text-zinc-700">
                 状态
               </label>
               <select
                 id="article-status"
                 value={isEditing.status || 'draft'}
-                onChange={e =>
+                onChange={(e) =>
                   setIsEditing({
                     ...isEditing,
                     status: e.target.value as 'draft' | 'published',
@@ -240,10 +221,7 @@ export default function Articles() {
 
           <div className="space-y-2">
             <div className="flex items-center justify-between">
-              <label
-                htmlFor="article-content"
-                className="text-sm font-medium text-zinc-700"
-              >
+              <label htmlFor="article-content" className="text-sm font-medium text-zinc-700">
                 内容 (Markdown)
               </label>
               <div className="flex items-center gap-1 bg-zinc-100 p-1 rounded-lg">
@@ -281,9 +259,7 @@ export default function Articles() {
                   id="article-content"
                   required
                   value={isEditing.content || ''}
-                  onChange={e =>
-                    setIsEditing({ ...isEditing, content: e.target.value })
-                  }
+                  onChange={(e) => setIsEditing({ ...isEditing, content: e.target.value })}
                   className="w-full flex-1 p-4 focus:outline-none font-mono text-sm resize-y min-h-[400px] focus-visible:ring-2 focus-visible:ring-zinc-900 focus-visible:ring-inset"
                   placeholder="在此处编写 Markdown 内容…"
                 />
@@ -322,9 +298,7 @@ export default function Articles() {
   if (loading) {
     return (
       <div className="space-y-6">
-        <h2 className="text-4xl font-serif font-bold tracking-tight text-zinc-900">
-          文章管理
-        </h2>
+        <h2 className="text-4xl font-serif font-bold tracking-tight text-zinc-900">文章管理</h2>
         <p className="text-zinc-500">加载中…</p>
       </div>
     );
@@ -333,9 +307,7 @@ export default function Articles() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-4xl font-serif font-bold tracking-tight text-zinc-900">
-          文章管理
-        </h2>
+        <h2 className="text-4xl font-serif font-bold tracking-tight text-zinc-900">文章管理</h2>
         <button
           type="button"
           onClick={() =>
@@ -361,10 +333,7 @@ export default function Articles() {
       )}
 
       <div className="border-b border-zinc-200">
-        <nav
-          className="-mb-px flex space-x-6 overflow-x-auto"
-          aria-label="文章分类筛选"
-        >
+        <nav className="-mb-px flex space-x-6 overflow-x-auto" aria-label="文章分类筛选">
           <button
             type="button"
             onClick={() => {
@@ -380,7 +349,7 @@ export default function Articles() {
           >
             所有文章
           </button>
-          {rootCategories.map(cat => (
+          {rootCategories.map((cat) => (
             <button
               key={cat.id}
               type="button"
@@ -410,17 +379,13 @@ export default function Articles() {
           <select
             id="subcat-select"
             value={selectedSubCatId}
-            onChange={e =>
-              setSelectedSubCatId(
-                e.target.value === 'all' ? 'all' : e.target.value
-              )
-            }
+            onChange={(e) => setSelectedSubCatId(e.target.value === 'all' ? 'all' : e.target.value)}
             className="px-3 py-1.5 bg-white border border-zinc-200 rounded-lg text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-zinc-900 focus-visible:ring-2 focus-visible:ring-zinc-900"
           >
             <option value="all">
-              全部 {rootCategories.find(c => c.id === activeTabId)?.name}
+              全部 {rootCategories.find((c) => c.id === activeTabId)?.name}
             </option>
-            {activeSubCategories.map(cat => (
+            {activeSubCategories.map((cat) => (
               <option key={cat.id} value={cat.id}>
                 {cat.name}
               </option>
@@ -455,20 +420,12 @@ export default function Articles() {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-zinc-200">
-              {filteredArticles.map(article => (
-                <tr
-                  key={article.id}
-                  className="hover:bg-zinc-50 transition-colors"
-                >
+              {filteredArticles.map((article) => (
+                <tr key={article.id} className="hover:bg-zinc-50 transition-colors">
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center gap-3">
-                      <FileText
-                        className="w-4 h-4 text-zinc-400 shrink-0"
-                        aria-hidden
-                      />
-                      <span className="font-medium text-zinc-900">
-                        {article.title}
-                      </span>
+                      <FileText className="w-4 h-4 text-zinc-400 shrink-0" aria-hidden />
+                      <span className="font-medium text-zinc-900">{article.title}</span>
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-zinc-500">
@@ -516,10 +473,7 @@ export default function Articles() {
               ))}
               {filteredArticles.length === 0 && (
                 <tr>
-                  <td
-                    colSpan={6}
-                    className="px-6 py-12 text-center text-zinc-500"
-                  >
+                  <td colSpan={6} className="px-6 py-12 text-center text-zinc-500">
                     暂无文章
                   </td>
                 </tr>

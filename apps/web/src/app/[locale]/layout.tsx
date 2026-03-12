@@ -10,8 +10,7 @@ import '@/app/globals.css';
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
 const siteName = process.env.NEXT_PUBLIC_SITE_NAME || 'jiuyuan.blog';
 const siteDescription =
-  process.env.NEXT_PUBLIC_SITE_DESCRIPTION ||
-  '关于 Web 开发和人工智能的思考、教程与见解。';
+  process.env.NEXT_PUBLIC_SITE_DESCRIPTION || '关于 Web 开发和人工智能的思考、教程与见解。';
 const twitterHandle = process.env.NEXT_PUBLIC_TWITTER_HANDLE || '@jiuyuanblog';
 
 export const viewport: Viewport = {
@@ -26,7 +25,7 @@ export const viewport: Viewport = {
 };
 
 export function generateStaticParams() {
-  return locales.map(locale => ({ locale }));
+  return locales.map((locale) => ({ locale }));
 }
 
 export async function generateMetadata({

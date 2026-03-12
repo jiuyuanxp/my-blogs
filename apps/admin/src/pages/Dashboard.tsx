@@ -12,12 +12,7 @@ import {
 } from 'recharts';
 import { format, parseISO } from 'date-fns';
 import { Eye, FilePlus, MessageCircle, Trash2 } from 'lucide-react';
-import {
-  fetchStatsSummary,
-  fetchPopularViews,
-  fetchPopularComments,
-  isApiError,
-} from '@/lib/api';
+import { fetchStatsSummary, fetchPopularViews, fetchPopularComments, isApiError } from '@/lib/api';
 
 export default function Dashboard() {
   const [period, setPeriod] = useState<'day' | 'month' | 'year'>('day');
@@ -27,9 +22,9 @@ export default function Dashboard() {
     deletes: { date: string; count: number }[];
     comments: { date: string; count: number }[];
   } | null>(null);
-  const [popularViews, setPopularViews] = useState<
-    { id: string; title: string; views: number }[]
-  >([]);
+  const [popularViews, setPopularViews] = useState<{ id: string; title: string; views: number }[]>(
+    []
+  );
   const [popularComments, setPopularComments] = useState<
     { id: string; title: string; commentCount: number }[]
   >([]);
@@ -53,7 +48,7 @@ export default function Dashboard() {
         setError(isApiError(err) || err instanceof Error ? err.message : '加载失败');
       } finally {
         setLoading(false);
-    }
+      }
     };
     load();
   }, [period]);
@@ -72,7 +67,7 @@ export default function Dashboard() {
       series: { date: string; count: number }[],
       key: keyof Omit<ChartPoint, 'date'>
     ) => {
-      series.forEach(item => {
+      series.forEach((item) => {
         const existing = map.get(item.date) || { date: item.date };
         existing[key] = item.count;
         map.set(item.date, existing);
@@ -82,9 +77,7 @@ export default function Dashboard() {
     process(stats.adds, 'adds');
     process(stats.deletes, 'deletes');
     process(stats.comments, 'comments');
-    return Array.from(map.values()).sort((a, b) =>
-      a.date.localeCompare(b.date)
-    );
+    return Array.from(map.values()).sort((a, b) => a.date.localeCompare(b.date));
   }, [stats]);
 
   const totals = useMemo(
@@ -124,9 +117,7 @@ export default function Dashboard() {
           role="status"
           aria-live="polite"
         >
-          <p className="text-sm font-medium text-zinc-900 mb-2">
-            {formatXAxis(label)}
-          </p>
+          <p className="text-sm font-medium text-zinc-900 mb-2">{formatXAxis(label)}</p>
           {payload.map((entry, index) => (
             <div key={index} className="flex items-center gap-2 text-sm">
               <div
@@ -134,9 +125,7 @@ export default function Dashboard() {
                 style={{ backgroundColor: entry.color }}
               />
               <span className="text-zinc-600">{entry.name}:</span>
-              <span className="font-medium text-zinc-900 tabular-nums">
-                {entry.value}
-              </span>
+              <span className="font-medium text-zinc-900 tabular-nums">{entry.value}</span>
             </div>
           ))}
         </div>
@@ -148,9 +137,7 @@ export default function Dashboard() {
   if (loading && !stats) {
     return (
       <div className="space-y-8">
-        <h2 className="text-4xl font-serif font-bold tracking-tight text-zinc-900">
-          仪表盘
-        </h2>
+        <h2 className="text-4xl font-serif font-bold tracking-tight text-zinc-900">仪表盘</h2>
         <p className="text-zinc-500">加载中…</p>
       </div>
     );
@@ -159,16 +146,14 @@ export default function Dashboard() {
   return (
     <div className="space-y-8">
       <div className="flex items-center justify-between">
-        <h2 className="text-4xl font-serif font-bold tracking-tight text-zinc-900">
-          仪表盘
-        </h2>
+        <h2 className="text-4xl font-serif font-bold tracking-tight text-zinc-900">仪表盘</h2>
         <label htmlFor="period-select" className="sr-only">
           统计周期
         </label>
         <select
           id="period-select"
           value={period}
-          onChange={e => setPeriod(e.target.value as 'day' | 'month' | 'year')}
+          onChange={(e) => setPeriod(e.target.value as 'day' | 'month' | 'year')}
           className="px-3 py-1.5 bg-white border border-zinc-200 rounded-lg text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-zinc-900 focus-visible:ring-2 focus-visible:ring-zinc-900"
           aria-label="选择统计周期"
         >
@@ -195,9 +180,7 @@ export default function Dashboard() {
           </div>
           <div className="min-w-0">
             <p className="text-sm font-medium text-zinc-500">总浏览量</p>
-            <p className="text-2xl font-semibold text-zinc-900 tabular-nums">
-              {totals.views}
-            </p>
+            <p className="text-2xl font-semibold text-zinc-900 tabular-nums">{totals.views}</p>
           </div>
         </div>
         <div className="bg-white p-6 rounded-2xl border border-zinc-200 shadow-sm flex items-center gap-4">
@@ -206,9 +189,7 @@ export default function Dashboard() {
           </div>
           <div className="min-w-0">
             <p className="text-sm font-medium text-zinc-500">新增文章</p>
-            <p className="text-2xl font-semibold text-zinc-900 tabular-nums">
-              {totals.adds}
-            </p>
+            <p className="text-2xl font-semibold text-zinc-900 tabular-nums">{totals.adds}</p>
           </div>
         </div>
         <div className="bg-white p-6 rounded-2xl border border-zinc-200 shadow-sm flex items-center gap-4">
@@ -217,9 +198,7 @@ export default function Dashboard() {
           </div>
           <div className="min-w-0">
             <p className="text-sm font-medium text-zinc-500">新增评论</p>
-            <p className="text-2xl font-semibold text-zinc-900 tabular-nums">
-              {totals.comments}
-            </p>
+            <p className="text-2xl font-semibold text-zinc-900 tabular-nums">{totals.comments}</p>
           </div>
         </div>
         <div className="bg-white p-6 rounded-2xl border border-zinc-200 shadow-sm flex items-center gap-4">
@@ -228,9 +207,7 @@ export default function Dashboard() {
           </div>
           <div className="min-w-0">
             <p className="text-sm font-medium text-zinc-500">删除文章</p>
-            <p className="text-2xl font-semibold text-zinc-900 tabular-nums">
-              {totals.deletes}
-            </p>
+            <p className="text-2xl font-semibold text-zinc-900 tabular-nums">{totals.deletes}</p>
           </div>
         </div>
       </div>
@@ -241,29 +218,19 @@ export default function Dashboard() {
           className="bg-white p-6 rounded-2xl border border-zinc-200 shadow-sm"
           aria-labelledby="views-chart-title"
         >
-          <h3
-            id="views-chart-title"
-            className="text-base font-medium mb-6 text-zinc-800"
-          >
+          <h3 id="views-chart-title" className="text-base font-medium mb-6 text-zinc-800">
             浏览量趋势
           </h3>
           <div className="h-[250px] w-full">
             <ResponsiveContainer width="100%" height="100%">
-              <AreaChart
-                data={chartData}
-                margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
-              >
+              <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                 <defs>
                   <linearGradient id="colorViews" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3} />
                     <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
                   </linearGradient>
                 </defs>
-                <CartesianGrid
-                  strokeDasharray="3 3"
-                  vertical={false}
-                  stroke="#e4e4e7"
-                />
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e4e4e7" />
                 <XAxis
                   dataKey="date"
                   tickFormatter={formatXAxis}
@@ -271,11 +238,7 @@ export default function Dashboard() {
                   axisLine={false}
                   tickLine={false}
                 />
-                <YAxis
-                  tick={{ fontSize: 12, fill: '#71717a' }}
-                  axisLine={false}
-                  tickLine={false}
-                />
+                <YAxis tick={{ fontSize: 12, fill: '#71717a' }} axisLine={false} tickLine={false} />
                 <Tooltip content={<CustomTooltip />} />
                 <Area
                   type="monotone"
@@ -295,23 +258,13 @@ export default function Dashboard() {
           className="bg-white p-6 rounded-2xl border border-zinc-200 shadow-sm"
           aria-labelledby="adds-chart-title"
         >
-          <h3
-            id="adds-chart-title"
-            className="text-base font-medium mb-6 text-zinc-800"
-          >
+          <h3 id="adds-chart-title" className="text-base font-medium mb-6 text-zinc-800">
             新增文章趋势
           </h3>
           <div className="h-[250px] w-full">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart
-                data={chartData}
-                margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
-              >
-                <CartesianGrid
-                  strokeDasharray="3 3"
-                  vertical={false}
-                  stroke="#e4e4e7"
-                />
+              <BarChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e4e4e7" />
                 <XAxis
                   dataKey="date"
                   tickFormatter={formatXAxis}
@@ -319,18 +272,9 @@ export default function Dashboard() {
                   axisLine={false}
                   tickLine={false}
                 />
-                <YAxis
-                  tick={{ fontSize: 12, fill: '#71717a' }}
-                  axisLine={false}
-                  tickLine={false}
-                />
+                <YAxis tick={{ fontSize: 12, fill: '#71717a' }} axisLine={false} tickLine={false} />
                 <Tooltip content={<CustomTooltip />} />
-                <Bar
-                  dataKey="adds"
-                  name="新增文章"
-                  fill="#10b981"
-                  radius={[4, 4, 0, 0]}
-                />
+                <Bar dataKey="adds" name="新增文章" fill="#10b981" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -340,35 +284,19 @@ export default function Dashboard() {
           className="bg-white p-6 rounded-2xl border border-zinc-200 shadow-sm"
           aria-labelledby="comments-chart-title"
         >
-          <h3
-            id="comments-chart-title"
-            className="text-base font-medium mb-6 text-zinc-800"
-          >
+          <h3 id="comments-chart-title" className="text-base font-medium mb-6 text-zinc-800">
             新增评论趋势
           </h3>
           <div className="h-[250px] w-full">
             <ResponsiveContainer width="100%" height="100%">
-              <AreaChart
-                data={chartData}
-                margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
-              >
+              <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                 <defs>
-                  <linearGradient
-                    id="colorComments"
-                    x1="0"
-                    y1="0"
-                    x2="0"
-                    y2="1"
-                  >
+                  <linearGradient id="colorComments" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="5%" stopColor="#f59e0b" stopOpacity={0.3} />
                     <stop offset="95%" stopColor="#f59e0b" stopOpacity={0} />
                   </linearGradient>
                 </defs>
-                <CartesianGrid
-                  strokeDasharray="3 3"
-                  vertical={false}
-                  stroke="#e4e4e7"
-                />
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e4e4e7" />
                 <XAxis
                   dataKey="date"
                   tickFormatter={formatXAxis}
@@ -376,11 +304,7 @@ export default function Dashboard() {
                   axisLine={false}
                   tickLine={false}
                 />
-                <YAxis
-                  tick={{ fontSize: 12, fill: '#71717a' }}
-                  axisLine={false}
-                  tickLine={false}
-                />
+                <YAxis tick={{ fontSize: 12, fill: '#71717a' }} axisLine={false} tickLine={false} />
                 <Tooltip content={<CustomTooltip />} />
                 <Area
                   type="monotone"
@@ -400,23 +324,13 @@ export default function Dashboard() {
           className="bg-white p-6 rounded-2xl border border-zinc-200 shadow-sm"
           aria-labelledby="deletes-chart-title"
         >
-          <h3
-            id="deletes-chart-title"
-            className="text-base font-medium mb-6 text-zinc-800"
-          >
+          <h3 id="deletes-chart-title" className="text-base font-medium mb-6 text-zinc-800">
             删除文章趋势
           </h3>
           <div className="h-[250px] w-full">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart
-                data={chartData}
-                margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
-              >
-                <CartesianGrid
-                  strokeDasharray="3 3"
-                  vertical={false}
-                  stroke="#e4e4e7"
-                />
+              <BarChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e4e4e7" />
                 <XAxis
                   dataKey="date"
                   tickFormatter={formatXAxis}
@@ -424,18 +338,9 @@ export default function Dashboard() {
                   axisLine={false}
                   tickLine={false}
                 />
-                <YAxis
-                  tick={{ fontSize: 12, fill: '#71717a' }}
-                  axisLine={false}
-                  tickLine={false}
-                />
+                <YAxis tick={{ fontSize: 12, fill: '#71717a' }} axisLine={false} tickLine={false} />
                 <Tooltip content={<CustomTooltip />} />
-                <Bar
-                  dataKey="deletes"
-                  name="删除文章"
-                  fill="#ef4444"
-                  radius={[4, 4, 0, 0]}
-                />
+                <Bar dataKey="deletes" name="删除文章" fill="#ef4444" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -453,17 +358,12 @@ export default function Dashboard() {
           <div className="space-y-4">
             {popularViews.length > 0 ? (
               popularViews.map((article, i) => (
-                <div
-                  key={article.id}
-                  className="flex items-center justify-between gap-3"
-                >
+                <div key={article.id} className="flex items-center justify-between gap-3">
                   <div className="flex items-center gap-3 min-w-0">
                     <span className="text-sm font-mono text-zinc-400 w-4 shrink-0 tabular-nums">
                       {i + 1}.
                     </span>
-                    <span className="font-medium text-zinc-700 truncate">
-                      {article.title}
-                    </span>
+                    <span className="font-medium text-zinc-700 truncate">{article.title}</span>
                   </div>
                   <span className="text-sm text-zinc-500 bg-zinc-100 px-2 py-1 rounded-md shrink-0 tabular-nums">
                     {article.views} 次浏览
@@ -486,17 +386,12 @@ export default function Dashboard() {
           <div className="space-y-4">
             {popularComments.length > 0 ? (
               popularComments.map((article, i) => (
-                <div
-                  key={article.id}
-                  className="flex items-center justify-between gap-3"
-                >
+                <div key={article.id} className="flex items-center justify-between gap-3">
                   <div className="flex items-center gap-3 min-w-0">
                     <span className="text-sm font-mono text-zinc-400 w-4 shrink-0 tabular-nums">
                       {i + 1}.
                     </span>
-                    <span className="font-medium text-zinc-700 truncate">
-                      {article.title}
-                    </span>
+                    <span className="font-medium text-zinc-700 truncate">{article.title}</span>
                   </div>
                   <span className="text-sm text-zinc-500 bg-zinc-100 px-2 py-1 rounded-md shrink-0 tabular-nums">
                     {article.commentCount} 条评论

@@ -4,12 +4,7 @@
  * 以 Java 后端字段为准（camelCase），ID 统一为 string 避免精度丢失
  */
 
-import {
-  createClient,
-  ApiError,
-  isApiError,
-  normalizeIds,
-} from '@blog/api-client';
+import { createClient, ApiError, isApiError, normalizeIds } from '@blog/api-client';
 
 const API_BASE =
   (typeof import.meta !== 'undefined' &&
@@ -44,7 +39,7 @@ const api = createClient({
 });
 
 function normalizeList<T extends object>(arr: T[]): T[] {
-  return arr.map(item => normalizeIds(item));
+  return arr.map((item) => normalizeIds(item));
 }
 
 // --- Auth ---
@@ -92,10 +87,7 @@ export async function fetchCategories(): Promise<Category[]> {
   return list.map(normalizeCategory);
 }
 
-export async function createCategory(
-  name: string,
-  parentId: string | null
-): Promise<Category> {
+export async function createCategory(name: string, parentId: string | null): Promise<Category> {
   const body = parentId ? { name, parentId: Number(parentId) } : { name, parentId: null };
   const res = await api.post<Category>('/api/categories', body);
   return normalizeIds(res);
@@ -220,10 +212,9 @@ export async function fetchComments(params?: {
   if (params?.categoryId) q.set('categoryId', params.categoryId ?? '');
   if (params?.page) q.set('page', String(params.page ?? 1));
   if (params?.pageSize) q.set('pageSize', String(params.pageSize ?? 20));
-  const res = await api.request<PageResponse<Comment> | Comment[]>(
-    `/api/comments?${q}`,
-    { method: 'GET' }
-  );
+  const res = await api.request<PageResponse<Comment> | Comment[]>(`/api/comments?${q}`, {
+    method: 'GET',
+  });
   const list = Array.isArray(res) ? res : res.data;
   const normalized = normalizeList(list);
   if (Array.isArray(res)) {
@@ -277,17 +268,11 @@ export async function fetchStatsSummary(
 }
 
 export async function fetchPopularViews(limit = 10): Promise<PopularArticle[]> {
-  const list = await api.get<PopularArticle[]>(
-    `/api/stats/popular-views?limit=${limit}`
-  );
+  const list = await api.get<PopularArticle[]>(`/api/stats/popular-views?limit=${limit}`);
   return normalizeList(list);
 }
 
-export async function fetchPopularComments(
-  limit = 10
-): Promise<PopularComment[]> {
-  const list = await api.get<PopularComment[]>(
-    `/api/stats/popular-comments?limit=${limit}`
-  );
+export async function fetchPopularComments(limit = 10): Promise<PopularComment[]> {
+  const list = await api.get<PopularComment[]>(`/api/stats/popular-comments?limit=${limit}`);
   return normalizeList(list);
 }

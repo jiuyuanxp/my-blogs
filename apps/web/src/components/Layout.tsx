@@ -41,17 +41,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 type="button"
                 onClick={toggleTheme}
                 className="p-2.5 rounded-full hover:bg-stone-100 dark:hover:bg-stone-800 text-stone-500 dark:text-stone-400 transition-colors focus-visible:outline focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
-                aria-label={
-                  theme === 'light'
-                    ? 'Switch to dark mode'
-                    : 'Switch to light mode'
-                }
+                aria-label={theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'}
               >
-                {theme === 'light' ? (
-                  <Moon size={18} aria-hidden />
-                ) : (
-                  <Sun size={18} aria-hidden />
-                )}
+                {theme === 'light' ? <Moon size={18} aria-hidden /> : <Sun size={18} aria-hidden />}
               </button>
               <LanguageSwitcher />
             </div>

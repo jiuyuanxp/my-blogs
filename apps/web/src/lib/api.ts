@@ -7,9 +7,7 @@
 import { createClient, normalizeIds } from '@blog/api-client';
 
 const API_BASE =
-  (typeof process !== 'undefined' &&
-    process.env?.NEXT_PUBLIC_API_BASE) ||
-  'http://localhost:4300';
+  (typeof process !== 'undefined' && process.env?.NEXT_PUBLIC_API_BASE) || 'http://localhost:4300';
 
 const api = createClient({
   baseUrl: API_BASE,
@@ -17,7 +15,7 @@ const api = createClient({
 });
 
 function normalizeList<T extends object>(arr: T[]): T[] {
-  return arr.map(item => normalizeIds(item));
+  return arr.map((item) => normalizeIds(item));
 }
 
 // --- Categories ---
@@ -78,13 +76,8 @@ export async function fetchArticles(params?: {
   return { ...res, data: normalizeList(res.data) };
 }
 
-export async function fetchArticle(
-  id: string,
-  incrementView = false
-): Promise<Article> {
-  const res = await api.get<Article>(
-    `/api/articles/${id}?incrementView=${incrementView}`
-  );
+export async function fetchArticle(id: string, incrementView = false): Promise<Article> {
+  const res = await api.get<Article>(`/api/articles/${id}?incrementView=${incrementView}`);
   return normalizeIds(res);
 }
 
@@ -98,12 +91,8 @@ export interface Comment {
   createdAt: string;
 }
 
-export async function fetchCommentsByArticle(
-  articleId: string
-): Promise<Comment[]> {
-  const res = await api.get<Comment[]>(
-    `/api/comments?articleId=${articleId}`
-  );
+export async function fetchCommentsByArticle(articleId: string): Promise<Comment[]> {
+  const res = await api.get<Comment[]>(`/api/comments?articleId=${articleId}`);
   return Array.isArray(res) ? normalizeList(res) : [];
 }
 

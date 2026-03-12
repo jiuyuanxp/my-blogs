@@ -17,11 +17,15 @@ function getLocaleFromPath(pathname: string): 'zh' | 'en' {
   return loc === 'en' ? 'en' : 'zh';
 }
 
-function toCategoryNodes(cats: { id: string; name: string; children?: unknown[] }[]): CategoryNode[] {
-  return cats.map(c => ({
+function toCategoryNodes(
+  cats: { id: string; name: string; children?: unknown[] }[]
+): CategoryNode[] {
+  return cats.map((c) => ({
     id: c.id,
     name: c.name,
-    children: c.children?.length ? toCategoryNodes(c.children as { id: string; name: string; children?: unknown[] }[]) : undefined,
+    children: c.children?.length
+      ? toCategoryNodes(c.children as { id: string; name: string; children?: unknown[] }[])
+      : undefined,
   }));
 }
 
@@ -85,7 +89,7 @@ export default function HomePage() {
   const filteredArticles =
     selectedCategoryId === 'all'
       ? articles
-      : articles.filter(a => {
+      : articles.filter((a) => {
           const cat = findCategoryById(categories, selectedCategoryId);
           if (!cat) return a.categoryId === selectedCategoryId;
           const ids = getCategoryIdsIncludingChildren(cat);
@@ -102,7 +106,7 @@ export default function HomePage() {
   const displayCategory =
     selectedCategoryId === 'all'
       ? tCommon('all')
-      : findCategoryById(categories, selectedCategoryId)?.name ?? selectedCategoryId;
+      : (findCategoryById(categories, selectedCategoryId)?.name ?? selectedCategoryId);
 
   return (
     <div className="space-y-12">
@@ -147,7 +151,7 @@ export default function HomePage() {
               <CategoryTree
                 categories={categoryTree}
                 selectedCategoryId={selectedCategoryId}
-                onSelectCategory={id => {
+                onSelectCategory={(id) => {
                   setSelectedCategoryId(id);
                   setIsSidebarOpen(false);
                 }}
@@ -164,12 +168,10 @@ export default function HomePage() {
             </div>
           ) : sortedArticles.length === 0 ? (
             <div className="text-center py-32 text-stone-400 dark:text-stone-600 bg-stone-50 dark:bg-stone-900/30 rounded-3xl border border-dashed border-stone-200 dark:border-stone-800">
-              <p className="text-lg font-serif italic">
-                {tCommon('noArticlesInCategory')}
-              </p>
+              <p className="text-lg font-serif italic">{tCommon('noArticlesInCategory')}</p>
             </div>
           ) : (
-            sortedArticles.map(article => (
+            sortedArticles.map((article) => (
               <Link
                 key={article.id}
                 href={articleLink(article)}

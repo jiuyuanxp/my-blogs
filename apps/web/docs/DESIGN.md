@@ -31,12 +31,12 @@
 
 ## 页面与 API 映射
 
-| 页面 | 主要 API |
-|------|----------|
-| 首页（文章列表） | GET /api/articles, GET /api/categories |
-| 文章详情 | GET /api/articles/:id, GET /api/comments?articleId= |
-| 分类页 | GET /api/articles?categoryId=, GET /api/categories |
-| 发表评论 | POST /api/comments |
+| 页面             | 主要 API                                            |
+| ---------------- | --------------------------------------------------- |
+| 首页（文章列表） | GET /api/articles, GET /api/categories              |
+| 文章详情         | GET /api/articles/:id, GET /api/comments?articleId= |
+| 分类页           | GET /api/articles?categoryId=, GET /api/categories  |
+| 发表评论         | POST /api/comments                                  |
 
 ## 类型定义
 

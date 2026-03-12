@@ -20,13 +20,7 @@ import ProjectInfo from './pages/ProjectInfo';
 import { cn } from './lib/utils';
 import { getToken, logout as apiLogout, checkAuth } from './lib/api';
 
-type Tab =
-  | 'dashboard'
-  | 'categories'
-  | 'articles'
-  | 'comments'
-  | 'design'
-  | 'about';
+type Tab = 'dashboard' | 'categories' | 'articles' | 'comments' | 'design' | 'about';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<Tab>('dashboard');
@@ -38,7 +32,7 @@ export default function App() {
 
   useEffect(() => {
     if (isAuthenticated && getToken()) {
-      checkAuth().then(valid => {
+      checkAuth().then((valid) => {
         setIsCheckingAuth(false);
         if (!valid) setIsAuthenticated(false);
       });
@@ -80,9 +74,7 @@ export default function App() {
     <div className="flex h-screen bg-[#fcfcfc] text-zinc-900 font-sans overflow-hidden">
       {/* Mobile Header */}
       <header className="lg:hidden fixed top-0 left-0 right-0 h-16 bg-[#0a0a0a] text-white flex items-center justify-between px-4 z-40 border-b border-zinc-900">
-        <h1 className="text-xl font-serif font-bold tracking-tight">
-          博客管理
-        </h1>
+        <h1 className="text-xl font-serif font-bold tracking-tight">博客管理</h1>
         <button
           type="button"
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -103,7 +95,7 @@ export default function App() {
         <div
           className="fixed inset-0 bg-black/50 z-40 lg:hidden backdrop-blur-sm"
           onClick={() => setIsMobileMenuOpen(false)}
-          onKeyDown={e => e.key === 'Escape' && setIsMobileMenuOpen(false)}
+          onKeyDown={(e) => e.key === 'Escape' && setIsMobileMenuOpen(false)}
           role="presentation"
           aria-hidden
         />
@@ -119,12 +111,10 @@ export default function App() {
         aria-label="主导航"
       >
         <div className="p-6 border-b border-white/5 hidden lg:block">
-          <h1 className="text-2xl font-serif font-bold tracking-tight text-white">
-            博客管理
-          </h1>
+          <h1 className="text-2xl font-serif font-bold tracking-tight text-white">博客管理</h1>
         </div>
         <nav className="flex-1 p-4 space-y-1 overflow-y-auto mt-16 lg:mt-0">
-          {navItems.map(item => {
+          {navItems.map((item) => {
             const Icon = item.icon;
             return (
               <button

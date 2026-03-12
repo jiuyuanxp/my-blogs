@@ -13,7 +13,7 @@ export function detectLocale(acceptLanguage: string | null): Locale {
   // 解析 Accept-Language 头
   const languages = acceptLanguage
     .split(',')
-    .map(lang => {
+    .map((lang) => {
       const [code, quality = '1'] = lang.trim().split(';q=');
       return {
         code: code.toLowerCase().split('-')[0],

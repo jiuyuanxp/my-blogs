@@ -89,7 +89,7 @@ export function escapeHtml(str: string): string {
     '"': '&quot;',
     "'": '&#039;',
   };
-  return str.replace(/[&<>"']/g, char => htmlMap[char]);
+  return str.replace(/[&<>"']/g, (char) => htmlMap[char]);
 }
 
 export function unescapeHtml(str: string): string {
@@ -100,7 +100,7 @@ export function unescapeHtml(str: string): string {
     '&quot;': '"',
     '&#039;': "'",
   };
-  return str.replace(/&amp;|&lt;|&gt;|&quot;|&#039;/g, char => htmlMap[char]);
+  return str.replace(/&amp;|&lt;|&gt;|&quot;|&#039;/g, (char) => htmlMap[char]);
 }
 
 export function generateId(prefix = 'id-'): string {
@@ -133,7 +133,7 @@ export function throttle<T extends (...args: any[]) => any>(
 }
 
 export async function asyncSleep(ms: number): Promise<void> {
-  return new Promise(resolve => setTimeout(resolve, ms));
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 export function isValidEmail(email: string): boolean {
@@ -179,9 +179,7 @@ export function getQueryString(url: string): Record<string, string> {
   return params;
 }
 
-export function buildQueryString(
-  params: Record<string, string | number | boolean>
-): string {
+export function buildQueryString(params: Record<string, string | number | boolean>): string {
   const searchParams = new URLSearchParams();
   Object.entries(params).forEach(([key, value]) => {
     searchParams.append(key, String(value));

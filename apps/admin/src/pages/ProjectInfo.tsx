@@ -4,12 +4,9 @@ export default function ProjectInfo() {
   return (
     <div className="space-y-12 max-w-5xl pb-12">
       <div className="border-b border-zinc-200 pb-6">
-        <h2 className="text-4xl font-serif font-bold tracking-tight text-zinc-900">
-          项目说明
-        </h2>
+        <h2 className="text-4xl font-serif font-bold tracking-tight text-zinc-900">项目说明</h2>
         <p className="mt-4 text-lg text-zinc-500 max-w-2xl">
-          博客管理前端专注于极简、高效的内容创作体验，采用现代化的 Web
-          技术栈与精致的 UI/UX 设计。
+          博客管理前端专注于极简、高效的内容创作体验，采用现代化的 Web 技术栈与精致的 UI/UX 设计。
         </p>
       </div>
 
@@ -93,8 +90,7 @@ export default function ProjectInfo() {
             </li>
             <li>
               <strong>圆润与亲和力 (Softness)：</strong>
-              全局采用 rounded-2xl
-              的大圆角设计，配合柔和的阴影，使界面更加平易近人。
+              全局采用 rounded-2xl 的大圆角设计，配合柔和的阴影，使界面更加平易近人。
             </li>
           </ul>
         </div>

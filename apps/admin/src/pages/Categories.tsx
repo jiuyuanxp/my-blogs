@@ -15,9 +15,7 @@ export default function Categories() {
   const [error, setError] = useState<string | null>(null);
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
   const [isEditing, setIsEditing] = useState<Category | null>(null);
-  const [isAdding, setIsAdding] = useState<{ parentId: string | null } | null>(
-    null
-  );
+  const [isAdding, setIsAdding] = useState<{ parentId: string | null } | null>(null);
   const [formName, setFormName] = useState('');
 
   const load = async () => {
@@ -38,7 +36,7 @@ export default function Categories() {
   }, []);
 
   const toggleExpand = (id: string) => {
-    setExpanded(prev => {
+    setExpanded((prev) => {
       const next = new Set(prev);
       if (next.has(id)) next.delete(id);
       else next.add(id);
@@ -76,7 +74,7 @@ export default function Categories() {
   };
 
   const renderTree = (nodes: Category[], level = 0) => {
-    return nodes.map(node => {
+    return nodes.map((node) => {
       const isExpanded = expanded.has(node.id);
       const hasChildren = node.children && node.children.length > 0;
 
@@ -111,8 +109,8 @@ export default function Categories() {
                     id="edit-cat-name"
                     autoFocus
                     value={formName}
-                    onChange={e => setFormName(e.target.value)}
-                    onKeyDown={e => e.key === 'Enter' && handleSave()}
+                    onChange={(e) => setFormName(e.target.value)}
+                    onKeyDown={(e) => e.key === 'Enter' && handleSave()}
                     className="px-2 py-1 border border-zinc-300 rounded text-sm focus:ring-2 focus:ring-zinc-900 focus:outline-none"
                   />
                   <button
@@ -172,9 +170,7 @@ export default function Categories() {
             </div>
           </div>
 
-          {isExpanded && hasChildren && (
-            <div>{renderTree(node.children!, level + 1)}</div>
-          )}
+          {isExpanded && hasChildren && <div>{renderTree(node.children!, level + 1)}</div>}
         </div>
       );
     });
@@ -183,9 +179,7 @@ export default function Categories() {
   if (loading) {
     return (
       <div className="space-y-6">
-        <h2 className="text-4xl font-serif font-bold tracking-tight text-zinc-900">
-          分类管理
-        </h2>
+        <h2 className="text-4xl font-serif font-bold tracking-tight text-zinc-900">分类管理</h2>
         <p className="text-zinc-500">加载中…</p>
       </div>
     );
@@ -194,9 +188,7 @@ export default function Categories() {
   return (
     <div className="space-y-6 max-w-3xl">
       <div className="flex items-center justify-between">
-        <h2 className="text-4xl font-serif font-bold tracking-tight text-zinc-900">
-          分类管理
-        </h2>
+        <h2 className="text-4xl font-serif font-bold tracking-tight text-zinc-900">分类管理</h2>
         <button
           type="button"
           onClick={() => {
@@ -230,8 +222,8 @@ export default function Categories() {
               autoFocus
               placeholder="新分类名称…"
               value={formName}
-              onChange={e => setFormName(e.target.value)}
-              onKeyDown={e => e.key === 'Enter' && handleSave()}
+              onChange={(e) => setFormName(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && handleSave()}
               className="px-3 py-1.5 border border-zinc-300 rounded-md text-sm flex-1 focus:ring-2 focus:ring-zinc-900 focus:outline-none"
             />
             <button
@@ -254,9 +246,7 @@ export default function Categories() {
         {categories.length > 0 ? (
           <div className="space-y-1">{renderTree(categories)}</div>
         ) : (
-          <div className="text-center py-8 text-zinc-500">
-            暂无分类，请先创建一个分类。
-          </div>
+          <div className="text-center py-8 text-zinc-500">暂无分类，请先创建一个分类。</div>
         )}
       </div>
     </div>

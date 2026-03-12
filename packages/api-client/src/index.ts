@@ -95,19 +95,16 @@ export function normalizeIds<T extends object>(
 }
 
 export function createClient(options: CreateClientOptions) {
-  const {
-    baseUrl,
-    getToken,
-    onUnauthorized,
-    defaultTimeout = 10000,
-  } = options;
+  const { baseUrl, getToken, onUnauthorized, defaultTimeout = 10000 } = options;
 
   async function request<T>(
     path: string,
     init: RequestInit = {},
     config: RequestConfig = {}
   ): Promise<T> {
-    const url = path.startsWith('http') ? path : `${baseUrl.replace(/\/$/, '')}${path.startsWith('/') ? path : `/${path}`}`;
+    const url = path.startsWith('http')
+      ? path
+      : `${baseUrl.replace(/\/$/, '')}${path.startsWith('/') ? path : `/${path}`}`;
     const timeout = config.timeout ?? defaultTimeout;
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), timeout);
@@ -157,8 +154,7 @@ export function createClient(options: CreateClientOptions) {
 
   return {
     request,
-    get: <T>(path: string, config?: RequestConfig) =>
-      request<T>(path, { method: 'GET' }, config),
+    get: <T>(path: string, config?: RequestConfig) => request<T>(path, { method: 'GET' }, config),
     post: <T>(path: string, body?: unknown, config?: RequestConfig) =>
       request<T>(path, { method: 'POST', body: body ? JSON.stringify(body) : undefined }, config),
     put: <T>(path: string, body?: unknown, config?: RequestConfig) =>

@@ -9,18 +9,18 @@
 
 ## 环境配置
 
-| 变量 | 说明 |
-|------|------|
+| 变量                   | 说明                                      |
+| ---------------------- | ----------------------------------------- |
 | `NEXT_PUBLIC_API_BASE` | 后端 API 地址，如 `http://localhost:4300` |
 
 ## 使用的接口（均公开，无需认证）
 
-| 页面 | 接口 |
-|------|------|
+| 页面          | 接口                                   |
+| ------------- | -------------------------------------- |
 | 首页 / 分类页 | GET /api/articles, GET /api/categories |
-| 文章详情 | GET /api/articles/:id |
-| 评论列表 | GET /api/comments?articleId=xxx |
-| 发表评论 | POST /api/comments |
+| 文章详情      | GET /api/articles/:id                  |
+| 评论列表      | GET /api/comments?articleId=xxx        |
+| 发表评论      | POST /api/comments                     |
 
 ## 评论作者
 

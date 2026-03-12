@@ -21,7 +21,7 @@ interface CategoryNode {
 }
 
 function toNodes(cats: Category[]): CategoryNode[] {
-  return cats.map(c => ({
+  return cats.map((c) => ({
     id: c.id,
     name: c.name,
     children: c.children?.length ? toNodes(c.children) : undefined,
@@ -96,7 +96,7 @@ export default function CategoryPage() {
         </div>
       ) : (
         <div className="grid gap-8 md:grid-cols-2">
-          {articles.map(article => (
+          {articles.map((article) => (
             <Link
               key={article.id}
               href={`/${locale}/article/${article.id}`}

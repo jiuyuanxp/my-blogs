@@ -1,14 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import {
-  ChevronRight,
-  ChevronDown,
-  Folder,
-  FolderOpen,
-  Hash,
-  Layers,
-} from 'lucide-react';
+import { ChevronRight, ChevronDown, Folder, FolderOpen, Hash, Layers } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
 export interface CategoryNode {
@@ -34,7 +27,7 @@ export default function CategoryTree({
 
   const toggleExpand = (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
-    setExpanded(prev => ({ ...prev, [id]: !prev[id] }));
+    setExpanded((prev) => ({ ...prev, [id]: !prev[id] }));
   };
 
   const renderNode = (node: CategoryNode) => {
@@ -52,7 +45,7 @@ export default function CategoryTree({
             ${isSelected ? 'bg-stone-900 text-white dark:bg-stone-100 dark:text-stone-900 font-medium' : 'text-stone-600 dark:text-stone-400 hover:bg-stone-100 dark:hover:bg-stone-800'}
           `}
           onClick={() => onSelectCategory(node.id)}
-          onKeyDown={e => {
+          onKeyDown={(e) => {
             if (e.key === 'Enter' || e.key === ' ') {
               e.preventDefault();
               onSelectCategory(node.id);
@@ -63,7 +56,7 @@ export default function CategoryTree({
           {hasChildren ? (
             <button
               type="button"
-              onClick={e => toggleExpand(node.id, e)}
+              onClick={(e) => toggleExpand(node.id, e)}
               className={`p-0.5 rounded-md hover:bg-black/10 dark:hover:bg-white/10 transition-colors mr-1 flex-shrink-0 ${isSelected ? 'text-white dark:text-stone-900' : ''}`}
               aria-label={isExpanded ? 'Collapse' : 'Expand'}
             >
@@ -79,17 +72,9 @@ export default function CategoryTree({
 
           {hasChildren ? (
             isExpanded ? (
-              <FolderOpen
-                size={16}
-                className="opacity-70 flex-shrink-0"
-                aria-hidden
-              />
+              <FolderOpen size={16} className="opacity-70 flex-shrink-0" aria-hidden />
             ) : (
-              <Folder
-                size={16}
-                className="opacity-70 flex-shrink-0"
-                aria-hidden
-              />
+              <Folder size={16} className="opacity-70 flex-shrink-0" aria-hidden />
             )
           ) : (
             <Hash size={16} className="opacity-70 flex-shrink-0" aria-hidden />
@@ -107,7 +92,7 @@ export default function CategoryTree({
               transition={{ duration: 0.2 }}
               className="overflow-hidden ml-4 pl-2 border-l border-stone-200 dark:border-stone-800"
             >
-              {node.children!.map(child => renderNode(child))}
+              {node.children!.map((child) => renderNode(child))}
             </motion.div>
           )}
         </AnimatePresence>
@@ -125,7 +110,7 @@ export default function CategoryTree({
           ${selectedCategoryId === 'all' ? 'bg-stone-900 text-white dark:bg-stone-100 dark:text-stone-900' : 'text-stone-600 dark:text-stone-400 hover:bg-stone-100 dark:hover:bg-stone-800'}
         `}
         onClick={() => onSelectCategory('all')}
-        onKeyDown={e => {
+        onKeyDown={(e) => {
           if (e.key === 'Enter' || e.key === ' ') {
             e.preventDefault();
             onSelectCategory('all');
@@ -136,7 +121,7 @@ export default function CategoryTree({
         <Layers size={16} className="opacity-70 flex-shrink-0" aria-hidden />
         <span>{allLabel}</span>
       </div>
-      {categories.map(node => renderNode(node))}
+      {categories.map((node) => renderNode(node))}
     </div>
   );
 }

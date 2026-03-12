@@ -4,10 +4,10 @@
 
 ## 参考规范
 
-| 规范 | 用途 | 来源 |
-|------|------|------|
-| Web Interface Guidelines | 无障碍、表单、动画、焦点、内容处理等 | [web-interface-guidelines](https://github.com/vercel-labs/web-interface-guidelines) |
-| Vercel React Best Practices | 性能、数据获取、重渲染、Bundle 优化 | 见 AGENTS.md / vercel-react-best-practices |
+| 规范                        | 用途                                 | 来源                                                                                |
+| --------------------------- | ------------------------------------ | ----------------------------------------------------------------------------------- |
+| Web Interface Guidelines    | 无障碍、表单、动画、焦点、内容处理等 | [web-interface-guidelines](https://github.com/vercel-labs/web-interface-guidelines) |
+| Vercel React Best Practices | 性能、数据获取、重渲染、Bundle 优化  | 见 AGENTS.md / vercel-react-best-practices                                          |
 
 ## 技术栈
 
@@ -51,13 +51,13 @@
 
 ## 页面与 API 映射
 
-| 页面 | 主要 API |
-|------|----------|
-| Login | POST /api/auth/login |
-| Dashboard | GET /api/stats/summary, popular-views, popular-comments |
-| Articles | GET/POST/PUT/DELETE /api/articles |
-| Categories | GET/POST/PUT/DELETE /api/categories |
-| Comments | GET /api/comments, DELETE /api/comments/:id |
+| 页面       | 主要 API                                                |
+| ---------- | ------------------------------------------------------- |
+| Login      | POST /api/auth/login                                    |
+| Dashboard  | GET /api/stats/summary, popular-views, popular-comments |
+| Articles   | GET/POST/PUT/DELETE /api/articles                       |
+| Categories | GET/POST/PUT/DELETE /api/categories                     |
+| Comments   | GET /api/comments, DELETE /api/comments/:id             |
 
 ## 对接说明
 

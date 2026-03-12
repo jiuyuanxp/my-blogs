@@ -19,11 +19,9 @@ export default function LanguageSwitcher() {
     startTransition(() => {
       // usePathname 不含 basePath，pathname 形如 /zh 或 /zh/article/1
       // 替换 locale 段，避免 /web/zh 时误生成 /en/web/zh
-      const pathWithoutBase = pathname.startsWith('/web/')
-        ? pathname.slice(5)
-        : pathname;
+      const pathWithoutBase = pathname.startsWith('/web/') ? pathname.slice(5) : pathname;
       const segments = pathWithoutBase.split('/').filter(Boolean);
-      const localeIndex = segments.findIndex(s => s === locale);
+      const localeIndex = segments.findIndex((s) => s === locale);
       if (localeIndex >= 0) {
         segments[localeIndex] = newLocale;
         router.push('/' + segments.join('/'));

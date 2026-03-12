@@ -20,11 +20,7 @@ export default function Login({ onLogin }: LoginProps) {
       setToken(token);
       onLogin();
     } catch (err) {
-      const msg = isApiError(err)
-        ? err.message
-        : err instanceof Error
-          ? err.message
-          : '登录失败';
+      const msg = isApiError(err) ? err.message : err instanceof Error ? err.message : '登录失败';
       setError(msg);
     } finally {
       setIsLoading(false);
@@ -51,9 +47,7 @@ export default function Login({ onLogin }: LoginProps) {
             <Lock className="w-6 h-6 text-white" aria-hidden />
           </div>
           <div className="mt-auto">
-            <h1 className="text-6xl font-serif font-bold mb-6 tracking-tight">
-              博客管理
-            </h1>
+            <h1 className="text-6xl font-serif font-bold mb-6 tracking-tight">博客管理</h1>
             <p className="text-xl text-zinc-400 max-w-md font-light leading-relaxed">
               记录思考，沉淀价值。极简、优雅的个人内容管理系统。
             </p>
@@ -65,12 +59,8 @@ export default function Login({ onLogin }: LoginProps) {
       <div className="w-full lg:w-1/2 flex items-center justify-center p-8 sm:p-12 lg:p-24">
         <div className="w-full max-w-md space-y-12">
           <div className="text-center lg:text-left">
-            <h2 className="text-4xl font-serif font-bold text-zinc-900 tracking-tight">
-              欢迎回来
-            </h2>
-            <p className="mt-3 text-zinc-500">
-              请输入管理密码以继续访问控制台
-            </p>
+            <h2 className="text-4xl font-serif font-bold text-zinc-900 tracking-tight">欢迎回来</h2>
+            <p className="mt-3 text-zinc-500">请输入管理密码以继续访问控制台</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
@@ -83,10 +73,7 @@ export default function Login({ onLogin }: LoginProps) {
               </div>
             )}
             <div className="space-y-2">
-              <label
-                htmlFor="admin-password"
-                className="text-sm font-medium text-zinc-700"
-              >
+              <label htmlFor="admin-password" className="text-sm font-medium text-zinc-700">
                 管理密码
               </label>
               <input
@@ -96,7 +83,7 @@ export default function Login({ onLogin }: LoginProps) {
                 autoComplete="current-password"
                 required
                 value={password}
-                onChange={e => {
+                onChange={(e) => {
                   setPassword(e.target.value);
                   setError(null);
                 }}

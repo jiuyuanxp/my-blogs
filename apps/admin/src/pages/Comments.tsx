@@ -2,12 +2,7 @@ import { useState, useEffect } from 'react';
 import type { Comment, Category } from '@/types';
 import { format, parseISO } from 'date-fns';
 import { Trash2, MessageSquare } from 'lucide-react';
-import {
-  fetchComments,
-  fetchCategories,
-  deleteComment,
-  isApiError,
-} from '@/lib/api';
+import { fetchComments, fetchCategories, deleteComment, isApiError } from '@/lib/api';
 
 export default function Comments() {
   const [comments, setComments] = useState<Comment[]>([]);
@@ -75,9 +70,7 @@ export default function Comments() {
   if (loading && comments.length === 0) {
     return (
       <div className="space-y-6 max-w-5xl">
-        <h2 className="text-4xl font-serif font-bold tracking-tight text-zinc-900">
-          评论管理
-        </h2>
+        <h2 className="text-4xl font-serif font-bold tracking-tight text-zinc-900">评论管理</h2>
         <p className="text-zinc-500">加载中…</p>
       </div>
     );
@@ -86,9 +79,7 @@ export default function Comments() {
   return (
     <div className="space-y-6 max-w-5xl">
       <div className="flex items-center justify-between">
-        <h2 className="text-4xl font-serif font-bold tracking-tight text-zinc-900">
-          评论管理
-        </h2>
+        <h2 className="text-4xl font-serif font-bold tracking-tight text-zinc-900">评论管理</h2>
         <div className="flex items-center gap-3">
           <label htmlFor="comment-cat-filter" className="text-sm text-zinc-500">
             筛选分类：
@@ -96,16 +87,12 @@ export default function Comments() {
           <select
             id="comment-cat-filter"
             value={selectedCatId}
-            onChange={e =>
-              setSelectedCatId(
-                e.target.value === 'all' ? 'all' : e.target.value
-              )
-            }
+            onChange={(e) => setSelectedCatId(e.target.value === 'all' ? 'all' : e.target.value)}
             className="px-3 py-1.5 bg-white border border-zinc-200 rounded-lg text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-zinc-900 focus-visible:ring-2 focus-visible:ring-zinc-900"
             aria-label="按分类筛选评论"
           >
             <option value="all">所有分类</option>
-            {flatCats.map(cat => (
+            {flatCats.map((cat) => (
               <option key={cat.id} value={cat.id}>
                 {cat.name}
               </option>
@@ -126,11 +113,8 @@ export default function Comments() {
       <div className="bg-white rounded-2xl border border-zinc-200 shadow-sm overflow-hidden">
         <div className="divide-y divide-zinc-200">
           {comments.length > 0 ? (
-            comments.map(comment => (
-              <div
-                key={comment.id}
-                className="p-6 hover:bg-zinc-50 transition-colors"
-              >
+            comments.map((comment) => (
+              <div key={comment.id} className="p-6 hover:bg-zinc-50 transition-colors">
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex gap-4 min-w-0">
                     <div className="mt-1 bg-zinc-100 p-2 rounded-full text-zinc-500 shrink-0">
@@ -145,15 +129,10 @@ export default function Comments() {
                           •
                         </span>
                         <span className="text-zinc-500 text-sm">
-                          {format(
-                            parseISO(comment.createdAt),
-                            'yyyy-MM-dd HH:mm'
-                          )}
+                          {format(parseISO(comment.createdAt), 'yyyy-MM-dd HH:mm')}
                         </span>
                       </div>
-                      <p className="text-zinc-700 text-sm mb-3 break-words">
-                        {comment.content}
-                      </p>
+                      <p className="text-zinc-700 text-sm mb-3 break-words">{comment.content}</p>
                       <div className="text-xs text-zinc-500 bg-zinc-100 inline-flex px-2 py-1 rounded max-w-full">
                         来自文章：
                         <span className="font-medium text-zinc-700 ml-1 truncate">

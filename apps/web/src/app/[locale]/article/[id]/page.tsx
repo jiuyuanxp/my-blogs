@@ -41,10 +41,7 @@ export default function ArticlePage() {
     const load = async () => {
       setLoading(true);
       try {
-        const [art, coms] = await Promise.all([
-          fetchArticle(id, true),
-          fetchCommentsByArticle(id),
-        ]);
+        const [art, coms] = await Promise.all([fetchArticle(id, true), fetchCommentsByArticle(id)]);
         setArticle(art);
         setComments(coms);
       } catch {
@@ -81,13 +78,9 @@ export default function ArticlePage() {
       </div>
 
       {loading ? (
-        <div className="text-center py-20 text-stone-500">
-          {t('loadingArticle')}
-        </div>
+        <div className="text-center py-20 text-stone-500">{t('loadingArticle')}</div>
       ) : !article ? (
-        <div className="text-center py-20 text-red-500">
-          {t('articleNotFound')}
-        </div>
+        <div className="text-center py-20 text-red-500">{t('articleNotFound')}</div>
       ) : (
         <>
           <header className="mb-12 text-center">
@@ -113,10 +106,7 @@ export default function ArticlePage() {
           </header>
 
           <div className="prose prose-stone dark:prose-invert prose-lg max-w-none mb-20 prose-headings:font-serif prose-headings:font-bold prose-a:text-indigo-600 dark:prose-a:text-indigo-400 hover:prose-a:text-indigo-500">
-            <ReactMarkdown
-              remarkPlugins={[remarkGfm]}
-              rehypePlugins={[rehypeHighlight]}
-            >
+            <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeHighlight]}>
               {article.content}
             </ReactMarkdown>
           </div>
@@ -134,7 +124,7 @@ export default function ArticlePage() {
                   {t('noComments')}
                 </p>
               ) : (
-                comments.map(comment => (
+                comments.map((comment) => (
                   <div
                     key={comment.id}
                     className="bg-white dark:bg-stone-800 p-5 rounded-xl border border-stone-200 dark:border-stone-700 shadow-sm"

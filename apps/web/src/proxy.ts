@@ -7,8 +7,7 @@ const handleI18n = createMiddleware({
   defaultLocale: 'zh',
 });
 
-const basePath =
-  (process.env.NEXT_PUBLIC_BASE_PATH ?? '/web').replace(/\/$/, '') || '';
+const basePath = (process.env.NEXT_PUBLIC_BASE_PATH ?? '/web').replace(/\/$/, '') || '';
 
 export function proxy(request: NextRequest) {
   const pathname = request.nextUrl.pathname;

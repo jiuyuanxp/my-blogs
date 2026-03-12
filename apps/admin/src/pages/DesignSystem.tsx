@@ -4,9 +4,7 @@ export default function DesignSystem() {
   return (
     <div className="space-y-12 max-w-5xl pb-12">
       <div className="border-b border-zinc-200 pb-6">
-        <h2 className="text-4xl font-serif font-bold tracking-tight text-zinc-900">
-          设计规范
-        </h2>
+        <h2 className="text-4xl font-serif font-bold tracking-tight text-zinc-900">设计规范</h2>
         <p className="mt-4 text-lg text-zinc-500 max-w-2xl">
           博客管理采用极简、优雅的设计语言，强调内容优先与深浅色的强烈对比。
         </p>
@@ -15,10 +13,7 @@ export default function DesignSystem() {
       <section className="space-y-6" aria-labelledby="colors-heading">
         <div className="flex items-center gap-3 border-b border-zinc-100 pb-2">
           <Palette className="w-5 h-5 text-zinc-400" aria-hidden />
-          <h3
-            id="colors-heading"
-            className="text-xl font-semibold text-zinc-800"
-          >
+          <h3 id="colors-heading" className="text-xl font-semibold text-zinc-800">
             色彩系统 (Colors)
           </h3>
         </div>
@@ -65,10 +60,7 @@ export default function DesignSystem() {
       <section className="space-y-6" aria-labelledby="typography-heading">
         <div className="flex items-center gap-3 border-b border-zinc-100 pb-2">
           <Type className="w-5 h-5 text-zinc-400" aria-hidden />
-          <h3
-            id="typography-heading"
-            className="text-xl font-semibold text-zinc-800"
-          >
+          <h3 id="typography-heading" className="text-xl font-semibold text-zinc-800">
             排版 (Typography)
           </h3>
         </div>
@@ -80,17 +72,13 @@ export default function DesignSystem() {
             <h1 className="text-5xl font-serif font-bold text-zinc-900 text-balance">
               Playfair Display
             </h1>
-            <p className="mt-2 text-sm text-zinc-500">
-              用于大标题、品牌名称，传递优雅与高级感。
-            </p>
+            <p className="mt-2 text-sm text-zinc-500">用于大标题、品牌名称，传递优雅与高级感。</p>
           </div>
           <div className="pt-6 border-t border-zinc-100">
             <div className="text-xs text-zinc-400 uppercase tracking-wider mb-2">
               Body / Sans-serif
             </div>
-            <p className="text-xl font-sans text-zinc-900">
-              Inter (Regular, Medium, Semibold)
-            </p>
+            <p className="text-xl font-sans text-zinc-900">Inter (Regular, Medium, Semibold)</p>
             <p className="mt-2 text-sm text-zinc-500">
               用于正文、UI 组件，保证极佳的阅读体验和现代感。
             </p>
@@ -100,9 +88,7 @@ export default function DesignSystem() {
               Data / Monospace
             </div>
             <p className="text-lg font-mono text-zinc-700">JetBrains Mono</p>
-            <p className="mt-2 text-sm text-zinc-500">
-              用于代码块、数字统计、日期显示。
-            </p>
+            <p className="mt-2 text-sm text-zinc-500">用于代码块、数字统计、日期显示。</p>
           </div>
         </div>
       </section>
@@ -110,10 +96,7 @@ export default function DesignSystem() {
       <section className="space-y-6" aria-labelledby="components-heading">
         <div className="flex items-center gap-3 border-b border-zinc-100 pb-2">
           <Layout className="w-5 h-5 text-zinc-400" aria-hidden />
-          <h3
-            id="components-heading"
-            className="text-xl font-semibold text-zinc-800"
-          >
+          <h3 id="components-heading" className="text-xl font-semibold text-zinc-800">
             组件风格 (Components)
           </h3>
         </div>

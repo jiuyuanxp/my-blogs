@@ -9,8 +9,8 @@
 
 ## 环境配置
 
-| 变量 | 说明 |
-|------|------|
+| 变量            | 说明                                      |
+| --------------- | ----------------------------------------- |
 | `VITE_API_BASE` | 后端 API 地址，如 `http://localhost:4300` |
 
 ## 认证
@@ -21,12 +21,12 @@
 
 ## 使用的接口
 
-| 页面 | 接口 |
-|------|------|
-| Login | POST /api/auth/login, GET /api/auth/check |
-| Dashboard | GET /api/stats/summary, /api/stats/popular-views, /api/stats/popular-comments |
-| Articles | GET/POST/PUT/DELETE /api/articles |
-| Categories | GET/POST/PUT/DELETE /api/categories |
-| Comments | GET /api/comments, DELETE /api/comments/:id |
+| 页面       | 接口                                                                          |
+| ---------- | ----------------------------------------------------------------------------- |
+| Login      | POST /api/auth/login, GET /api/auth/check                                     |
+| Dashboard  | GET /api/stats/summary, /api/stats/popular-views, /api/stats/popular-comments |
+| Articles   | GET/POST/PUT/DELETE /api/articles                                             |
+| Categories | GET/POST/PUT/DELETE /api/categories                                           |
+| Comments   | GET /api/comments, DELETE /api/comments/:id                                   |
 
 所有管理接口需认证（除 login 外）。

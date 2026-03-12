@@ -13,9 +13,7 @@ function flattenCategories(
     result.push({ id: c.id, name: c.name });
     if (c.children?.length) {
       result.push(
-        ...flattenCategories(
-          c.children as { id: string; name: string; children?: unknown[] }[]
-        )
+        ...flattenCategories(c.children as { id: string; name: string; children?: unknown[] }[])
       );
     }
   }
