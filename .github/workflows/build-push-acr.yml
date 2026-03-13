@@ -6,14 +6,18 @@ on:
   push:
     branches: [main]
     paths:
+      # 应用与后端
       - 'apps/web/**'
       - 'apps/admin/**'
       - 'services/java/**'
-      - 'infra/**'
+      #  infra：仅 Docker/Nginx 配置，排除 README 等文档
+      - 'infra/docker/**'
+      - 'infra/nginx/**'
+      # 共享包（web/admin 依赖）
       - 'packages/**'
-      - 'package.json'
-      - 'pnpm-lock.yaml'
-      - 'pnpm-workspace.yaml'
+      # 不包含：package.json、pnpm-lock.yaml、pnpm-workspace.yaml
+      # 根 package.json 仅 devDependencies/scripts，修改不触发部署
+      # 依赖变更通常伴随 apps/packages 变更，会由对应路径触发
   workflow_dispatch: # 手动触发时构建全部
 
 env:

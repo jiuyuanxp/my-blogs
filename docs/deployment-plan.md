@@ -145,11 +145,12 @@ FROM --platform=linux/amd64 node:20-alpine AS deps
 ### 5.1 GitHub Actions
 
 - **工作流**：`.github/workflows/build-push-acr.yml`
-- **触发**：push 到 `main`，或 `workflow_dispatch`
-- **路径过滤**：仅相关路径变更时构建对应镜像
-  - web：`apps/web/**`、`packages/**`
-  - admin/nginx：`apps/admin/**`、`infra/nginx/**`
-  - java：`services/java/**`、`infra/docker/Dockerfile.java`
+- **触发**：push 到 `main`（路径过滤），或 `workflow_dispatch`（手动全量构建）
+- **路径过滤**：仅以下路径变更时触发，避免文档/配置类修改触发部署
+  - `apps/web/**`、`apps/admin/**`、`services/java/**`
+  - `infra/docker/**`、`infra/nginx/**`（不含 infra/README.md）
+  - `packages/**`（共享包）
+  - 不含：`package.json`、`pnpm-lock.yaml`、`pnpm-workspace.yaml`（根配置变更不触发）
 
 ### 5.2 镜像仓库
 
