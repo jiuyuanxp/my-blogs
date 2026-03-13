@@ -1,0 +1,43 @@
+# AGENTS.md 与文档一致性校验
+# 在 AGENTS.md、docs/、包级 AGENTS.md 变更时运行
+name: Validate AGENTS.md
+
+on:
+  pull_request:
+    paths:
+      - 'AGENTS.md'
+      - 'docs/**'
+      - 'apps/*/AGENTS.md'
+      - 'services/*/AGENTS.md'
+      - 'package.json'
+      - 'scripts/validate-agents-md.js'
+  push:
+    branches: [main]
+    paths:
+      - 'AGENTS.md'
+      - 'docs/**'
+      - 'apps/*/AGENTS.md'
+      - 'services/*/AGENTS.md'
+      - 'package.json'
+      - 'scripts/validate-agents-md.js'
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Validate AGENTS.md
+        run: pnpm docs:validate-agents

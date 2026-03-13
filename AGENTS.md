@@ -2,6 +2,8 @@
 
 > 本项目用于学习 Java、Nginx 等技术。AI 协助开发时遵循以下规范。
 > 参考 [Everything Claude Code](https://github.com/affaan-m/everything-claude-code) 与 [精简指南](https://x.com/affaanmustafa/status/2012378465664745795)。
+>
+> **最后更新**：2025-03-13
 
 ## 职责划分
 
@@ -90,6 +92,48 @@ AI 可自动调用的项目命令：
 
 ---
 
+## 常见任务分步说明（Common Patterns）
+
+以下为高频任务的步骤化指引，Agent 应严格按序执行。
+
+### 新增 API 接口
+
+1. 在 `docs/active-task.md` 或 `services/java/docs/api/` 对应设计文档中列出接口契约（路径、方法、请求/响应 DTO）
+2. 在 `services/java` 中实现：Controller → Service → Repository（按需）
+3. 添加 Swagger 注解（`@Operation`、`@ApiResponse`），DTO 与 Entity 分离
+4. 同步更新 `docs/api-contract.md`、`services/java/docs/api/` 接口清单、`packages/types`
+5. 运行 `pnpm docs:generate`（需 Java 服务已启动）更新 OpenAPI 与 types
+6. 运行 `pnpm typecheck` 验证类型
+7. 运行 `mvn test -f services/java/pom.xml` 验证后端
+
+### 新增前端页面/组件（Web）
+
+1. 查阅 `apps/web/docs/INTEGRATION.md` 确认 API 对接方式
+2. 使用 `@blog/api-client` 发起请求，`isApiError(err)` 解析错误
+3. 默认 Server Component，仅需交互时使用 `"use client"`
+4. 严格 Tailwind CSS，图片用 `next/image`
+5. 运行 `pnpm typecheck` 验证
+
+### 新增管理后台功能（Admin）
+
+1. 查阅 `apps/admin/docs/INTEGRATION.md` 确认 API 与认证方式
+2. 使用 `@blog/api-client`，Token 存 localStorage，401 时清除并跳转登录
+3. 图标按钮加 `aria-label`，表单加 `label` 或 `aria-label`
+4. 运行 `pnpm typecheck` 验证
+
+### 接口/DTO 变更后的文档同步（强制）
+
+| 变更类型      | 须更新文档                                                                   |
+| ------------- | ---------------------------------------------------------------------------- |
+| Java DTO/接口 | `docs/api-contract.md`、`services/java/docs/api/` 对应设计、`packages/types` |
+| 完成后验证    | 运行 `pnpm typecheck`                                                        |
+
+### 复杂任务追踪
+
+多步骤、跨多文件任务时，维护 `docs/active-task.md`：填写任务目标、进度、已决策、待验证、下一步。参考 `.cursor/rules/12-task-orchestration.mdc`。
+
+---
+
 ## Agents（ECC 子代理映射）
 
 复杂任务可委托给 `mcp_task` 子代理，对应 ECC 的 agents 职责：
@@ -117,6 +161,30 @@ AI 可自动调用的项目命令：
 | **Hooks**      | `.cursor/hooks/`     | 16 个钩子（编辑后格式化、session 持久化、密钥检测等）             |
 | **Hooks 配置** | `.cursor/hooks.json` | 钩子事件绑定                                                      |
 | **Scripts**    | `scripts/hooks/`     | 钩子实现（format、typecheck、console.log 检测等）                 |
+
+---
+
+## 维护与校验
+
+### 维护周期
+
+- **AGENTS.md**：规范或命令变更时立即更新；建议每季度复核一次
+- **last updated**：每次实质性修改后更新顶部日期
+
+### 自动化校验（CI）
+
+`scripts/validate-agents-md.js` 在 CI 中执行，校验：
+
+- AGENTS.md 中列出的快速命令在 `package.json` 中存在
+- `docs/` 下 SSOT 文档路径存在
+- 根目录与包级 AGENTS.md 引用路径有效
+
+PR 修改 AGENTS.md 或 docs/ 时，CI 会运行该校验。
+
+### 已知限制
+
+- `pnpm docs:generate` 需 Java 服务已启动，首次使用 `specs/` 前需先执行
+- MCP OpenAPI 依赖 `specs/openapi.json`，空目录时 MCP 无法加载
 
 ---
 

@@ -6,6 +6,7 @@
   "scripts": {
     "build": "turbo run build",
     "docs:generate": "node scripts/generate-api-docs.js",
+    "docs:validate-agents": "node scripts/validate-agents-md.js",
     "dev": "turbo run dev --parallel",
     "lint": "turbo run lint",
     "test": "turbo run test",

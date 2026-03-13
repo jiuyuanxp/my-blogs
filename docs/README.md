@@ -27,6 +27,18 @@
 | **RBAC 权限系统**      | [design/RBAC_DESIGN.md](./design/RBAC_DESIGN.md)                                                     | 用户/角色/权限设计、API、Admin 对接、待讨论项                                |
 | **规范合规**           | [development/CURSORRULES_COMPLIANCE.md](./development/CURSORRULES_COMPLIANCE.md)                     | .cursorrules 合规性检测报告（Java/Next.js/Admin/Docker/Nginx）               |
 
+## 分层上下文（Monorepo）
+
+根 [AGENTS.md](../AGENTS.md) 为组织级规范；各包有包级 AGENTS.md 提供包特定指引：
+
+| 包         | 路径                                                  |
+| ---------- | ----------------------------------------------------- |
+| Web 主站   | [apps/web/AGENTS.md](../apps/web/AGENTS.md)           |
+| Admin 后台 | [apps/admin/AGENTS.md](../apps/admin/AGENTS.md)       |
+| Java 服务  | [services/java/AGENTS.md](../services/java/AGENTS.md) |
+
+Agent 应先读根 AGENTS.md，再读当前工作包对应的包级 AGENTS.md。
+
 ## 目录结构
 
 ```
