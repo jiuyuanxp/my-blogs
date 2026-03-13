@@ -151,6 +151,21 @@ AI 可自动调用的项目命令：
 | 文档更新     | generalPurpose | doc-updater          |
 | 代码库探索   | explore        | —                    |
 
+### build-error-resolver 触发条件
+
+**委托子代理**（使用 `mcp_task`，子代理类型 `generalPurpose`，任务描述含「构建错误修复」）当：
+
+- 根因涉及**多文件**、**跨栈**（前后端联动、API 契约漂移）
+- 需**系统性排查**（依赖链、配置、环境）
+- 单次修复后仍失败，需多轮试错
+
+**直接修复**（不委托）当：
+
+- 单点错误：单文件类型错误、单处 import 路径、单条断言失败
+- 根因明确且修复范围小
+
+详见 `/fix` 流程与 `.cursor/rules/13-automation.mdc`。
+
 ---
 
 ## Cursor 配置（ECC 完整移植）

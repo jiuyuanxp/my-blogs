@@ -13,12 +13,35 @@ alwaysApply: false
 
 在尝试 `pnpm build` 之前，先运行 `pnpm typecheck` 做类型检查，避免构建中途失败。
 
-## 3. 错误回溯
+## 3. 错误回溯（统一流程）
 
-若 `pnpm test` 失败：
-1. 立即读取错误日志
-2. 定位失败用例和根因
+构建或测试失败时，**按层级分析 → 根因定位 → 修复 → 验证** 执行：
+
+### 3.1 分析层级
+
+| 层级 | 典型报错关键词 | 常见场景 |
+|------|----------------|----------|
+| **OS** | ENOENT、permission denied、ENV、PATH | 路径、权限、环境变量 |
+| **Docker** | Error response、no such image、execution failed | 镜像构建、容器启动、M1 需 --platform |
+| **Java** | BUILD FAILURE、Compilation failure、Tests run.*Failures | Maven、JUnit、依赖 |
+| **Node** | Cannot find module、Type error、TS\d{4} | pnpm、TypeScript、依赖、类型 |
+
+### 3.2 常见根因映射
+
+| 报错特征 | 根因 | 修复方向 |
+|----------|------|----------|
+| Module not found / Cannot find module | 依赖缺失或 import 路径错误 | pnpm install、检查 workspace、修正 import |
+| Type error / TS2xxx | 类型不匹配、DTO 漂移 | 同步 packages/types、Java DTO |
+| Compilation failure / cannot find symbol | Java 语法、import、类型 | 修正 Java 代码、检查 Maven 依赖 |
+| Tests run: X, Failures: Y | 断言失败、逻辑变更 | 修正测试或业务逻辑 |
+| ENOENT / no such file | 文件不存在 | 确认路径、创建文件、检查大小写 |
+
+### 3.3 执行步骤
+
+1. 立即读取错误日志（尾部通常含关键信息）
+2. 按上表确定层级与根因
 3. 提出修复建议并执行，无需等待用户干预
+4. 修复后运行 `pnpm test` 或 `mvn test` 验证
 
 ## 实现方式
 

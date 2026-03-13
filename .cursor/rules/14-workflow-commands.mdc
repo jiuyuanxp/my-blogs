@@ -26,10 +26,13 @@ alwaysApply: true
 ## /fix
 
 错误诊断与修复：
-1. 读取用户提供的终端报错或最近构建/测试输出
-2. 定位根因，提出修复方案
-3. 增量修复并验证
-4. 适用：编译失败、测试未通过
+1. **分析层级**（OS/Docker/Java/Node）→ **根因** → **修复** → **验证**
+2. 读取用户提供的终端报错或最近构建/测试输出
+3. 定位根因，提出修复方案，增量修复
+4. 修复后运行对应验证命令（pnpm build / mvn test）
+5. 适用：编译失败、测试未通过
+
+**详细流程**：`docs/development/CLAUDE_CODE_COMMANDS.md`；**层级与根因**：13-automation.mdc；**委托条件**：AGENTS.md build-error-resolver。
 
 ## /refactor
 
