@@ -1,0 +1,21 @@
+# 构建产物
+node_modules/
+**/target/
+**/.next/
+**/dist/
+**/.turbo/
+**/out/
+
+# 日志与缓存
+*.log
+.npm/
+.pnpm-store/
+.eslintcache
+
+# 环境与密钥（双重保护）
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+**/credentials*

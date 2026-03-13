@@ -2,7 +2,7 @@
 
 本目录存放博客服务 API 设计文档，为服务端实现的契约来源。设计遵循 api-design 规范。
 
-**文档生成**：项目已集成 Knife4j（基于 OpenAPI 3），启动后访问 `/doc.html` 获取可交互文档，OpenAPI JSON 见 `/v3/api-docs`。
+**文档生成**：项目已集成 Knife4j（基于 OpenAPI 3），启动后访问 `/doc.html` 获取可交互文档，OpenAPI JSON 见 `/v3/api-docs`。根目录运行 `pnpm docs:generate` 可从 OpenAPI 自动更新本接口清单与 `packages/types`。
 
 ## 设计决策汇总
 

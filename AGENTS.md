@@ -47,6 +47,7 @@ AI 生成代码时：
 1. **关键处加学习注释** - 如 `// 依赖注入：Spring 自动管理 Bean 生命周期`
 2. **生成后可提问** - 「这段代码如何体现 Spring 的 AOP？」
 3. **笔记优先** - 复杂概念在 `docs/learning/` 创建学习笔记
+4. **ADR 建议** - 对于复杂的架构设计或技术选型（如 Nginx 缓存策略、Spring Security 过滤链、新中间件引入），应在 `docs/learning/` 下生成简短 ADR，说明 Why 与取舍
 
 ## 技术栈
 
@@ -59,6 +60,7 @@ pnpm install          # 安装依赖
 pnpm dev              # 启动所有服务
 pnpm --filter web dev # 只启动前端
 pnpm build            # 构建全部
+pnpm docs:generate    # 从 OpenAPI 自动生成 types + 接口清单（需 Java 服务已启动）
 ```
 
 ## 快捷指令（提示词模板）
@@ -120,3 +122,18 @@ AI 可自动调用的项目命令：
 
 **项目概览见** [`README.md`](./README.md)  
 **学习笔记见** `docs/learning/`
+
+---
+
+## 已安装 Skills
+
+| Skill                             | 用途                                               |
+| --------------------------------- | -------------------------------------------------- |
+| sync-docs                         | 文档与代码同步检测（import 路径、版本、CHANGELOG） |
+| spring-boot-openapi-documentation | Spring Boot + SpringDoc 配置与注解最佳实践         |
+
+## 已配置 MCP
+
+| MCP                          | 用途                                                       |
+| ---------------------------- | ---------------------------------------------------------- |
+| openapi (@reapi/mcp-openapi) | 加载 `specs/` 下 OpenAPI 规范，供 AI 做 API 感知的代码生成 |

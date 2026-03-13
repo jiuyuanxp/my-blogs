@@ -37,6 +37,7 @@
 
 ### 1.4 自检
 - 新增接口后确认已加入 Knife4j 文档 (`/doc.html`)，且错误响应格式符合 api-contract。
+- **DTO 与 TS 同步**：涉及 DTO 变更时，必须同步更新 `docs/api-contract.md`、`services/java/docs/api/` 对应设计、`packages/types`，并运行 `!typecheck` 验证。
 
 ---
 

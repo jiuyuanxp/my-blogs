@@ -54,6 +54,27 @@ services/java/scripts/run-init.sh
 *.swp
 *.swo
 
+# API docs generation temp
+.openapi-temp.json
+
+# Skills CLI（多 Agent 配置目录，仅用 Cursor 可忽略）
+.agent
+.agents
+.claude
+.codebuddy
+.commandcode
+.continue
+.crush
+.factory
+.goose
+.windsurf
+.zencoder
+skills/
+skills-lock.json
+
+# 生成的 OpenAPI 规范（可运行 pnpm docs:generate 重新生成）
+specs/openapi.json
+
 # Build artifacts
 *.tsbuildinfo
 web-standalone.tar.gz
