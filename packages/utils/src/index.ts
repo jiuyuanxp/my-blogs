@@ -1,3 +1,22 @@
+import { parse } from 'date-fns';
+import { clsx, type ClassValue } from 'clsx';
+import { twMerge } from 'tailwind-merge';
+
+/** Tailwind 类名合并：clsx + tailwind-merge，避免冲突类被覆盖 */
+export function cn(...inputs: ClassValue[]): string {
+  return twMerge(clsx(inputs));
+}
+
+/** 项目统一时间格式: yyyy-MM-dd HH:mm:ss（符合 docs/api-contract.md） */
+export const DATETIME_PATTERN = 'yyyy-MM-dd HH:mm:ss';
+
+/** 解析 API 返回的时间字符串，支持 yyyy-MM-dd HH:mm:ss 与 ISO 8601 */
+export function parseDateTime(str: string): Date {
+  if (!str) return new Date(NaN);
+  if (str.includes('T')) return new Date(str);
+  return parse(str, DATETIME_PATTERN, new Date());
+}
+
 // String Utils
 export function capitalize(str: string): string {
   if (!str) return '';
