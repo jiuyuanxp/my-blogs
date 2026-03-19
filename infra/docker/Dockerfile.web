@@ -26,6 +26,8 @@ COPY . .
 # 从 deps 覆盖 packages/，保留 pnpm install 生成的 node_modules（含 clsx/date-fns/tailwind-merge 等）
 COPY --from=deps /app/packages ./packages
 ENV NEXT_PUBLIC_BASE_PATH=/web
+# 生产环境：SSR 时 web 容器需通过 Docker 网络访问 java 服务
+ENV NEXT_PUBLIC_API_BASE=http://java:4300
 RUN pnpm --filter web build
 
 # Stage 3: 运行

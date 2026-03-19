@@ -13,6 +13,16 @@ function AppContent() {
   const navigate = useNavigate();
   const { user, isLoading, refresh, hasMenu } = useAuth();
 
+  const navItems = ROUTES.filter((item) => hasMenu(item.menuPermission));
+  const defaultPath = navItems[0]?.path ?? '/';
+
+  // 登录后或访问根路径时，重定向到有权限的第一个菜单（必须在所有 return 之前调用，遵守 Hooks 规则）
+  useEffect(() => {
+    if (location.pathname === '/' && defaultPath !== '/') {
+      navigate(defaultPath, { replace: true });
+    }
+  }, [location.pathname, defaultPath, navigate]);
+
   const handleLogin = async () => {
     await refresh();
   };
@@ -33,16 +43,6 @@ function AppContent() {
       </div>
     );
   }
-
-  const navItems = ROUTES.filter((item) => hasMenu(item.menuPermission));
-  const defaultPath = navItems[0]?.path ?? '/';
-
-  // 登录后或访问根路径时，重定向到有权限的第一个菜单
-  useEffect(() => {
-    if (location.pathname === '/' && defaultPath !== '/') {
-      navigate(defaultPath, { replace: true });
-    }
-  }, [location.pathname, defaultPath, navigate]);
 
   return (
     <div className="flex h-screen bg-[#fcfcfc] text-zinc-900 font-sans overflow-hidden">

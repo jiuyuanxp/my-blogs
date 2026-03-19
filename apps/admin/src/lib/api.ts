@@ -21,10 +21,11 @@ import type {
 
 export type { Category, Article, Comment, User, Role, Permission, MeResponse, PageResponse };
 
-const API_BASE =
-  (typeof import.meta !== 'undefined' &&
-    (import.meta as { env?: { VITE_API_BASE?: string } }).env?.VITE_API_BASE) ||
-  'http://localhost:4300';
+const env =
+  typeof import.meta !== 'undefined'
+    ? (import.meta as { env?: { VITE_API_BASE?: string } }).env
+    : undefined;
+const API_BASE = env?.VITE_API_BASE !== undefined ? env.VITE_API_BASE : 'http://localhost:4300';
 
 const TOKEN_KEY = 'admin-token';
 
