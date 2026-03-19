@@ -1,4 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap');
+/* antd 与 Tailwind 共存：antd 置于 components 之前，便于 Tailwind utilities 覆盖 */
+@layer theme, base, antd, components, utilities;
 @import 'tailwindcss';
 @plugin '@tailwindcss/typography';
 

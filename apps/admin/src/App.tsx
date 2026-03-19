@@ -1,14 +1,16 @@
-import { useState } from 'react';
-import { Routes, Route, NavLink, Navigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { Routes, Route, NavLink, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { LogOut, Menu, X } from 'lucide-react';
 import Login from './pages/Login';
-import { cn } from './lib/utils';
+import { cn } from '@blog/utils';
 import { getToken, logout as apiLogout } from './lib/api';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { ROUTES } from './routes';
 
 function AppContent() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const location = useLocation();
+  const navigate = useNavigate();
   const { user, isLoading, refresh, hasMenu } = useAuth();
 
   const handleLogin = async () => {
@@ -33,6 +35,14 @@ function AppContent() {
   }
 
   const navItems = ROUTES.filter((item) => hasMenu(item.menuPermission));
+  const defaultPath = navItems[0]?.path ?? '/';
+
+  // 登录后或访问根路径时，重定向到有权限的第一个菜单
+  useEffect(() => {
+    if (location.pathname === '/' && defaultPath !== '/') {
+      navigate(defaultPath, { replace: true });
+    }
+  }, [location.pathname, defaultPath, navigate]);
 
   return (
     <div className="flex h-screen bg-[#fcfcfc] text-zinc-900 font-sans overflow-hidden">
@@ -118,7 +128,7 @@ function AppContent() {
             {ROUTES.map((route) => (
               <Route key={route.id} path={route.path} element={route.element} />
             ))}
-            <Route path="*" element={<Navigate to="/" replace />} />
+            <Route path="*" element={<Navigate to={defaultPath} replace />} />
           </Routes>
         </div>
       </main>

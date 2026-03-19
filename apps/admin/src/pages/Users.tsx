@@ -172,12 +172,11 @@ export default function UsersPage() {
                         type="button"
                         onClick={() => {
                           setEditingUser(u);
-                          const role = roles.find((r) => r.code === u.roleCode);
                           setForm({
                             username: u.username,
                             password: '',
                             nickname: u.nickname ?? '',
-                            roleId: role?.id ?? '',
+                            roleId: u.roleId ?? '',
                             status: u.status,
                           });
                           setIsModalOpen('edit');

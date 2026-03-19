@@ -11,15 +11,20 @@
     "lint": "eslint \"src/**/*.{ts,tsx}\" --cache --cache-location node_modules/.cache/eslint"
   },
   "dependencies": {
+    "@ant-design/cssinjs": "^2.1.2",
+    "@ant-design/icons": "^6.1.0",
     "@blog/api-client": "workspace:*",
-    "react-router-dom": "^7.0.0",
+    "@blog/types": "workspace:*",
+    "@blog/utils": "workspace:*",
     "@tailwindcss/typography": "^0.5.19",
+    "antd": "^6.3.3",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
     "lucide-react": "^0.575.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-markdown": "^10.1.0",
+    "react-router-dom": "^7.0.0",
     "recharts": "^3.7.0",
     "remark-gfm": "^4.0.1",
     "tailwind-merge": "^3.5.0"

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import type { Category } from '@/types';
+import type { Category } from '@blog/types';
 import { ChevronRight, ChevronDown, Plus, Edit2, Trash2 } from 'lucide-react';
 import {
   fetchCategories,

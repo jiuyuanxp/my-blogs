@@ -5,6 +5,21 @@
  */
 
 import { createClient, ApiError, isApiError, normalizeIds } from '@blog/api-client';
+import type {
+  Category,
+  Article,
+  Comment,
+  User,
+  Role,
+  Permission,
+  MeResponse,
+  PageResponse,
+  StatsSummary,
+  PopularArticle,
+  PopularComment,
+} from '@blog/types';
+
+export type { Category, Article, Comment, User, Role, Permission, MeResponse, PageResponse };
 
 const API_BASE =
   (typeof import.meta !== 'undefined' &&
@@ -44,14 +59,6 @@ function normalizeList<T extends object>(arr: T[]): T[] {
 
 // --- Auth ---
 
-export interface MeResponse {
-  id: number;
-  username: string;
-  nickname: string;
-  role: string;
-  permissions: string[];
-}
-
 export async function login(
   username: string,
   password: string,
@@ -86,14 +93,6 @@ export async function logout(): Promise<void> {
 }
 
 // --- Categories ---
-
-export interface Category {
-  id: string;
-  parentId: string | null;
-  name: string;
-  createdAt: string;
-  children?: Category[];
-}
 
 function normalizeCategory(c: Category): Category {
   return {
@@ -130,25 +129,6 @@ export async function deleteCategory(id: string): Promise<void> {
 }
 
 // --- Articles ---
-
-export interface Article {
-  id: string;
-  categoryId: string;
-  categoryName?: string;
-  title: string;
-  summary?: string;
-  content: string;
-  status: 'draft' | 'published';
-  views: number;
-  isPinned: number;
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface PageResponse<T> {
-  data: T[];
-  meta: { total: number; page: number; pageSize: number; totalPages: number };
-}
 
 export async function fetchArticles(params?: {
   categoryId?: string;
@@ -212,15 +192,6 @@ export async function deleteArticle(id: string): Promise<void> {
 
 // --- Comments ---
 
-export interface Comment {
-  id: string;
-  articleId: string;
-  articleTitle?: string;
-  authorName: string;
-  content: string;
-  createdAt: string;
-}
-
 export async function fetchComments(params?: {
   articleId?: string;
   categoryId?: string;
@@ -257,30 +228,6 @@ export async function deleteComment(id: string): Promise<void> {
 
 // --- Stats ---
 
-export interface DateCount {
-  date: string;
-  count: number;
-}
-
-export interface StatsSummary {
-  views: DateCount[];
-  adds: DateCount[];
-  deletes: DateCount[];
-  comments: DateCount[];
-}
-
-export interface PopularArticle {
-  id: string;
-  title: string;
-  views: number;
-}
-
-export interface PopularComment {
-  id: string;
-  title: string;
-  commentCount: number;
-}
-
 export async function fetchStatsSummary(
   period: 'day' | 'month' | 'year' = 'day'
 ): Promise<StatsSummary> {
@@ -299,16 +246,7 @@ export async function fetchPopularComments(limit = 10): Promise<PopularComment[]
 
 // --- Users ---
 
-export interface User {
-  id: string;
-  username: string;
-  nickname?: string;
-  roleCode: string;
-  roleName: string;
-  status: string;
-  createdAt: string;
-  updatedAt?: string;
-}
+const USER_ID_KEYS = ['id', 'roleId', 'categoryId', 'parentId', 'articleId'];
 
 export async function fetchUsers(params?: {
   page?: number;
@@ -318,12 +256,15 @@ export async function fetchUsers(params?: {
   if (params?.page) q.set('page', String(params.page));
   if (params?.pageSize) q.set('pageSize', String(params.pageSize ?? 20));
   const res = await api.get<PageResponse<User>>(`/api/users?${q}`);
-  return { ...res, data: normalizeList(res.data) };
+  return {
+    ...res,
+    data: res.data.map((u) => normalizeIds(u, USER_ID_KEYS)),
+  };
 }
 
 export async function fetchUser(id: string): Promise<User> {
   const res = await api.get<User>(`/api/users/${id}`);
-  return normalizeIds(res);
+  return normalizeIds(res, USER_ID_KEYS);
 }
 
 export async function createUser(data: {
@@ -336,7 +277,7 @@ export async function createUser(data: {
     ...data,
     roleId: Number(data.roleId),
   });
-  return normalizeIds(res);
+  return normalizeIds(res, USER_ID_KEYS);
 }
 
 export async function updateUser(
@@ -348,7 +289,7 @@ export async function updateUser(
     (body as Record<string, unknown>).roleId = Number(data.roleId);
   }
   const res = await api.put<User>(`/api/users/${id}`, body);
-  return normalizeIds(res);
+  return normalizeIds(res, USER_ID_KEYS);
 }
 
 export async function deleteUser(id: string): Promise<void> {
@@ -361,16 +302,6 @@ export async function resetUserPassword(id: string, newPassword: string): Promis
 
 // --- Roles ---
 
-export interface Role {
-  id: string;
-  code: string;
-  name: string;
-  description?: string;
-  permissionIds?: string[];
-  createdAt: string;
-  updatedAt?: string;
-}
-
 export async function fetchRoles(): Promise<Role[]> {
   const list = await api.get<Role[]>('/api/roles');
   return normalizeList(list);
@@ -378,7 +309,11 @@ export async function fetchRoles(): Promise<Role[]> {
 
 export async function fetchRole(id: string): Promise<Role> {
   const res = await api.get<Role>(`/api/roles/${id}`);
-  return normalizeIds(res);
+  const normalized = normalizeIds(res);
+  if (Array.isArray(normalized.permissionIds)) {
+    normalized.permissionIds = normalized.permissionIds.map((id) => String(id));
+  }
+  return normalized;
 }
 
 export async function createRole(data: {
@@ -410,17 +345,6 @@ export async function deleteRole(id: string): Promise<void> {
 
 // --- Permissions ---
 
-export interface Permission {
-  id: string;
-  code: string;
-  name: string;
-  type: 'menu' | 'button';
-  parentId?: string | null;
-  sortOrder: number;
-  children?: Permission[];
-  createdAt?: string;
-}
-
 export async function fetchPermissions(type?: 'menu' | 'button'): Promise<Permission[]> {
   const q = type ? `?type=${type}` : '';
   const list = await api.get<Permission[]>(`/api/permissions${q}`);
@@ -431,7 +355,10 @@ export async function createPermission(data: {
   code: string;
   name: string;
   type?: 'menu' | 'button';
-  parentId?: number;
+  parentId?: number | null;
+  routePath?: string | null;
+  component?: string | null;
+  isHidden?: boolean;
   sortOrder?: number;
 }): Promise<Permission> {
   const res = await api.post<Permission>('/api/permissions', data);
@@ -440,10 +367,23 @@ export async function createPermission(data: {
 
 export async function updatePermission(
   id: string,
-  data: Partial<{ name: string; type: string; parentId?: number; sortOrder: number }>
+  data: Partial<{
+    name: string;
+    type: string;
+    parentId?: number | null;
+    routePath?: string | null;
+    component?: string | null;
+    isHidden?: boolean;
+    sortOrder: number;
+  }>
 ): Promise<Permission> {
   const res = await api.put<Permission>(`/api/permissions/${id}`, data);
   return normalizeIds(res);
+}
+
+export async function fetchMenus(): Promise<Permission[]> {
+  const list = await api.get<Permission[]>('/api/auth/menus');
+  return normalizeList(list);
 }
 
 export async function deletePermission(id: string): Promise<void> {

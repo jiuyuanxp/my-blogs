@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
-import type { Comment, Category } from '@/types';
-import { format, parseISO } from 'date-fns';
+import type { Comment, Category } from '@blog/types';
+import { format } from 'date-fns';
+import { parseDateTime } from '@blog/utils';
 import { Trash2, MessageSquare } from 'lucide-react';
 import { fetchComments, fetchCategories, deleteComment, isApiError } from '@/lib/api';
 
@@ -129,7 +130,7 @@ export default function Comments() {
                           •
                         </span>
                         <span className="text-zinc-500 text-sm">
-                          {format(parseISO(comment.createdAt), 'yyyy-MM-dd HH:mm')}
+                          {format(parseDateTime(comment.createdAt), 'yyyy-MM-dd HH:mm:ss')}
                         </span>
                       </div>
                       <p className="text-zinc-700 text-sm mb-3 break-words">{comment.content}</p>

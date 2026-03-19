@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
-import type { Article, Category } from '@/types';
-import { format, parseISO } from 'date-fns';
+import type { Article, Category } from '@blog/types';
+import { format } from 'date-fns';
+import { parseDateTime } from '@blog/utils';
 import { Edit2, Trash2, Plus, FileText, Eye, Code } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { cn } from '@blog/utils';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import {
@@ -447,7 +448,7 @@ export default function Articles() {
                     {article.views}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-zinc-500">
-                    {format(parseISO(article.createdAt), 'yyyy-MM-dd')}
+                    {format(parseDateTime(article.createdAt), 'yyyy-MM-dd')}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                     <div className="flex items-center justify-end gap-2">

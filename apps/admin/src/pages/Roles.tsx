@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Plus, Edit2, Trash2, Key } from 'lucide-react';
+import { Modal } from 'antd';
 import {
   fetchRoles,
   fetchPermissions,
@@ -13,6 +14,7 @@ import {
   type Permission,
 } from '@/lib/api';
 import { useAuth } from '@/contexts/AuthContext';
+import { PermissionTreeCheckbox } from '@/components/PermissionTreeCheckbox';
 
 export default function RolesPage() {
   const [roles, setRoles] = useState<Role[]>([]);
@@ -72,8 +74,7 @@ export default function RolesPage() {
     }
   };
 
-  const handleAssign = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleAssign = async () => {
     if (!assigningRole) return;
     setError(null);
     try {
@@ -97,20 +98,15 @@ export default function RolesPage() {
     }
   };
 
+  const handleCheck = (checkedKeys: Set<string>) => {
+    setSelectedPermIds(checkedKeys);
+  };
+
   const openAssign = async (role: Role) => {
     const detail = await fetchRole(role.id);
     setAssigningRole(role);
     setSelectedPermIds(new Set((detail.permissionIds ?? []).map(String)));
     setIsModalOpen('assign');
-  };
-
-  const togglePerm = (id: string) => {
-    setSelectedPermIds((prev) => {
-      const next = new Set(prev);
-      if (next.has(id)) next.delete(id);
-      else next.add(id);
-      return next;
-    });
   };
 
   return (
@@ -195,6 +191,9 @@ export default function RolesPage() {
                         <Trash2 className="w-4 h-4" aria-hidden />
                       </button>
                     )}
+                    {r.code === 'super_admin' && (
+                      <span className="text-xs text-zinc-400">超级管理员（不可修改）</span>
+                    )}
                   </td>
                 </tr>
               ))}
@@ -203,7 +202,6 @@ export default function RolesPage() {
         </div>
       )}
 
-      {/* Create Modal */}
       {isModalOpen === 'create' && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-xl p-6 max-w-md w-full">
@@ -255,7 +253,6 @@ export default function RolesPage() {
         </div>
       )}
 
-      {/* Edit Modal */}
       {isModalOpen === 'edit' && editingRole && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-xl p-6 max-w-md w-full">
@@ -309,46 +306,27 @@ export default function RolesPage() {
         </div>
       )}
 
-      {/* Assign Permissions Modal */}
-      {isModalOpen === 'assign' && assigningRole && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl p-6 max-w-lg w-full max-h-[80vh] overflow-auto">
-            <h2 className="text-lg font-semibold mb-4">分配权限 - {assigningRole.name}</h2>
-            <form onSubmit={handleAssign} className="space-y-4">
-              <div className="space-y-2 max-h-60 overflow-y-auto">
-                {permissions.map((p) => (
-                  <label key={p.id} className="flex items-center gap-2 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={selectedPermIds.has(p.id)}
-                      onChange={() => togglePerm(p.id)}
-                      className="rounded"
-                    />
-                    <span className="text-sm">
-                      [{p.type}] {p.name} ({p.code})
-                    </span>
-                  </label>
-                ))}
-              </div>
-              <div className="flex gap-2 justify-end pt-2">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setIsModalOpen(null);
-                    setAssigningRole(null);
-                  }}
-                  className="px-4 py-2 border rounded-lg"
-                >
-                  取消
-                </button>
-                <button type="submit" className="px-4 py-2 bg-zinc-900 text-white rounded-lg">
-                  保存
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
+      <Modal
+        title={`分配权限 - ${assigningRole?.name ?? ''}`}
+        open={isModalOpen === 'assign'}
+        onCancel={() => {
+          setIsModalOpen(null);
+          setAssigningRole(null);
+        }}
+        onOk={() => handleAssign()}
+        okText="保存"
+        cancelText="取消"
+        width={480}
+        destroyOnClose
+      >
+        {assigningRole && (
+          <PermissionTreeCheckbox
+            data={permissions}
+            checkedKeys={selectedPermIds}
+            onCheck={handleCheck}
+          />
+        )}
+      </Modal>
     </div>
   );
 }
