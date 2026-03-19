@@ -72,16 +72,16 @@
 
 ### 3.1 路由表
 
-| 路径                  | 处理方式   | 目标                                 |
-| --------------------- | ---------- | ------------------------------------ |
-| `/`                   | 302 重定向 | `/web/zh`                            |
-| `/admin`              | 302 重定向 | `/admin/`                            |
-| `/admin/`、`/admin/*` | 静态文件   | alias `/usr/share/nginx/html/admin/` |
-| `/api/`               | 反向代理   | `http://java:4300`                   |
-| `/doc.html`           | 反向代理   | `http://java:4300`（Knife4j）        |
-| `/v3/api-docs`        | 反向代理   | `http://java:4300`                   |
-| `/webjars/`           | 反向代理   | `http://java:4300`                   |
-| `/web`、`/web/*`      | 反向代理   | `http://web:3000`                    |
+| 路径                  | 处理方式   | 目标                                                        |
+| --------------------- | ---------- | ----------------------------------------------------------- |
+| `/`                   | 302 重定向 | `/web/`（Next.js 根据 Accept-Language 自动识别 /zh 或 /en） |
+| `/admin`              | 302 重定向 | `/admin/`                                                   |
+| `/admin/`、`/admin/*` | 静态文件   | alias `/usr/share/nginx/html/admin/`                        |
+| `/api/`               | 反向代理   | `http://java:4300`                                          |
+| `/doc.html`           | 反向代理   | `http://java:4300`（Knife4j）                               |
+| `/v3/api-docs`        | 反向代理   | `http://java:4300`                                          |
+| `/webjars/`           | 反向代理   | `http://java:4300`                                          |
+| `/web`、`/web/*`      | 反向代理   | `http://web:3000`                                           |
 
 ### 3.2 代理头
 

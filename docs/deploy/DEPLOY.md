@@ -154,7 +154,7 @@ Mac（Apple Silicon）构建 amd64 会走 QEMU 模拟，耗时长且可能不稳
 
 部署成功后：
 
-- 主站：`http://你的服务器IP/web` 或 `http://你的服务器IP/`（会跳转到 `/web/zh`）
+- 主站：`http://你的服务器IP/web` 或 `http://你的服务器IP/`（根据 Accept-Language 自动跳转到 `/web/zh` 或 `/web/en`）
 - 管理后台：`http://你的服务器IP/admin`
 
 ---
