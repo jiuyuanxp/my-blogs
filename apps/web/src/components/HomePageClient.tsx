@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { format } from 'date-fns';
+import { parseDateTime } from '@blog/utils';
 import { zhCN, enUS } from 'date-fns/locale';
 import { usePathname } from 'next/navigation';
 import { useTranslations } from 'next-intl';
@@ -54,7 +55,7 @@ export default function HomePageClient({
 
   const sortedArticles = [...filteredArticles].sort((a, b) => {
     if (a.isPinned !== b.isPinned) return b.isPinned - a.isPinned;
-    return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+    return parseDateTime(b.createdAt).getTime() - parseDateTime(a.createdAt).getTime();
   });
 
   const articleLink = (article: Article) => `/${locale}/article/${article.id}`;
@@ -157,7 +158,7 @@ export default function HomePageClient({
                   </span>
                   <span aria-hidden>•</span>
                   <time dateTime={article.createdAt}>
-                    {format(new Date(article.createdAt), dateFormat, {
+                    {format(parseDateTime(article.createdAt), dateFormat, {
                       locale: dateLocale,
                     })}
                   </time>

@@ -22,8 +22,8 @@
     "loadingArticle": "文章加载中…",
     "loadingCategory": "分类加载中…",
     "noArticlesInCategory": "该分类下暂无文章。",
-    "dateFormat": "yyyy年M月d日",
-    "dateTimeFormat": "yyyy年M月d日 HH:mm"
+    "dateFormat": "yyyy-MM-dd",
+    "dateTimeFormat": "yyyy-MM-dd HH:mm:ss"
   },
   "home": {
     "latestArticles": "最新文章",

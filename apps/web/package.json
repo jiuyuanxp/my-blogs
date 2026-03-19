@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@blog/api-client": "workspace:*",
+    "@blog/utils": "workspace:*",
     "@tailwindcss/typography": "^0.5.19",
     "date-fns": "^4.1.0",
     "highlight.js": "^11.11.1",

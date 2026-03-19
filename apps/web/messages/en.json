@@ -22,8 +22,8 @@
     "loadingArticle": "Loading article…",
     "loadingCategory": "Loading category…",
     "noArticlesInCategory": "No articles found in this category.",
-    "dateFormat": "MMM d, yyyy",
-    "dateTimeFormat": "MMM d, h:mm a"
+    "dateFormat": "yyyy-MM-dd",
+    "dateTimeFormat": "yyyy-MM-dd HH:mm:ss"
   },
   "home": {
     "latestArticles": "Latest Articles",

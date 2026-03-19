@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { format } from 'date-fns';
 import { zhCN, enUS } from 'date-fns/locale';
+import { parseDateTime } from '@blog/utils';
 import { usePathname } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import ReactMarkdown from 'react-markdown';
@@ -94,7 +95,7 @@ export default function ArticlePageClient({
             •
           </span>
           <time dateTime={article.createdAt}>
-            {format(new Date(article.createdAt), dateFormat, {
+            {format(parseDateTime(article.createdAt), dateFormat, {
               locale: dateLocale,
             })}
           </time>
@@ -133,7 +134,7 @@ export default function ArticlePageClient({
                     {comment.authorName}
                   </span>
                   <span className="text-xs text-stone-400">
-                    {format(new Date(comment.createdAt), dateTimeFormat, {
+                    {format(parseDateTime(comment.createdAt), dateTimeFormat, {
                       locale: dateLocale,
                     })}
                   </span>

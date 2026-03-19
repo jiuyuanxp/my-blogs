@@ -1,6 +1,7 @@
 import type { MetadataRoute } from 'next';
 import { locales } from '@/i18n/request';
 import { fetchArticles, fetchCategories } from '@/lib/api';
+import { parseDateTime } from '@blog/utils';
 
 const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://jiuyuan.blog';
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? '/web';
@@ -42,7 +43,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       for (const article of articles) {
         entries.push({
           url: `${baseUrl}${basePath}/${locale}/article/${article.id}`,
-          lastModified: new Date(article.createdAt),
+          lastModified: parseDateTime(article.createdAt),
           changeFrequency: 'monthly' as const,
           priority: 0.8,
         });

@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { format } from 'date-fns';
+import { parseDateTime } from '@blog/utils';
 import { zhCN, enUS } from 'date-fns/locale';
 import { usePathname } from 'next/navigation';
 import { useTranslations } from 'next-intl';
@@ -75,7 +76,7 @@ export default function CategoryPageClient({
                   {article.categoryName ?? ''}
                 </span>
                 <time dateTime={article.createdAt}>
-                  {format(new Date(article.createdAt), dateFormat, {
+                  {format(parseDateTime(article.createdAt), dateFormat, {
                     locale: dateLocale,
                   })}
                 </time>
