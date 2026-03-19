@@ -34,8 +34,8 @@
       "status": "published",
       "views": 1280,
       "isPinned": 0,
-      "createdAt": "2024-03-01T10:00:00Z",
-      "updatedAt": "2024-03-02T15:30:00Z"
+      "createdAt": "2024-03-01 10:00:00",
+      "updatedAt": "2024-03-02 15:30:00"
     }
   ],
   "meta": {
@@ -74,8 +74,8 @@
   "status": "published",
   "views": 1281,
   "isPinned": 0,
-  "createdAt": "2024-03-01T10:00:00Z",
-  "updatedAt": "2024-03-02T15:30:00Z"
+  "createdAt": "2024-03-01 10:00:00",
+  "updatedAt": "2024-03-02 15:30:00"
 }
 ```
 

@@ -16,20 +16,20 @@
     "id": 1,
     "parentId": null,
     "name": "技术",
-    "createdAt": "2024-01-01T00:00:00Z",
+    "createdAt": "2024-01-01 00:00:00",
     "children": [
       {
         "id": 2,
         "parentId": 1,
         "name": "前端",
-        "createdAt": "2024-01-01T00:00:00Z",
+        "createdAt": "2024-01-01 00:00:00",
         "children": []
       },
       {
         "id": 3,
         "parentId": 1,
         "name": "后端",
-        "createdAt": "2024-01-01T00:00:00Z",
+        "createdAt": "2024-01-01 00:00:00",
         "children": []
       }
     ]
@@ -38,7 +38,7 @@
     "id": 4,
     "parentId": null,
     "name": "随笔",
-    "createdAt": "2024-01-01T00:00:00Z",
+    "createdAt": "2024-01-01 00:00:00",
     "children": []
   }
 ]
@@ -76,7 +76,7 @@
   "id": 2,
   "parentId": 1,
   "name": "前端",
-  "createdAt": "2024-03-01T10:00:00Z"
+  "createdAt": "2024-03-01 10:00:00"
 }
 ```
 

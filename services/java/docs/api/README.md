@@ -6,15 +6,15 @@
 
 ## 设计决策汇总
 
-| 决策项       | 选择       | 说明                                       |
-| ------------ | ---------- | ------------------------------------------ |
-| 分类返回格式 | 树形       | `GET /api/categories` 返回嵌套 `children`  |
-| 认证方案     | 简单 Token | 固定密码校验，返回随机 token 存 Redis/内存 |
-| 评论作者     | 前端生成   | web 端随机生成，可修改，存 localStorage    |
-| DTO          | 独立       | Request/Response DTO 与 Entity 分离        |
-| 软删除       | 是         | 评论软删除，后台可查看已删评论             |
-| 分页         | offset     | `page`, `pageSize`，适合管理后台           |
-| 时间格式     | ISO 8601   | `2024-03-01T10:00:00Z` (UTC)               |
+| 决策项       | 选择                | 说明                                       |
+| ------------ | ------------------- | ------------------------------------------ |
+| 分类返回格式 | 树形                | `GET /api/categories` 返回嵌套 `children`  |
+| 认证方案     | 简单 Token          | 固定密码校验，返回随机 token 存 Redis/内存 |
+| 评论作者     | 前端生成            | web 端随机生成，可修改，存 localStorage    |
+| DTO          | 独立                | Request/Response DTO 与 Entity 分离        |
+| 软删除       | 是                  | 评论软删除，后台可查看已删评论             |
+| 分页         | offset              | `page`, `pageSize`，适合管理后台           |
+| 时间格式     | yyyy-MM-dd HH:mm:ss | `2024-03-01 10:00:00`                      |
 
 ## 接口清单
 
@@ -46,6 +46,7 @@
 ## 详细设计
 
 - [认证 API](./auth.md)
+- [RBAC 权限 API](./rbac.md)
 - [分类 API](./categories.md)
 - [文章 API](./articles.md)
 - [评论 API](./comments.md)

@@ -14,7 +14,7 @@
 
 ### 1.2 时间格式
 
-- 统一使用 **ISO 8601**：`2024-03-01T10:00:00Z`（UTC）
+- 统一使用 **`yyyy-MM-dd HH:mm:ss`**：`2024-03-01 10:00:00`（禁止使用 ISO 8601 如 `2024-03-01T10:00:00Z`）
 
 ### 1.3 分页参数
 
@@ -36,7 +36,7 @@
   "id": 1,
   "title": "文章标题",
   "content": "...",
-  "createdAt": "2024-03-01T10:00:00Z"
+  "createdAt": "2024-03-01 10:00:00"
 }
 ```
 
@@ -138,21 +138,28 @@
 | ---- | ------------------- | ------------------ | ---- | ------------- |
 | 认证 | POST                | `/api/auth/login`  | 否   | auth.md       |
 | 认证 | GET                 | `/api/auth/check`  | 是   | auth.md       |
+| 认证 | GET                 | `/api/auth/me`     | 是   | rbac.md       |
+| 认证 | GET                 | `/api/auth/menus`  | 是   | rbac.md       |
 | 认证 | POST                | `/api/auth/logout` | 是   | auth.md       |
 | 分类 | GET                 | `/api/categories`  | 否   | categories.md |
 | 分类 | POST/PUT/DELETE     | `/api/categories`  | 是   | categories.md |
 | 文章 | GET/POST/PUT/DELETE | `/api/articles`    | 部分 | articles.md   |
 | 评论 | GET/POST/DELETE     | `/api/comments`    | 部分 | comments.md   |
 | 统计 | GET                 | `/api/stats/*`     | 是   | stats.md      |
+| RBAC | GET/POST/PUT/DELETE | `/api/permissions` | 是   | rbac.md       |
+| RBAC | GET/POST/PUT/DELETE | `/api/roles`       | 是   | rbac.md       |
+| RBAC | GET/POST/PUT/DELETE | `/api/users`       | 是   | rbac.md       |
 
 完整接口定义与请求/响应示例见 `services/java/docs/api/`，可交互文档启动后访问 `/doc.html`。
 
 ---
 
-## 六、前端类型同步
+## 六、前端类型同步与字段对齐
 
 - `packages/types` 中的 TypeScript 接口必须与 Java DTO 严格对应
-- 后端 DTO 变更时，必须同步更新前端类型
+- **字段对齐（强制）**：前后端 DTO 字段名必须一致（camelCase），禁止做字段名映射
+- **ID 类型**：因 JS 精度问题，前端将 `id`、`roleId` 等 BigInt 转为 `string` 存储
+- 后端 DTO 变更时，必须同步更新 `docs/api-contract.md`、`services/java/docs/api/`、`packages/types`、`apps/admin/src/lib/api.ts`
 - 使用 `@blog/api-client` 统一发起请求，封装错误解析与 Token 传递
 
 ---

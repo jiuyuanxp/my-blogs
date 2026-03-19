@@ -1,6 +1,18 @@
 # 初始化脚本
 
-本目录用于存放部署/初始化脚本。以下脚本**不提交 Git**，仅本地使用。
+本目录用于存放部署/初始化脚本。
+
+## 权限表迁移（permissions 新增列）
+
+当 `permissions` 表缺少 `route_path`、`component`、`is_hidden` 列时（Entity 已更新但 ddl-auto 未生效），执行：
+
+```bash
+# 本机安装 PostgreSQL
+psql -h localhost -p 5433 -U bloguser -d blogdb -f scripts/migrate-permissions-columns.sql
+
+# 或通过 Docker 容器（容器名见 infra/docker/docker-compose.yml）
+docker exec -i blogs-postgres psql -U bloguser -d blogdb < scripts/migrate-permissions-columns.sql
+```
 
 ## 超级管理员初始化
 

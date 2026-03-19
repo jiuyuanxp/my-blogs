@@ -27,7 +27,7 @@
       "articleTitle": "Next.js 16 新特性解析",
       "authorName": "User1234",
       "content": "写得很好！",
-      "createdAt": "2024-03-02T14:20:00Z",
+      "createdAt": "2024-03-02 14:20:00",
       "deletedAt": null
     },
     {
@@ -36,7 +36,7 @@
       "articleTitle": "Next.js 16 新特性解析",
       "authorName": "匿名",
       "content": "已删除的评论内容",
-      "createdAt": "2024-03-03T10:00:00Z",
+      "createdAt": "2024-03-03 10:00:00",
       "deletedAt": "2024-03-04T09:00:00Z"
     }
   ],
@@ -82,7 +82,7 @@
   "articleId": 1,
   "authorName": "User1234",
   "content": "评论内容",
-  "createdAt": "2024-03-05T10:00:00Z"
+  "createdAt": "2024-03-05 10:00:00"
 }
 ```
 

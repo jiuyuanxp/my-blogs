@@ -40,16 +40,19 @@ Admin 登录已改为 **RBAC 用户表** 方案：
 
 ### permissions（权限）
 
-| 列名       | 类型         | 约束            | 说明           |
-| ---------- | ------------ | --------------- | -------------- |
-| id         | BIGSERIAL    | PK              | 主键           |
-| code       | VARCHAR(100) | NOT NULL UNIQUE | 权限编码       |
-| name       | VARCHAR(100) | NOT NULL        | 权限名称       |
-| type       | VARCHAR(20)  | NOT NULL        | menu \| button |
-| parent_id  | BIGINT       | nullable        | 父权限 ID      |
-| sort_order | INTEGER      | NOT NULL        | 排序           |
-| created_at | TIMESTAMP    | NOT NULL        | 创建时间       |
-| updated_at | TIMESTAMP    | nullable        | 更新时间       |
+| 列名       | 类型         | 约束            | 说明                      |
+| ---------- | ------------ | --------------- | ------------------------- |
+| id         | BIGSERIAL    | PK              | 主键                      |
+| code       | VARCHAR(100) | NOT NULL UNIQUE | 权限编码（perm_key 语义） |
+| name       | VARCHAR(100) | NOT NULL        | 权限名称（title 语义）    |
+| type       | VARCHAR(20)  | NOT NULL        | menu \| button            |
+| parent_id  | BIGINT       | nullable        | 父权限 ID，根为 NULL      |
+| route_path | VARCHAR(200) | nullable        | 路由路径（仅菜单有效）    |
+| component  | VARCHAR(200) | nullable        | 前端组件路径              |
+| is_hidden  | BOOLEAN      | NOT NULL        | 是否在菜单栏隐藏          |
+| sort_order | INTEGER      | NOT NULL        | 排序                      |
+| created_at | TIMESTAMP    | NOT NULL        | 创建时间                  |
+| updated_at | TIMESTAMP    | nullable        | 更新时间                  |
 
 ### role_permissions（角色-权限关联）
 
