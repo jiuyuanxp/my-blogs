@@ -1,62 +1,13 @@
 import { useState } from 'react';
-import {
-  LayoutDashboard,
-  FolderTree,
-  FileText,
-  MessageSquare,
-  Users,
-  Shield,
-  Key,
-  LogOut,
-  Palette,
-  Info,
-  Menu,
-  X,
-} from 'lucide-react';
-import Dashboard from './pages/Dashboard';
-import Categories from './pages/Categories';
-import Articles from './pages/Articles';
-import Comments from './pages/Comments';
-import UsersPage from './pages/Users';
-import RolesPage from './pages/Roles';
-import PermissionsPage from './pages/Permissions';
+import { Routes, Route, NavLink, Navigate } from 'react-router-dom';
+import { LogOut, Menu, X } from 'lucide-react';
 import Login from './pages/Login';
-import DesignSystem from './pages/DesignSystem';
-import ProjectInfo from './pages/ProjectInfo';
 import { cn } from './lib/utils';
 import { getToken, logout as apiLogout } from './lib/api';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
-
-type Tab =
-  | 'dashboard'
-  | 'categories'
-  | 'articles'
-  | 'comments'
-  | 'users'
-  | 'roles'
-  | 'permissions'
-  | 'design'
-  | 'about';
-
-const ALL_NAV_ITEMS: {
-  id: Tab;
-  label: string;
-  icon: typeof LayoutDashboard;
-  menuPermission: string;
-}[] = [
-  { id: 'dashboard', label: '仪表盘', icon: LayoutDashboard, menuPermission: 'dashboard' },
-  { id: 'categories', label: '分类管理', icon: FolderTree, menuPermission: 'categories' },
-  { id: 'articles', label: '文章管理', icon: FileText, menuPermission: 'articles' },
-  { id: 'comments', label: '评论管理', icon: MessageSquare, menuPermission: 'comments' },
-  { id: 'users', label: '用户管理', icon: Users, menuPermission: 'users' },
-  { id: 'roles', label: '角色管理', icon: Shield, menuPermission: 'roles' },
-  { id: 'permissions', label: '权限管理', icon: Key, menuPermission: 'permissions' },
-  { id: 'design', label: '设计规范', icon: Palette, menuPermission: 'design' },
-  { id: 'about', label: '项目说明', icon: Info, menuPermission: 'about' },
-];
+import { ROUTES } from './routes';
 
 function AppContent() {
-  const [activeTab, setActiveTab] = useState<Tab>('dashboard');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { user, isLoading, refresh, hasMenu } = useAuth();
 
@@ -81,7 +32,7 @@ function AppContent() {
     );
   }
 
-  const navItems = ALL_NAV_ITEMS.filter((item) => hasMenu(item.menuPermission));
+  const navItems = ROUTES.filter((item) => hasMenu(item.menuPermission));
 
   return (
     <div className="flex h-screen bg-[#fcfcfc] text-zinc-900 font-sans overflow-hidden">
@@ -130,23 +81,21 @@ function AppContent() {
           {navItems.map((item) => {
             const Icon = item.icon;
             return (
-              <button
+              <NavLink
                 key={item.id}
-                type="button"
-                onClick={() => {
-                  setActiveTab(item.id);
-                  setIsMobileMenuOpen(false);
-                }}
-                className={cn(
-                  'w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-900',
-                  activeTab === item.id
-                    ? 'bg-white/10 text-white'
-                    : 'hover:bg-white/5 hover:text-white'
-                )}
+                to={item.path}
+                end={item.path === '/'}
+                onClick={() => setIsMobileMenuOpen(false)}
+                className={({ isActive }) =>
+                  cn(
+                    'w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-900',
+                    isActive ? 'bg-white/10 text-white' : 'hover:bg-white/5 hover:text-white'
+                  )
+                }
               >
                 <Icon className="w-5 h-5 shrink-0" aria-hidden />
                 {item.label}
-              </button>
+              </NavLink>
             );
           })}
         </nav>
@@ -165,15 +114,12 @@ function AppContent() {
       {/* Main Content */}
       <main className="flex-1 overflow-auto pt-16 lg:pt-0" id="main-content">
         <div className="p-4 sm:p-8 md:p-12 max-w-7xl mx-auto">
-          {activeTab === 'dashboard' && <Dashboard />}
-          {activeTab === 'categories' && <Categories />}
-          {activeTab === 'articles' && <Articles />}
-          {activeTab === 'comments' && <Comments />}
-          {activeTab === 'users' && <UsersPage />}
-          {activeTab === 'roles' && <RolesPage />}
-          {activeTab === 'permissions' && <PermissionsPage />}
-          {activeTab === 'design' && <DesignSystem />}
-          {activeTab === 'about' && <ProjectInfo />}
+          <Routes>
+            {ROUTES.map((route) => (
+              <Route key={route.id} path={route.path} element={route.element} />
+            ))}
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
         </div>
       </main>
     </div>

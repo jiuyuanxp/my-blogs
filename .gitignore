@@ -77,6 +77,10 @@ specs/openapi.json
 
 # Build artifacts
 *.tsbuildinfo
+# Packages tsc 构建产物（声明等可能输出到 src）
+packages/*/src/**/*.js
+packages/*/src/**/*.d.ts
+packages/*/src/**/*.map
 web-standalone.tar.gz
 **/web-standalone.tar.gz
 admin-dist.tar.gz
