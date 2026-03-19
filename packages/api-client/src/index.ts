@@ -69,6 +69,8 @@ export interface RequestConfig {
   timeout?: number;
   /** 自定义 headers */
   headers?: Record<string, string>;
+  /** 用于取消请求（如 useEffect 清理时 abort） */
+  signal?: AbortSignal;
 }
 
 export interface CreateClientOptions {
@@ -108,6 +110,10 @@ export function createClient(options: CreateClientOptions) {
     const timeout = config.timeout ?? defaultTimeout;
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), timeout);
+    if (config.signal) {
+      if (config.signal.aborted) controller.abort();
+      else config.signal.addEventListener('abort', () => controller.abort());
+    }
 
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
