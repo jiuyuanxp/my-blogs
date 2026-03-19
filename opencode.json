@@ -8,29 +8,17 @@
     },
     "playwright-mcp-server": {
       "type": "local",
-      "command": [
-        "/Users/caoxinpeng/.nvm/versions/node/v20.20.0/bin/npx",
-        "-y",
-        "@executeautomation/playwright-mcp-server"
-      ],
-      "env": {
-        "npm_config_registry": "https://registry.npmjs.org/",
-        "PATH": "/Users/caoxinpeng/.nvm/versions/node/v20.20.0/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
-      },
-      "enabled": true
+      "command": ["npx", "-y", "@executeautomation/playwright-mcp-server"],
+      "environment": {
+        "npm_config_registry": "https://registry.npmjs.org/"
+      }
     },
     "context7": {
       "type": "local",
-      "command": [
-        "/Users/caoxinpeng/.nvm/versions/node/v20.20.0/bin/npx",
-        "-y",
-        "@upstash/context7-mcp@latest"
-      ],
-      "env": {
-        "npm_config_registry": "https://registry.npmjs.org/",
-        "PATH": "/Users/caoxinpeng/.nvm/versions/node/v20.20.0/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
-      },
-      "enabled": true
+      "command": ["npx", "-y", "@upstash/context7-mcp@latest"],
+      "environment": {
+        "npm_config_registry": "https://registry.npmjs.org/"
+      }
     },
     "interactive-feedback-mcp": {
       "type": "local",
@@ -41,8 +29,7 @@
         "run",
         "server.py"
       ],
-      "timeout": 600000,
-      "enabled": true
+      "timeout": 600000
     }
   }
 }
