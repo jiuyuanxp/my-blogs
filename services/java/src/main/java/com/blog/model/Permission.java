@@ -36,6 +36,17 @@ public class Permission {
     @Column(name = "parent_id")
     private Long parentId;
 
+    @Size(max = 200)
+    @Column(name = "route_path", length = 200)
+    private String routePath;
+
+    @Size(max = 200)
+    @Column(name = "component", length = 200)
+    private String component;
+
+    @Column(name = "is_hidden", nullable = false)
+    private Boolean isHidden = false;
+
     @Column(name = "sort_order", nullable = false)
     private Integer sortOrder = 0;
 

@@ -1,5 +1,6 @@
 package com.blog.auth;
 
+import com.blog.dto.PermissionDto;
 import com.blog.exception.BusinessException;
 import com.blog.model.Permission;
 import com.blog.model.Role;
@@ -7,6 +8,7 @@ import com.blog.model.User;
 import com.blog.repository.PermissionRepository;
 import com.blog.repository.RolePermissionRepository;
 import com.blog.repository.UserRepository;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -73,6 +75,45 @@ public class AuthService {
                 role.getCode(),
                 permissions
         );
+    }
+
+    @Transactional(readOnly = true)
+    public List<PermissionDto> getCurrentUserMenus(String token) {
+        Long userId = tokenService.getUserId(token);
+        if (userId == null) {
+            throw new BusinessException("invalid_token", "Token 无效或已过期");
+        }
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new BusinessException("user_not_found", "用户不存在"));
+        Role role = user.getRole();
+
+        List<Permission> allMenus;
+        if (SUPER_ADMIN_ROLE.equals(role.getCode())) {
+            allMenus = permissionRepository.findAllByTypeOrderBySortOrderAsc("menu");
+        } else {
+            List<Long> permIds = rolePermissionRepository.findAllByRoleId(role.getId()).stream()
+                    .map(rp -> rp.getPermission().getId())
+                    .collect(Collectors.toList());
+            allMenus = permissionRepository.findAllById(permIds).stream()
+                    .filter(p -> "menu".equals(p.getType()))
+                    .sorted((a, b) -> Integer.compare(a.getSortOrder(), b.getSortOrder()))
+                    .collect(Collectors.toList());
+        }
+        return buildMenuTree(allMenus, null);
+    }
+
+    private List<PermissionDto> buildMenuTree(List<Permission> permissions, Long parentId) {
+        List<PermissionDto> result = new ArrayList<>();
+        for (Permission p : permissions) {
+            Long pid = p.getParentId();
+            boolean match = (parentId == null && pid == null) || (parentId != null && parentId.equals(pid));
+            if (match && !Boolean.TRUE.equals(p.getIsHidden())) {
+                PermissionDto dto = PermissionDto.from(p);
+                dto.setChildren(buildMenuTree(permissions, p.getId()));
+                result.add(dto);
+            }
+        }
+        return result;
     }
 
     public record MeResponse(Long id, String username, String nickname, String role, List<String> permissions) {}

@@ -31,6 +31,15 @@ public class PermissionDto {
     @Schema(description = "父权限 ID")
     private Long parentId;
 
+    @Schema(description = "路由路径（仅菜单有效）")
+    private String routePath;
+
+    @Schema(description = "前端组件路径")
+    private String component;
+
+    @Schema(description = "是否在菜单栏隐藏")
+    private Boolean isHidden;
+
     @Schema(description = "排序")
     private Integer sortOrder;
 
@@ -47,6 +56,9 @@ public class PermissionDto {
                 .name(p.getName())
                 .type(p.getType())
                 .parentId(p.getParentId())
+                .routePath(p.getRoutePath())
+                .component(p.getComponent())
+                .isHidden(p.getIsHidden())
                 .sortOrder(p.getSortOrder())
                 .createdAt(p.getCreatedAt())
                 .build();

@@ -24,6 +24,9 @@ public class UserDto {
     @Schema(description = "昵称")
     private String nickname;
 
+    @Schema(description = "角色 ID")
+    private Long roleId;
+
     @Schema(description = "角色编码")
     private String roleCode;
 
@@ -44,6 +47,7 @@ public class UserDto {
                 .id(user.getId())
                 .username(user.getUsername())
                 .nickname(user.getNickname())
+                .roleId(user.getRole().getId())
                 .roleCode(user.getRole().getCode())
                 .roleName(user.getRole().getName())
                 .status(user.getStatus())

@@ -47,6 +47,9 @@ public class PermissionController {
                 request.name(),
                 request.type(),
                 request.parentId(),
+                request.routePath(),
+                request.component(),
+                request.isHidden(),
                 request.sortOrder());
         return ResponseEntity.status(HttpStatus.CREATED)
                 .location(URI.create("/api/permissions/" + created.getId()))
@@ -58,7 +61,8 @@ public class PermissionController {
     public ResponseEntity<PermissionDto> update(
             @Parameter(description = "权限 ID") @PathVariable Long id,
             @Valid @RequestBody UpdatePermissionRequest request) {
-        return ResponseEntity.ok(permissionService.update(id, request.name(), request.type(), request.parentId(), request.sortOrder()));
+        return ResponseEntity.ok(permissionService.update(id, request.name(), request.type(),
+                request.parentId(), request.routePath(), request.component(), request.isHidden(), request.sortOrder()));
     }
 
     @Operation(summary = "删除权限")
@@ -73,7 +77,10 @@ public class PermissionController {
             @NotBlank @Size(max = 100) @Schema(description = "权限编码") String code,
             @NotBlank @Size(max = 100) @Schema(description = "权限名称") String name,
             @Schema(description = "类型：menu/button") String type,
-            @Schema(description = "父权限 ID") Long parentId,
+            @Schema(description = "父权限 ID，根为 0 或 null") Long parentId,
+            @Size(max = 200) @Schema(description = "路由路径") String routePath,
+            @Size(max = 200) @Schema(description = "前端组件路径") String component,
+            @Schema(description = "是否在菜单隐藏") Boolean isHidden,
             @Schema(description = "排序") Integer sortOrder) {}
 
     @Schema(description = "更新权限请求")
@@ -81,5 +88,8 @@ public class PermissionController {
             @Size(max = 100) @Schema(description = "权限名称") String name,
             @Schema(description = "类型：menu/button") String type,
             @Schema(description = "父权限 ID") Long parentId,
+            @Size(max = 200) @Schema(description = "路由路径") String routePath,
+            @Size(max = 200) @Schema(description = "前端组件路径") String component,
+            @Schema(description = "是否在菜单隐藏") Boolean isHidden,
             @Schema(description = "排序") Integer sortOrder) {}
 }

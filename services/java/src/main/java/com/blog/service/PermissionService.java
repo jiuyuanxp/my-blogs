@@ -51,24 +51,46 @@ public class PermissionService {
     }
 
     @Transactional
-    public PermissionDto create(String code, String name, String type, Long parentId, Integer sortOrder) {
+    public PermissionDto create(String code, String name, String type, Long parentId,
+            String routePath, String component, Boolean isHidden, Integer sortOrder) {
         if (permissionRepository.existsByCode(code)) {
             throw new BusinessException("code_exists", "权限编码已存在");
+        }
+        if (parentId != null && parentId != 0) {
+            Permission parent = permissionRepository.findById(parentId)
+                    .orElseThrow(() -> new ResourceNotFoundException("父权限不存在"));
+            if ("button".equals(parent.getType())) {
+                throw new BusinessException("invalid_parent", "按钮不能作为父级，请选择菜单");
+            }
         }
 
         Permission p = new Permission();
         p.setCode(code);
         p.setName(name);
         p.setType(type != null ? type : "menu");
-        p.setParentId(parentId);
+        p.setParentId(parentId != null && parentId == 0 ? null : parentId);
+        p.setRoutePath(routePath);
+        p.setComponent(component);
+        p.setIsHidden(isHidden != null ? isHidden : false);
         p.setSortOrder(sortOrder != null ? sortOrder : 0);
         p = permissionRepository.save(p);
         return PermissionDto.from(p);
     }
 
     @Transactional
-    public PermissionDto update(Long id, String name, String type, Long parentId, Integer sortOrder) {
+    public PermissionDto update(Long id, String name, String type, Long parentId,
+            String routePath, String component, Boolean isHidden, Integer sortOrder) {
         Permission p = permissionRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("权限不存在"));
+        if (parentId != null && parentId.equals(id)) {
+            throw new BusinessException("invalid_parent", "不能将自身设为父级");
+        }
+        if (parentId != null && parentId != 0) {
+            Permission parent = permissionRepository.findById(parentId)
+                    .orElseThrow(() -> new ResourceNotFoundException("父权限不存在"));
+            if ("button".equals(parent.getType())) {
+                throw new BusinessException("invalid_parent", "按钮不能作为父级");
+            }
+        }
 
         if (name != null) {
             p.setName(name);
@@ -77,7 +99,16 @@ public class PermissionService {
             p.setType(type);
         }
         if (parentId != null) {
-            p.setParentId(parentId);
+            p.setParentId(parentId == 0 ? null : parentId);
+        }
+        if (routePath != null) {
+            p.setRoutePath(routePath);
+        }
+        if (component != null) {
+            p.setComponent(component);
+        }
+        if (isHidden != null) {
+            p.setIsHidden(isHidden);
         }
         if (sortOrder != null) {
             p.setSortOrder(sortOrder);
@@ -89,10 +120,25 @@ public class PermissionService {
     @Transactional
     public void delete(Long id) {
         Permission p = permissionRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("权限不存在"));
-        long refCount = rolePermissionRepository.countByPermissionId(id);
-        if (refCount > 0) {
-            throw new BusinessException("permission_in_use", "该权限已被角色使用，无法删除");
+        List<Long> idsToDelete = collectIdsWithChildren(id);
+        for (Long pid : idsToDelete) {
+            long refCount = rolePermissionRepository.countByPermissionId(pid);
+            if (refCount > 0) {
+                throw new BusinessException("permission_in_use", "该权限或其子权限已被角色使用，无法删除");
+            }
         }
-        permissionRepository.delete(p);
+        for (Long pid : idsToDelete) {
+            permissionRepository.findById(pid).ifPresent(permissionRepository::delete);
+        }
+    }
+
+    private List<Long> collectIdsWithChildren(Long parentId) {
+        List<Long> result = new ArrayList<>();
+        result.add(parentId);
+        List<Permission> children = permissionRepository.findAllByParentId(parentId);
+        for (Permission c : children) {
+            result.addAll(collectIdsWithChildren(c.getId()));
+        }
+        return result;
     }
 }

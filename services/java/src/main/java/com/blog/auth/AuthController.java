@@ -1,5 +1,6 @@
 package com.blog.auth;
 
+import com.blog.dto.PermissionDto;
 import com.blog.exception.BusinessException;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.Operation;
@@ -7,6 +8,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
+import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -40,6 +42,17 @@ public class AuthController {
             throw new BusinessException("invalid_token", "Token 无效或已过期");
         }
         return ResponseEntity.ok(authService.getCurrentUser(token));
+    }
+
+    @Operation(summary = "当前用户菜单树", description = "返回当前用户可见的菜单树，用于动态路由")
+    @GetMapping("/menus")
+    public ResponseEntity<List<PermissionDto>> menus(
+            @Parameter(description = "Authorization: Bearer {token}") @RequestHeader(value = "Authorization", required = false) String auth) {
+        String token = extractToken(auth);
+        if (token == null) {
+            throw new BusinessException("invalid_token", "Token 无效或已过期");
+        }
+        return ResponseEntity.ok(authService.getCurrentUserMenus(token));
     }
 
     @Operation(summary = "校验 Token", description = "检查当前 Token 是否有效")
