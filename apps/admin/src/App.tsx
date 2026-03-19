@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { Routes, Route, NavLink, Navigate, useLocation, useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import { Routes, Route, NavLink, Navigate, useLocation } from 'react-router-dom';
 import { LogOut, Menu, X } from 'lucide-react';
 import Login from './pages/Login';
 import { cn } from '@blog/utils';
@@ -10,18 +10,10 @@ import { ROUTES } from './routes';
 function AppContent() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
-  const navigate = useNavigate();
   const { user, isLoading, refresh, hasMenu } = useAuth();
 
   const navItems = ROUTES.filter((item) => hasMenu(item.menuPermission));
   const defaultPath = navItems[0]?.path ?? '/';
-
-  // 登录后或访问根路径时，重定向到有权限的第一个菜单（必须在所有 return 之前调用，遵守 Hooks 规则）
-  useEffect(() => {
-    if (location.pathname === '/' && defaultPath !== '/') {
-      navigate(defaultPath, { replace: true });
-    }
-  }, [location.pathname, defaultPath, navigate]);
 
   const handleLogin = async () => {
     await refresh();
@@ -42,6 +34,11 @@ function AppContent() {
         <p className="text-zinc-500">验证登录状态…</p>
       </div>
     );
+  }
+
+  // 根路径重定向到有权限的第一个菜单（声明式，避免 useEffect 导致 React #310）
+  if (location.pathname === '/' && defaultPath !== '/') {
+    return <Navigate to={defaultPath} replace />;
   }
 
   return (
