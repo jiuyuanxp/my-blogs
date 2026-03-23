@@ -1,19 +1,17 @@
-import type { Article, Category } from '@blog/types';
+import type { Article } from '@blog/types';
 import { format } from 'date-fns';
 import { parseDateTime } from '@blog/utils';
 import { Edit2, Trash2, Plus, FileText, Loader2 } from 'lucide-react';
 import { cn } from '@blog/utils';
 import { ErrorAlert } from '@/components/ErrorAlert';
 import { AdminSelect } from '@/components/AdminSelect';
+import type { CategoryFilterOption } from '../categoryUtils';
 
 export function ArticleListView({
   error,
-  rootCategories,
-  activeTabId,
-  setActiveTabId,
-  selectedSubCatId,
-  setSelectedSubCatId,
-  activeSubCategories,
+  filterCategoryId,
+  setFilterCategoryId,
+  categoryFilterOptions,
   filteredArticles,
   deletingId,
   onNewArticle,
@@ -21,12 +19,9 @@ export function ArticleListView({
   onDelete,
 }: {
   error: string | null;
-  rootCategories: Category[];
-  activeTabId: string | 'all';
-  setActiveTabId: (id: string | 'all') => void;
-  selectedSubCatId: string | 'all';
-  setSelectedSubCatId: (id: string | 'all') => void;
-  activeSubCategories: Category[];
+  filterCategoryId: string | 'all';
+  setFilterCategoryId: (id: string | 'all') => void;
+  categoryFilterOptions: CategoryFilterOption[];
   filteredArticles: Article[];
   deletingId: string | null;
   onNewArticle: () => void;
@@ -51,67 +46,32 @@ export function ArticleListView({
 
       {error ? <ErrorAlert message={error} /> : null}
 
-      <div className="border-b border-zinc-200">
-        <nav className="-mb-px flex space-x-6 overflow-x-auto" aria-label="文章分类筛选">
-          <button
-            type="button"
-            onClick={() => {
-              setActiveTabId('all');
-              setSelectedSubCatId('all');
-            }}
-            className={cn(
-              'whitespace-nowrap py-3 px-1 border-b-2 font-medium text-sm touch-manipulation transition-colors motion-reduce:transition-none focus-visible:ring-2 focus-visible:ring-zinc-900 focus-visible:ring-offset-2 rounded',
-              activeTabId === 'all'
-                ? 'border-zinc-900 text-zinc-900'
-                : 'border-transparent text-zinc-500 hover:text-zinc-700 hover:border-zinc-300'
-            )}
-          >
-            所有文章
-          </button>
-          {rootCategories.map((cat) => (
-            <button
-              key={cat.id}
-              type="button"
-              onClick={() => {
-                setActiveTabId(cat.id);
-                setSelectedSubCatId('all');
-              }}
-              className={cn(
-                'whitespace-nowrap py-3 px-1 border-b-2 font-medium text-sm touch-manipulation transition-colors motion-reduce:transition-none focus-visible:ring-2 focus-visible:ring-zinc-900 focus-visible:ring-offset-2 rounded',
-                activeTabId === cat.id
-                  ? 'border-zinc-900 text-zinc-900'
-                  : 'border-transparent text-zinc-500 hover:text-zinc-700 hover:border-zinc-300'
-              )}
-            >
-              {cat.name}
-            </button>
-          ))}
-        </nav>
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-4">
+        <label
+          htmlFor="article-category-filter"
+          className="text-sm font-medium text-zinc-700 shrink-0"
+        >
+          按分类筛选
+        </label>
+        <AdminSelect
+          id="article-category-filter"
+          value={filterCategoryId}
+          onChange={(v) => setFilterCategoryId(v === 'all' ? 'all' : String(v))}
+          options={[
+            { value: 'all', label: '所有文章（含全部子分类）' },
+            ...categoryFilterOptions.map((o) => ({ value: o.value, label: o.label })),
+          ]}
+          showSearch
+          optionFilterProp="label"
+          placeholder="选择分类"
+          className="w-full min-w-0 sm:max-w-xl"
+          size="middle"
+          aria-label="按分类筛选文章；选中某节点会包含其下所有子分类中的文章"
+        />
       </div>
-
-      {activeTabId !== 'all' && activeSubCategories.length > 0 ? (
-        <div className="flex items-center gap-3">
-          <span className="text-sm text-zinc-500">筛选子分类：</span>
-          <label htmlFor="subcat-select" className="sr-only">
-            选择子分类
-          </label>
-          <AdminSelect
-            id="subcat-select"
-            value={selectedSubCatId}
-            onChange={(v) => setSelectedSubCatId(v === 'all' ? 'all' : String(v))}
-            options={[
-              {
-                value: 'all',
-                label: `全部 ${rootCategories.find((c) => c.id === activeTabId)?.name ?? ''}`,
-              },
-              ...activeSubCategories.map((cat) => ({ value: cat.id, label: cat.name })),
-            ]}
-            className="min-w-[12rem]"
-            size="small"
-            aria-label="选择子分类"
-          />
-        </div>
-      ) : null}
+      <p className="text-xs text-zinc-500 -mt-2">
+        选项中的「 / 」表示从根到当前节点的路径；选中某一类后，列表包含该类及其子类下的文章。
+      </p>
 
       <div className="bg-white rounded-2xl border border-zinc-200 shadow-sm overflow-hidden">
         <div className="overflow-x-auto overscroll-x-contain touch-manipulation">

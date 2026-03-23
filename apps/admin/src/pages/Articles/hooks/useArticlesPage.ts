@@ -9,18 +9,18 @@ import {
 } from '@/lib/api';
 import { apiErrorMessage } from '@/lib/errorMessage';
 import { flattenCategories } from '@/lib/categoryFlat';
-import { getSubCategories, filterArticlesByCategoryTabs } from '../categoryUtils';
+import { buildCategoryFilterPathOptions, filterArticlesByCategory } from '../categoryUtils';
 
 const ARTICLES_FILTER_STORAGE_KEY = 'blog-admin-articles-filter';
 
-function readStoredArticleFilter(): {
-  activeTabId: string | 'all';
-  selectedSubCatId: string | 'all';
-} | null {
+function readStoredArticleFilter(): { filterCategoryId: string | 'all' } | null {
   try {
     const raw = sessionStorage.getItem(ARTICLES_FILTER_STORAGE_KEY);
     if (!raw) return null;
-    const parsed = JSON.parse(raw) as { activeTabId?: unknown; selectedSubCatId?: unknown };
+    const parsed = JSON.parse(raw) as Record<string, unknown>;
+    if (parsed.filterCategoryId === 'all' || typeof parsed.filterCategoryId === 'string') {
+      return { filterCategoryId: parsed.filterCategoryId };
+    }
     const activeTabId =
       parsed.activeTabId === 'all' || typeof parsed.activeTabId === 'string'
         ? parsed.activeTabId
@@ -30,7 +30,9 @@ function readStoredArticleFilter(): {
         ? parsed.selectedSubCatId
         : null;
     if (activeTabId === null || selectedSubCatId === null) return null;
-    return { activeTabId, selectedSubCatId };
+    if (selectedSubCatId !== 'all') return { filterCategoryId: selectedSubCatId };
+    if (activeTabId !== 'all') return { filterCategoryId: activeTabId };
+    return { filterCategoryId: 'all' };
   } catch {
     return null;
   }
@@ -43,11 +45,8 @@ export function useArticlesPage() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [activeTabId, setActiveTabId] = useState<string | 'all'>(() => {
-    return readStoredArticleFilter()?.activeTabId ?? 'all';
-  });
-  const [selectedSubCatId, setSelectedSubCatId] = useState<string | 'all'>(() => {
-    return readStoredArticleFilter()?.selectedSubCatId ?? 'all';
+  const [filterCategoryId, setFilterCategoryId] = useState<string | 'all'>(() => {
+    return readStoredArticleFilter()?.filterCategoryId ?? 'all';
   });
   const [isEditing, setIsEditing] = useState<Article | Partial<Article> | null>(null);
   const [isImmersive, setIsImmersive] = useState(false);
@@ -55,12 +54,14 @@ export function useArticlesPage() {
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
   const flatCats = useMemo(() => flattenCategories(categories), [categories]);
-  const rootCategories = categories;
-  const activeSubCategories = activeTabId !== 'all' ? getSubCategories(flatCats, activeTabId) : [];
+  const categoryFilterOptions = useMemo(
+    () => buildCategoryFilterPathOptions(categories),
+    [categories]
+  );
 
   const filteredArticles = useMemo(
-    () => filterArticlesByCategoryTabs(articles, flatCats, activeTabId, selectedSubCatId),
-    [articles, flatCats, activeTabId, selectedSubCatId]
+    () => filterArticlesByCategory(articles, flatCats, filterCategoryId),
+    [articles, flatCats, filterCategoryId]
   );
 
   const load = async (mode: ArticlesLoadMode = 'full') => {
@@ -83,29 +84,20 @@ export function useArticlesPage() {
 
   useEffect(() => {
     try {
-      sessionStorage.setItem(
-        ARTICLES_FILTER_STORAGE_KEY,
-        JSON.stringify({ activeTabId, selectedSubCatId })
-      );
+      sessionStorage.setItem(ARTICLES_FILTER_STORAGE_KEY, JSON.stringify({ filterCategoryId }));
     } catch {
       /* ignore quota / private mode */
     }
-  }, [activeTabId, selectedSubCatId]);
+  }, [filterCategoryId]);
 
-  const rootIds = useMemo(() => new Set(rootCategories.map((c) => c.id)), [rootCategories]);
   const flatIds = useMemo(() => new Set(flatCats.map((c) => c.id)), [flatCats]);
 
   useEffect(() => {
-    if (rootCategories.length === 0 && categories.length === 0) return;
-    if (activeTabId !== 'all' && !rootIds.has(activeTabId)) {
-      setActiveTabId('all');
-      setSelectedSubCatId('all');
-      return;
+    if (categories.length === 0) return;
+    if (filterCategoryId !== 'all' && !flatIds.has(filterCategoryId)) {
+      setFilterCategoryId('all');
     }
-    if (selectedSubCatId !== 'all' && !flatIds.has(selectedSubCatId)) {
-      setSelectedSubCatId('all');
-    }
-  }, [categories.length, rootCategories.length, rootIds, flatIds, activeTabId, selectedSubCatId]);
+  }, [categories.length, flatIds, filterCategoryId]);
 
   useEffect(() => {
     if (!isEditing) setIsImmersive(false);
@@ -189,10 +181,9 @@ export function useArticlesPage() {
     loading,
     error,
     setError,
-    activeTabId,
-    setActiveTabId,
-    selectedSubCatId,
-    setSelectedSubCatId,
+    filterCategoryId,
+    setFilterCategoryId,
+    categoryFilterOptions,
     isEditing,
     setIsEditing,
     isImmersive,
@@ -200,8 +191,6 @@ export function useArticlesPage() {
     saving,
     deletingId,
     flatCats,
-    rootCategories,
-    activeSubCategories,
     filteredArticles,
     load,
     handleSaveArticle,

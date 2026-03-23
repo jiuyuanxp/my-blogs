@@ -3,7 +3,7 @@ import { Lock, ArrowRight } from 'lucide-react';
 import { login, setToken } from '@/lib/api';
 import { apiErrorMessage } from '@/lib/errorMessage';
 import { ErrorAlert } from '@/components/ErrorAlert';
-import backgroundImage from '@/assets/images/logo-background.png';
+import backgroundImage from '@/assets/images/login-background.png';
 
 interface LoginProps {
   onLogin: () => void;

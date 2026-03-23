@@ -46,21 +46,14 @@ export default function ArticlesPage() {
   return (
     <ArticleListView
       error={ctx.error}
-      rootCategories={ctx.rootCategories}
-      activeTabId={ctx.activeTabId}
-      setActiveTabId={ctx.setActiveTabId}
-      selectedSubCatId={ctx.selectedSubCatId}
-      setSelectedSubCatId={ctx.setSelectedSubCatId}
-      activeSubCategories={ctx.activeSubCategories}
+      filterCategoryId={ctx.filterCategoryId}
+      setFilterCategoryId={ctx.setFilterCategoryId}
+      categoryFilterOptions={ctx.categoryFilterOptions}
       filteredArticles={ctx.filteredArticles}
       deletingId={ctx.deletingId}
       onNewArticle={() => {
         const defaultCategoryId =
-          ctx.selectedSubCatId !== 'all'
-            ? ctx.selectedSubCatId
-            : ctx.activeTabId !== 'all'
-              ? ctx.activeTabId
-              : (ctx.flatCats[0]?.id ?? '');
+          ctx.filterCategoryId !== 'all' ? ctx.filterCategoryId : (ctx.flatCats[0]?.id ?? '');
         ctx.setIsEditing({
           status: 'draft',
           categoryId: defaultCategoryId,
