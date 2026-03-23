@@ -23,7 +23,16 @@
     "loadingCategory": "Loading category…",
     "noArticlesInCategory": "No articles found in this category.",
     "dateFormat": "yyyy-MM-dd",
-    "dateTimeFormat": "yyyy-MM-dd HH:mm:ss"
+    "dateTimeFormat": "yyyy-MM-dd HH:mm:ss",
+    "pinned": "Pinned",
+    "categoryFilterMenu": "Open or close category filter",
+    "expandCategory": "Expand subcategories",
+    "collapseCategory": "Collapse subcategories",
+    "switchToEnglish": "Switch to English",
+    "switchToChinese": "Switch to Chinese",
+    "themeDark": "Switch to dark mode",
+    "themeLight": "Switch to light mode",
+    "skipToContent": "Skip to main content"
   },
   "home": {
     "latestArticles": "Latest Articles",

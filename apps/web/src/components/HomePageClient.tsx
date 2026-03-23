@@ -67,7 +67,11 @@ export default function HomePageClient({
 
   if (errorMessage) {
     return (
-      <div className="text-center py-20 text-red-500 dark:text-red-400">
+      <div
+        className="text-center py-20 text-red-500 dark:text-red-400"
+        role="alert"
+        aria-live="polite"
+      >
         <p className="text-lg font-medium">{tCommon('error')}</p>
         <p className="mt-2 text-sm">{errorMessage}</p>
       </div>
@@ -90,9 +94,10 @@ export default function HomePageClient({
           <button
             type="button"
             onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-            className="flex items-center gap-2 px-4 py-3 bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 rounded-xl text-stone-700 dark:text-stone-300 shadow-sm w-full font-medium focus-visible:outline focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
+            className="flex items-center gap-2 px-4 py-3 bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 rounded-xl text-stone-700 dark:text-stone-300 shadow-sm w-full font-medium touch-manipulation transition-colors motion-reduce:transition-none focus-visible:outline focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
             aria-expanded={isSidebarOpen}
             aria-controls="category-sidebar"
+            aria-label={`${tCommon('categoryFilterMenu')} (${displayCategory})`}
           >
             <Menu size={20} aria-hidden />
             <span>{displayCategory}</span>
@@ -105,7 +110,7 @@ export default function HomePageClient({
           lg:block
           ${isSidebarOpen ? 'block' : 'hidden'}
           sticky top-28
-          max-h-[calc(100vh-8rem)] overflow-y-auto overflow-x-auto
+          max-h-[calc(100vh-8rem)] overflow-y-auto overflow-x-auto overscroll-y-contain touch-manipulation
           scrollbar-hide
         `}
         >
@@ -137,7 +142,7 @@ export default function HomePageClient({
               <Link
                 key={article.id}
                 href={articleLink(article)}
-                className={`group block p-8 rounded-3xl transition-all duration-300 relative overflow-hidden
+                className={`group block p-8 rounded-3xl relative overflow-hidden touch-manipulation transition-[color,background-color,border-color,box-shadow,transform,opacity] duration-300 motion-reduce:transition-none motion-reduce:hover:transform-none focus-visible:outline focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2
                   ${
                     article.isPinned
                       ? 'bg-stone-50 dark:bg-stone-900/80 border border-indigo-100 dark:border-indigo-900/30 hover:border-indigo-200 dark:hover:border-indigo-800/50 hover:shadow-lg hover:shadow-indigo-500/5'
@@ -148,7 +153,7 @@ export default function HomePageClient({
                 {article.isPinned === 1 && (
                   <div className="absolute top-6 right-6 flex items-center gap-1.5 text-indigo-500 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-900/20 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">
                     <Pin size={12} className="fill-current" aria-hidden />
-                    <span>Pinned</span>
+                    <span>{tCommon('pinned')}</span>
                   </div>
                 )}
 
@@ -164,7 +169,7 @@ export default function HomePageClient({
                   </time>
                 </div>
 
-                <h2 className="text-2xl md:text-3xl font-bold mb-4 text-stone-900 dark:text-stone-100 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors font-serif leading-tight">
+                <h2 className="text-2xl md:text-3xl font-bold mb-4 text-stone-900 dark:text-stone-100 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors motion-reduce:transition-none font-serif leading-tight wrap-break-word">
                   {article.title}
                 </h2>
 
@@ -172,7 +177,7 @@ export default function HomePageClient({
                   {article.summary}
                 </p>
 
-                <div className="mt-6 flex items-center text-sm font-medium text-stone-900 dark:text-stone-100 opacity-0 group-hover:opacity-100 transition-opacity -translate-x-2 group-hover:translate-x-0 duration-300">
+                <div className="mt-6 flex items-center text-sm font-medium text-stone-900 dark:text-stone-100 opacity-0 group-hover:opacity-100 transition-[opacity,transform] duration-300 motion-reduce:transition-none motion-reduce:opacity-100 motion-reduce:translate-x-0 -translate-x-2 group-hover:translate-x-0">
                   {tCommon('readMore')}{' '}
                   <span className="ml-2" aria-hidden>
                     →

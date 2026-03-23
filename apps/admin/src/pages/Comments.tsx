@@ -3,7 +3,12 @@ import type { Comment, Category } from '@blog/types';
 import { format } from 'date-fns';
 import { parseDateTime } from '@blog/utils';
 import { Trash2, MessageSquare } from 'lucide-react';
-import { fetchComments, fetchCategories, deleteComment, isApiError } from '@/lib/api';
+import { fetchComments, fetchCategories, deleteComment } from '@/lib/api';
+import { apiErrorMessage } from '@/lib/errorMessage';
+import { flattenCategories } from '@/lib/categoryFlat';
+import { ErrorAlert } from '@/components/ErrorAlert';
+import { PageLoading } from '@/components/PageLoading';
+import { AdminSelect } from '@/components/AdminSelect';
 
 export default function Comments() {
   const [comments, setComments] = useState<Comment[]>([]);
@@ -11,17 +16,6 @@ export default function Comments() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedCatId, setSelectedCatId] = useState<string | 'all'>('all');
-
-  function flattenCategories(cats: Category[]): Category[] {
-    const result: Category[] = [];
-    for (const c of cats) {
-      result.push({ ...c, children: undefined });
-      if (c.children?.length) {
-        result.push(...flattenCategories(c.children));
-      }
-    }
-    return result;
-  }
 
   const flatCats = flattenCategories(categories);
 
@@ -43,7 +37,7 @@ export default function Comments() {
       });
       setComments(comRes.data);
     } catch (err) {
-      setError(isApiError(err) || err instanceof Error ? err.message : '加载失败');
+      setError(apiErrorMessage(err, '加载失败，请刷新页面或稍后重试。'));
     } finally {
       setLoading(false);
     }
@@ -64,15 +58,14 @@ export default function Comments() {
       await deleteComment(comment.id);
       await loadComments();
     } catch (err) {
-      setError(isApiError(err) || err instanceof Error ? err.message : '删除失败');
+      setError(apiErrorMessage(err, '删除失败，请稍后重试。'));
     }
   };
 
   if (loading && comments.length === 0) {
     return (
-      <div className="space-y-6 max-w-5xl">
-        <h2 className="text-4xl font-serif font-bold tracking-tight text-zinc-900">评论管理</h2>
-        <p className="text-zinc-500">加载中…</p>
+      <div className="max-w-5xl">
+        <PageLoading title="评论管理" />
       </div>
     );
   }
@@ -85,31 +78,22 @@ export default function Comments() {
           <label htmlFor="comment-cat-filter" className="text-sm text-zinc-500">
             筛选分类：
           </label>
-          <select
+          <AdminSelect
             id="comment-cat-filter"
             value={selectedCatId}
-            onChange={(e) => setSelectedCatId(e.target.value === 'all' ? 'all' : e.target.value)}
-            className="px-3 py-1.5 bg-white border border-zinc-200 rounded-lg text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-zinc-900 focus-visible:ring-2 focus-visible:ring-zinc-900"
+            onChange={(v) => setSelectedCatId(v === 'all' ? 'all' : String(v))}
+            options={[
+              { value: 'all', label: '所有分类' },
+              ...flatCats.map((cat) => ({ value: cat.id, label: cat.name })),
+            ]}
+            className="min-w-[11rem]"
+            size="small"
             aria-label="按分类筛选评论"
-          >
-            <option value="all">所有分类</option>
-            {flatCats.map((cat) => (
-              <option key={cat.id} value={cat.id}>
-                {cat.name}
-              </option>
-            ))}
-          </select>
+          />
         </div>
       </div>
 
-      {error && (
-        <div
-          className="px-4 py-3 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm"
-          role="alert"
-        >
-          {error}
-        </div>
-      )}
+      {error ? <ErrorAlert message={error} /> : null}
 
       <div className="bg-white rounded-2xl border border-zinc-200 shadow-sm overflow-hidden">
         <div className="divide-y divide-zinc-200">

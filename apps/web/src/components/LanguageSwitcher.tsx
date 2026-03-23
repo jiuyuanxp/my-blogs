@@ -1,15 +1,15 @@
 'use client';
 
-import { useLocale } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { useRouter, usePathname } from 'next/navigation';
 import { useTransition } from 'react';
 import { Languages } from 'lucide-react';
 
-const LOCALES = ['zh', 'en'] as const;
 const LABELS: Record<string, string> = { zh: 'CN', en: 'EN' };
 
 export default function LanguageSwitcher() {
   const locale = useLocale();
+  const t = useTranslations('common');
   const router = useRouter();
   const pathname = usePathname();
   const [isPending, startTransition] = useTransition();
@@ -36,8 +36,9 @@ export default function LanguageSwitcher() {
       type="button"
       onClick={handleLocaleChange}
       disabled={isPending}
-      className="p-2.5 rounded-full hover:bg-stone-100 dark:hover:bg-stone-800 text-stone-500 dark:text-stone-400 transition-colors flex items-center gap-1 text-xs font-medium font-mono focus-visible:outline focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 disabled:opacity-50"
-      aria-label="Toggle language"
+      className="p-2.5 rounded-full hover:bg-stone-100 dark:hover:bg-stone-800 text-stone-500 dark:text-stone-400 touch-manipulation transition-colors motion-reduce:transition-none flex items-center gap-1 text-xs font-medium font-mono focus-visible:outline focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 disabled:opacity-50"
+      aria-busy={isPending}
+      aria-label={locale === 'zh' ? t('switchToEnglish') : t('switchToChinese')}
     >
       <Languages size={18} aria-hidden />
       <span>{LABELS[locale] ?? 'EN'}</span>

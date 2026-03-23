@@ -40,7 +40,11 @@ export default function CategoryPageClient({
   if (errorMessage) {
     return (
       <div className="space-y-12">
-        <div className="text-center py-20 text-red-500 dark:text-red-400">
+        <div
+          className="text-center py-20 text-red-500 dark:text-red-400"
+          role="alert"
+          aria-live="polite"
+        >
           <p className="text-lg font-medium">{t('error')}</p>
           <p className="mt-2 text-sm">{errorMessage}</p>
         </div>
@@ -69,7 +73,7 @@ export default function CategoryPageClient({
             <Link
               key={article.id}
               href={`/${locale}/article/${article.id}`}
-              className="group block p-6 bg-white dark:bg-stone-800 rounded-2xl shadow-sm border border-stone-200 dark:border-stone-700 hover:shadow-md hover:border-stone-300 dark:hover:border-stone-600 transition-all focus-visible:outline focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 rounded-2xl"
+              className="group block p-6 bg-white dark:bg-stone-800 rounded-2xl shadow-sm border border-stone-200 dark:border-stone-700 hover:shadow-md hover:border-stone-300 dark:hover:border-stone-600 touch-manipulation transition-[box-shadow,border-color,color] motion-reduce:transition-none focus-visible:outline focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
             >
               <div className="flex items-center justify-between text-xs font-medium text-stone-500 dark:text-stone-400 mb-3">
                 <span className="bg-stone-100 dark:bg-stone-700 px-2 py-1 rounded-md text-stone-700 dark:text-stone-300 uppercase tracking-wide">
@@ -81,7 +85,7 @@ export default function CategoryPageClient({
                   })}
                 </time>
               </div>
-              <h2 className="text-xl font-bold text-stone-900 dark:text-stone-100 mb-2 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
+              <h2 className="text-xl font-bold text-stone-900 dark:text-stone-100 mb-2 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors motion-reduce:transition-none wrap-break-word">
                 {article.title}
               </h2>
               <p className="text-stone-600 dark:text-stone-400 line-clamp-3 text-sm leading-relaxed">

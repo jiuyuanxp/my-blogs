@@ -1,13 +1,10 @@
 import { useState, useEffect } from 'react';
 import type { Category } from '@blog/types';
 import { ChevronRight, ChevronDown, Plus, Edit2, Trash2 } from 'lucide-react';
-import {
-  fetchCategories,
-  createCategory,
-  updateCategory,
-  deleteCategory,
-  isApiError,
-} from '@/lib/api';
+import { fetchCategories, createCategory, updateCategory, deleteCategory } from '@/lib/api';
+import { apiErrorMessage } from '@/lib/errorMessage';
+import { ErrorAlert } from '@/components/ErrorAlert';
+import { PageLoading } from '@/components/PageLoading';
 
 export default function Categories() {
   const [categories, setCategories] = useState<Category[]>([]);
@@ -15,7 +12,10 @@ export default function Categories() {
   const [error, setError] = useState<string | null>(null);
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
   const [isEditing, setIsEditing] = useState<Category | null>(null);
-  const [isAdding, setIsAdding] = useState<{ parentId: string | null } | null>(null);
+  const [isAdding, setIsAdding] = useState<{
+    parentId: string | null;
+    parentName?: string;
+  } | null>(null);
   const [formName, setFormName] = useState('');
 
   const load = async () => {
@@ -25,7 +25,7 @@ export default function Categories() {
       const data = await fetchCategories();
       setCategories(data);
     } catch (err) {
-      setError(isApiError(err) || err instanceof Error ? err.message : '加载失败');
+      setError(apiErrorMessage(err, '加载失败，请刷新页面或稍后重试。'));
     } finally {
       setLoading(false);
     }
@@ -58,7 +58,7 @@ export default function Categories() {
       setIsAdding(null);
       await load();
     } catch (err) {
-      setError(isApiError(err) || err instanceof Error ? err.message : '保存失败');
+      setError(apiErrorMessage(err, '保存失败，请稍后重试。'));
     }
   };
 
@@ -69,7 +69,7 @@ export default function Categories() {
       await deleteCategory(node.id);
       await load();
     } catch (err) {
-      setError(isApiError(err) || err instanceof Error ? err.message : '删除失败');
+      setError(apiErrorMessage(err, '删除失败，请稍后重试。'));
     }
   };
 
@@ -137,8 +137,13 @@ export default function Categories() {
               <button
                 type="button"
                 onClick={() => {
-                  setIsAdding({ parentId: node.id });
+                  setIsAdding({ parentId: node.id, parentName: node.name });
                   setFormName('');
+                  setExpanded((prev) => {
+                    const next = new Set(prev);
+                    next.add(node.id);
+                    return next;
+                  });
                 }}
                 className="p-1.5 text-zinc-500 hover:text-zinc-900 hover:bg-zinc-200 rounded focus-visible:ring-2 focus-visible:ring-zinc-900 focus-visible:ring-offset-2"
                 title="添加子分类"
@@ -177,12 +182,7 @@ export default function Categories() {
   };
 
   if (loading) {
-    return (
-      <div className="space-y-6">
-        <h2 className="text-4xl font-serif font-bold tracking-tight text-zinc-900">分类管理</h2>
-        <p className="text-zinc-500">加载中…</p>
-      </div>
-    );
+    return <PageLoading title="分类管理" />;
   }
 
   return (
@@ -202,44 +202,42 @@ export default function Categories() {
         </button>
       </div>
 
-      {error && (
-        <div
-          className="px-4 py-3 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm"
-          role="alert"
-        >
-          {error}
-        </div>
-      )}
+      {error ? <ErrorAlert message={error} /> : null}
 
       <div className="bg-white rounded-2xl border border-zinc-200 shadow-sm p-4">
-        {isAdding?.parentId === null && (
-          <div className="flex items-center gap-2 p-3 mb-2 bg-zinc-50 rounded-lg border border-zinc-200">
-            <label htmlFor="new-cat-name" className="sr-only">
-              新分类名称
-            </label>
-            <input
-              id="new-cat-name"
-              autoFocus
-              placeholder="新分类名称…"
-              value={formName}
-              onChange={(e) => setFormName(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && handleSave()}
-              className="px-3 py-1.5 border border-zinc-300 rounded-md text-sm flex-1 focus:ring-2 focus:ring-zinc-900 focus:outline-none"
-            />
-            <button
-              type="button"
-              onClick={handleSave}
-              className="text-sm bg-zinc-900 text-white px-3 py-1.5 rounded-md font-medium focus-visible:ring-2 focus-visible:ring-zinc-900 focus-visible:ring-offset-2"
-            >
-              保存
-            </button>
-            <button
-              type="button"
-              onClick={() => setIsAdding(null)}
-              className="text-sm bg-zinc-200 px-3 py-1.5 rounded-md font-medium focus-visible:ring-2 focus-visible:ring-zinc-900 focus-visible:ring-offset-2"
-            >
-              取消
-            </button>
+        {isAdding != null && (
+          <div className="p-3 mb-2 bg-zinc-50 rounded-lg border border-zinc-200 space-y-2">
+            {isAdding.parentId != null && isAdding.parentName ? (
+              <p className="text-sm text-zinc-600">在「{isAdding.parentName}」下添加子分类</p>
+            ) : null}
+            <div className="flex items-center gap-2">
+              <label htmlFor="new-cat-name" className="sr-only">
+                新分类名称
+              </label>
+              <input
+                id="new-cat-name"
+                autoFocus
+                placeholder="新分类名称…"
+                value={formName}
+                onChange={(e) => setFormName(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleSave()}
+                className="px-3 py-1.5 border border-zinc-300 rounded-md text-sm flex-1 focus:ring-2 focus:ring-zinc-900 focus:outline-none"
+              />
+              <button
+                type="button"
+                onClick={handleSave}
+                className="text-sm bg-zinc-900 text-white px-3 py-1.5 rounded-md font-medium focus-visible:ring-2 focus-visible:ring-zinc-900 focus-visible:ring-offset-2"
+              >
+                保存
+              </button>
+              <button
+                type="button"
+                onClick={() => setIsAdding(null)}
+                className="text-sm bg-zinc-200 px-3 py-1.5 rounded-md font-medium focus-visible:ring-2 focus-visible:ring-zinc-900 focus-visible:ring-offset-2"
+              >
+                取消
+              </button>
+            </div>
           </div>
         )}
 

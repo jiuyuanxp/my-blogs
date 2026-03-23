@@ -4,11 +4,14 @@ import {
   createPermission as apiCreatePermission,
   updatePermission as apiUpdatePermission,
   deletePermission as apiDeletePermission,
-  isApiError,
   type Permission,
 } from '@/lib/api';
+import { apiErrorMessage } from '@/lib/errorMessage';
+import { ErrorAlert } from '@/components/ErrorAlert';
+import { InlineLoading } from '@/components/PageLoading';
 import { useAuth } from '@/contexts/AuthContext';
 import { PermissionTree } from '@/components/PermissionTree';
+import { AdminSelect } from '@/components/AdminSelect';
 
 /** 从树中提取所有菜单（用于父级选择） */
 function collectMenus(tree: Permission[]): Permission[] {
@@ -55,7 +58,7 @@ export default function PermissionsPage() {
       const list = await fetchPermissions();
       setPermissions(list);
     } catch (err) {
-      setError(isApiError(err) ? err.message : '加载失败');
+      setError(apiErrorMessage(err, '加载失败，请刷新页面或稍后重试。'));
     } finally {
       setLoading(false);
     }
@@ -134,7 +137,12 @@ export default function PermissionsPage() {
       setForm(INIT_FORM);
       await load();
     } catch (err) {
-      setError(isApiError(err) ? err.message : formMode === 'edit' ? '更新失败' : '创建失败');
+      setError(
+        apiErrorMessage(
+          err,
+          formMode === 'edit' ? '更新失败，请稍后重试。' : '创建失败，请稍后重试。'
+        )
+      );
     }
   };
 
@@ -153,7 +161,7 @@ export default function PermissionsPage() {
       }
       await load();
     } catch (err) {
-      setError(isApiError(err) ? err.message : '删除失败');
+      setError(apiErrorMessage(err, '删除失败，请稍后重试。'));
     }
   };
 
@@ -167,17 +175,10 @@ export default function PermissionsPage() {
     <div className="space-y-4">
       <h1 className="text-2xl font-serif font-bold text-zinc-900">权限管理</h1>
 
-      {error && (
-        <div
-          className="px-4 py-3 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm"
-          role="alert"
-        >
-          {error}
-        </div>
-      )}
+      {error ? <ErrorAlert message={error} /> : null}
 
       {loading ? (
-        <p className="text-zinc-500">加载中…</p>
+        <InlineLoading />
       ) : (
         <div className="flex gap-6 min-h-[480px]">
           {/* 左侧树 */}
@@ -241,17 +242,16 @@ export default function PermissionsPage() {
                 <label htmlFor="perm-type" className="block text-sm font-medium text-zinc-700 mb-1">
                   类型
                 </label>
-                <select
+                <AdminSelect
+                  block
                   id="perm-type"
                   value={form.type}
-                  onChange={(e) =>
-                    setForm((f) => ({ ...f, type: e.target.value as 'menu' | 'button' }))
-                  }
-                  className="w-full px-3 py-2 border border-zinc-200 rounded-lg"
-                >
-                  <option value="menu">菜单</option>
-                  <option value="button">按钮</option>
-                </select>
+                  onChange={(v) => setForm((f) => ({ ...f, type: v as 'menu' | 'button' }))}
+                  options={[
+                    { value: 'menu', label: '菜单' },
+                    { value: 'button', label: '按钮' },
+                  ]}
+                />
               </div>
               <div>
                 <label
@@ -260,21 +260,21 @@ export default function PermissionsPage() {
                 >
                   上级{form.type === 'button' ? '菜单' : '权限'}
                 </label>
-                <select
+                <AdminSelect
+                  block
                   id="perm-parent"
                   value={form.parentId}
-                  onChange={(e) => setForm((f) => ({ ...f, parentId: e.target.value }))}
-                  className="w-full px-3 py-2 border border-zinc-200 rounded-lg"
-                >
-                  <option value="">无（根节点）</option>
-                  {menuOptions
-                    .filter((m) => formMode !== 'edit' || m.id !== selectedNode?.id)
-                    .map((m) => (
-                      <option key={m.id} value={m.id}>
-                        {m.name} ({m.code})
-                      </option>
-                    ))}
-                </select>
+                  onChange={(v) => setForm((f) => ({ ...f, parentId: String(v) }))}
+                  options={[
+                    { value: '', label: '无（根节点）' },
+                    ...menuOptions
+                      .filter((m) => formMode !== 'edit' || m.id !== selectedNode?.id)
+                      .map((m) => ({
+                        value: m.id,
+                        label: `${m.name} (${m.code})`,
+                      })),
+                  ]}
+                />
               </div>
               {form.type === 'menu' && (
                 <>

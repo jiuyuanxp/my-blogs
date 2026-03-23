@@ -9,10 +9,12 @@ import {
   deleteRole,
   assignRolePermissions,
   fetchRole,
-  isApiError,
   type Role,
   type Permission,
 } from '@/lib/api';
+import { apiErrorMessage } from '@/lib/errorMessage';
+import { ErrorAlert } from '@/components/ErrorAlert';
+import { InlineLoading } from '@/components/PageLoading';
 import { useAuth } from '@/contexts/AuthContext';
 import { PermissionTreeCheckbox } from '@/components/PermissionTreeCheckbox';
 
@@ -36,7 +38,7 @@ export default function RolesPage() {
       setRoles(rolesRes);
       setPermissions(permsRes);
     } catch (err) {
-      setError(isApiError(err) ? err.message : '加载失败');
+      setError(apiErrorMessage(err, '加载失败，请刷新页面或稍后重试。'));
     } finally {
       setLoading(false);
     }
@@ -56,7 +58,7 @@ export default function RolesPage() {
       setIsModalOpen(null);
       await load();
     } catch (err) {
-      setError(isApiError(err) ? err.message : '创建失败');
+      setError(apiErrorMessage(err, '创建失败，请稍后重试。'));
     }
   };
 
@@ -70,7 +72,7 @@ export default function RolesPage() {
       setIsModalOpen(null);
       await load();
     } catch (err) {
-      setError(isApiError(err) ? err.message : '更新失败');
+      setError(apiErrorMessage(err, '更新失败，请稍后重试。'));
     }
   };
 
@@ -83,7 +85,7 @@ export default function RolesPage() {
       setIsModalOpen(null);
       await load();
     } catch (err) {
-      setError(isApiError(err) ? err.message : '分配失败');
+      setError(apiErrorMessage(err, '分配失败，请稍后重试。'));
     }
   };
 
@@ -94,7 +96,7 @@ export default function RolesPage() {
       await deleteRole(role.id);
       await load();
     } catch (err) {
-      setError(isApiError(err) ? err.message : '删除失败');
+      setError(apiErrorMessage(err, '删除失败，请稍后重试。'));
     }
   };
 
@@ -128,17 +130,10 @@ export default function RolesPage() {
         )}
       </div>
 
-      {error && (
-        <div
-          className="px-4 py-3 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm"
-          role="alert"
-        >
-          {error}
-        </div>
-      )}
+      {error ? <ErrorAlert message={error} /> : null}
 
       {loading ? (
-        <p className="text-zinc-500">加载中…</p>
+        <InlineLoading />
       ) : (
         <div className="bg-white border border-zinc-200 rounded-xl overflow-hidden">
           <table className="w-full text-sm">

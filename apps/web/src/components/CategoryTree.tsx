@@ -2,7 +2,8 @@
 
 import { useState } from 'react';
 import { ChevronRight, ChevronDown, Folder, FolderOpen, Hash, Layers } from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
+import { useTranslations } from 'next-intl';
 
 export interface CategoryNode {
   id: string;
@@ -24,6 +25,8 @@ export default function CategoryTree({
   allLabel,
 }: CategoryTreeProps) {
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
+  const t = useTranslations('common');
+  const reduceMotion = useReducedMotion();
 
   const toggleExpand = (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
@@ -41,7 +44,8 @@ export default function CategoryTree({
           role="button"
           tabIndex={0}
           className={`
-            flex items-center gap-2 px-2 py-1.5 rounded-md cursor-pointer transition-colors text-sm mb-0.5 group
+            flex items-center gap-2 px-2 py-1.5 rounded-md cursor-pointer touch-manipulation transition-colors motion-reduce:transition-none text-sm mb-0.5 group
+            focus-visible:outline focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2
             ${isSelected ? 'bg-stone-900 text-white dark:bg-stone-100 dark:text-stone-900 font-medium' : 'text-stone-600 dark:text-stone-400 hover:bg-stone-100 dark:hover:bg-stone-800'}
           `}
           onClick={() => onSelectCategory(node.id)}
@@ -57,8 +61,9 @@ export default function CategoryTree({
             <button
               type="button"
               onClick={(e) => toggleExpand(node.id, e)}
-              className={`p-0.5 rounded-md hover:bg-black/10 dark:hover:bg-white/10 transition-colors mr-1 flex-shrink-0 ${isSelected ? 'text-white dark:text-stone-900' : ''}`}
-              aria-label={isExpanded ? 'Collapse' : 'Expand'}
+              className={`p-0.5 rounded-md hover:bg-black/10 dark:hover:bg-white/10 touch-manipulation transition-colors motion-reduce:transition-none mr-1 shrink-0 focus-visible:outline focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 ${isSelected ? 'text-white dark:text-stone-900' : ''}`}
+              aria-label={isExpanded ? t('collapseCategory') : t('expandCategory')}
+              aria-expanded={isExpanded}
             >
               {isExpanded ? (
                 <ChevronDown size={14} aria-hidden />
@@ -67,17 +72,17 @@ export default function CategoryTree({
               )}
             </button>
           ) : (
-            <span className="w-5 mr-1 flex-shrink-0" aria-hidden />
+            <span className="w-5 mr-1 shrink-0" aria-hidden />
           )}
 
           {hasChildren ? (
             isExpanded ? (
-              <FolderOpen size={16} className="opacity-70 flex-shrink-0" aria-hidden />
+              <FolderOpen size={16} className="opacity-70 shrink-0" aria-hidden />
             ) : (
-              <Folder size={16} className="opacity-70 flex-shrink-0" aria-hidden />
+              <Folder size={16} className="opacity-70 shrink-0" aria-hidden />
             )
           ) : (
-            <Hash size={16} className="opacity-70 flex-shrink-0" aria-hidden />
+            <Hash size={16} className="opacity-70 shrink-0" aria-hidden />
           )}
 
           <span className="whitespace-nowrap">{node.name}</span>
@@ -86,10 +91,10 @@ export default function CategoryTree({
         <AnimatePresence>
           {hasChildren && isExpanded && (
             <motion.div
-              initial={{ height: 0, opacity: 0 }}
+              initial={reduceMotion ? false : { height: 0, opacity: 0 }}
               animate={{ height: 'auto', opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              transition={{ duration: 0.2 }}
+              exit={reduceMotion ? undefined : { height: 0, opacity: 0 }}
+              transition={reduceMotion ? { duration: 0 } : { duration: 0.2 }}
               className="overflow-hidden ml-4 pl-2 border-l border-stone-200 dark:border-stone-800"
             >
               {node.children!.map((child) => renderNode(child))}
@@ -106,7 +111,8 @@ export default function CategoryTree({
         role="button"
         tabIndex={0}
         className={`
-          flex items-center gap-2 px-2 py-1.5 rounded-md cursor-pointer transition-colors text-sm font-medium mb-2
+          flex items-center gap-2 px-2 py-1.5 rounded-md cursor-pointer touch-manipulation transition-colors motion-reduce:transition-none text-sm font-medium mb-2
+          focus-visible:outline focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2
           ${selectedCategoryId === 'all' ? 'bg-stone-900 text-white dark:bg-stone-100 dark:text-stone-900' : 'text-stone-600 dark:text-stone-400 hover:bg-stone-100 dark:hover:bg-stone-800'}
         `}
         onClick={() => onSelectCategory('all')}
@@ -117,8 +123,8 @@ export default function CategoryTree({
           }
         }}
       >
-        <span className="w-5 mr-1 flex-shrink-0" aria-hidden />
-        <Layers size={16} className="opacity-70 flex-shrink-0" aria-hidden />
+        <span className="w-5 mr-1 shrink-0" aria-hidden />
+        <Layers size={16} className="opacity-70 shrink-0" aria-hidden />
         <span>{allLabel}</span>
       </div>
       {categories.map((node) => renderNode(node))}

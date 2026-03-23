@@ -12,7 +12,11 @@ import {
 } from 'recharts';
 import { format, parseISO } from 'date-fns';
 import { Eye, FilePlus, MessageCircle, Trash2 } from 'lucide-react';
-import { fetchStatsSummary, fetchPopularViews, fetchPopularComments, isApiError } from '@/lib/api';
+import { fetchStatsSummary, fetchPopularViews, fetchPopularComments } from '@/lib/api';
+import { apiErrorMessage } from '@/lib/errorMessage';
+import { ErrorAlert } from '@/components/ErrorAlert';
+import { PageLoading } from '@/components/PageLoading';
+import { AdminSelect } from '@/components/AdminSelect';
 
 export default function Dashboard() {
   const [period, setPeriod] = useState<'day' | 'month' | 'year'>('day');
@@ -45,7 +49,7 @@ export default function Dashboard() {
         setPopularViews(views);
         setPopularComments(comments);
       } catch (err) {
-        setError(isApiError(err) || err instanceof Error ? err.message : '加载失败');
+        setError(apiErrorMessage(err, '加载失败，请刷新页面或稍后重试。'));
       } finally {
         setLoading(false);
       }
@@ -135,12 +139,7 @@ export default function Dashboard() {
   };
 
   if (loading && !stats) {
-    return (
-      <div className="space-y-8">
-        <h2 className="text-4xl font-serif font-bold tracking-tight text-zinc-900">仪表盘</h2>
-        <p className="text-zinc-500">加载中…</p>
-      </div>
-    );
+    return <PageLoading title="仪表盘" className="space-y-8" />;
   }
 
   return (
@@ -150,27 +149,22 @@ export default function Dashboard() {
         <label htmlFor="period-select" className="sr-only">
           统计周期
         </label>
-        <select
+        <AdminSelect
           id="period-select"
           value={period}
-          onChange={(e) => setPeriod(e.target.value as 'day' | 'month' | 'year')}
-          className="px-3 py-1.5 bg-white border border-zinc-200 rounded-lg text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-zinc-900 focus-visible:ring-2 focus-visible:ring-zinc-900"
+          onChange={(v) => setPeriod(v as 'day' | 'month' | 'year')}
+          options={[
+            { value: 'day', label: '按日统计' },
+            { value: 'month', label: '按月统计' },
+            { value: 'year', label: '按年统计' },
+          ]}
+          className="min-w-[7.5rem]"
+          size="small"
           aria-label="选择统计周期"
-        >
-          <option value="day">按日统计</option>
-          <option value="month">按月统计</option>
-          <option value="year">按年统计</option>
-        </select>
+        />
       </div>
 
-      {error && (
-        <div
-          className="px-4 py-3 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm"
-          role="alert"
-        >
-          {error}
-        </div>
-      )}
+      {error ? <ErrorAlert message={error} /> : null}
 
       {/* KPI Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">

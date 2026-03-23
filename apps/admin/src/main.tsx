@@ -15,7 +15,16 @@ createRoot(document.getElementById('root')!).render(
       <ConfigProvider
         locale={zhCN}
         theme={{
-          token: { colorPrimary: '#0a0a0a', borderRadius: 8 },
+          token: { colorPrimary: '#0a0a0a', borderRadius: 8, colorBorder: '#d4d4d8' },
+          components: {
+            Select: {
+              optionSelectedBg: '#f4f4f5',
+              optionSelectedColor: '#18181b',
+              optionActiveBg: '#fafafa',
+              hoverBorderColor: '#a1a1aa',
+              activeBorderColor: '#0a0a0a',
+            },
+          },
         }}
       >
         <BrowserRouter basename={basename}>

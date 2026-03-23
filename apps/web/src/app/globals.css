@@ -11,6 +11,10 @@
 @variant dark (&:where(.dark, .dark *));
 
 @layer base {
+  html {
+    color-scheme: light;
+  }
+
   body {
     @apply bg-stone-50 text-stone-900 antialiased;
     font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';

@@ -23,7 +23,16 @@
     "loadingCategory": "分类加载中…",
     "noArticlesInCategory": "该分类下暂无文章。",
     "dateFormat": "yyyy-MM-dd",
-    "dateTimeFormat": "yyyy-MM-dd HH:mm:ss"
+    "dateTimeFormat": "yyyy-MM-dd HH:mm:ss",
+    "pinned": "置顶",
+    "categoryFilterMenu": "打开或关闭分类筛选",
+    "expandCategory": "展开子分类",
+    "collapseCategory": "收起子分类",
+    "switchToEnglish": "切换到英文",
+    "switchToChinese": "切换到中文",
+    "themeDark": "切换为深色模式",
+    "themeLight": "切换为浅色模式",
+    "skipToContent": "跳到正文"
   },
   "home": {
     "latestArticles": "最新文章",

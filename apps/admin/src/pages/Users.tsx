@@ -7,11 +7,14 @@ import {
   updateUser,
   deleteUser,
   resetUserPassword,
-  isApiError,
   type User,
   type Role,
 } from '@/lib/api';
+import { apiErrorMessage } from '@/lib/errorMessage';
+import { ErrorAlert } from '@/components/ErrorAlert';
+import { InlineLoading } from '@/components/PageLoading';
 import { useAuth } from '@/contexts/AuthContext';
+import { AdminSelect } from '@/components/AdminSelect';
 
 export default function UsersPage() {
   const [users, setUsers] = useState<User[]>([]);
@@ -45,7 +48,7 @@ export default function UsersPage() {
       setUsers(usersRes.data);
       setTotalPages(usersRes.meta.totalPages);
     } catch (err) {
-      setError(isApiError(err) ? err.message : '加载失败');
+      setError(apiErrorMessage(err, '加载失败，请刷新页面或稍后重试。'));
     } finally {
       setLoading(false);
     }
@@ -70,7 +73,7 @@ export default function UsersPage() {
       setIsModalOpen(null);
       await load();
     } catch (err) {
-      setError(isApiError(err) ? err.message : '创建失败');
+      setError(apiErrorMessage(err, '创建失败，请稍后重试。'));
     }
   };
 
@@ -88,7 +91,7 @@ export default function UsersPage() {
       setIsModalOpen(null);
       await load();
     } catch (err) {
-      setError(isApiError(err) ? err.message : '更新失败');
+      setError(apiErrorMessage(err, '更新失败，请稍后重试。'));
     }
   };
 
@@ -102,7 +105,7 @@ export default function UsersPage() {
       setNewPassword('');
       setIsModalOpen(null);
     } catch (err) {
-      setError(isApiError(err) ? err.message : '重置失败');
+      setError(apiErrorMessage(err, '重置失败，请稍后重试。'));
     }
   };
 
@@ -113,7 +116,7 @@ export default function UsersPage() {
       await deleteUser(user.id);
       await load();
     } catch (err) {
-      setError(isApiError(err) ? err.message : '删除失败');
+      setError(apiErrorMessage(err, '删除失败，请稍后重试。'));
     }
   };
 
@@ -136,17 +139,10 @@ export default function UsersPage() {
         )}
       </div>
 
-      {error && (
-        <div
-          className="px-4 py-3 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm"
-          role="alert"
-        >
-          {error}
-        </div>
-      )}
+      {error ? <ErrorAlert message={error} /> : null}
 
       {loading ? (
-        <p className="text-zinc-500">加载中…</p>
+        <InlineLoading />
       ) : (
         <div className="bg-white border border-zinc-200 rounded-xl overflow-hidden">
           <table className="w-full text-sm">
@@ -281,21 +277,15 @@ export default function UsersPage() {
               </div>
               <div>
                 <label className="block text-sm font-medium text-zinc-700 mb-1">角色</label>
-                <select
-                  value={form.roleId}
-                  onChange={(e) => setForm((f) => ({ ...f, roleId: e.target.value }))}
-                  className="w-full px-3 py-2 border border-zinc-200 rounded-lg"
-                  required
-                >
-                  <option value="">请选择</option>
-                  {roles
+                <AdminSelect
+                  block
+                  placeholder="请选择"
+                  value={form.roleId || undefined}
+                  onChange={(v) => setForm((f) => ({ ...f, roleId: String(v) }))}
+                  options={roles
                     .filter((r) => r.code !== 'super_admin')
-                    .map((r) => (
-                      <option key={r.id} value={r.id}>
-                        {r.name}
-                      </option>
-                    ))}
-                </select>
+                    .map((r) => ({ value: r.id, label: r.name }))}
+                />
               </div>
               <div className="flex gap-2 justify-end pt-2">
                 <button
@@ -340,30 +330,26 @@ export default function UsersPage() {
               </div>
               <div>
                 <label className="block text-sm font-medium text-zinc-700 mb-1">角色</label>
-                <select
-                  value={form.roleId}
-                  onChange={(e) => setForm((f) => ({ ...f, roleId: e.target.value }))}
-                  className="w-full px-3 py-2 border border-zinc-200 rounded-lg"
-                >
-                  {roles
+                <AdminSelect
+                  block
+                  value={form.roleId || undefined}
+                  onChange={(v) => setForm((f) => ({ ...f, roleId: String(v) }))}
+                  options={roles
                     .filter((r) => r.code !== 'super_admin')
-                    .map((r) => (
-                      <option key={r.id} value={r.id}>
-                        {r.name}
-                      </option>
-                    ))}
-                </select>
+                    .map((r) => ({ value: r.id, label: r.name }))}
+                />
               </div>
               <div>
                 <label className="block text-sm font-medium text-zinc-700 mb-1">状态</label>
-                <select
+                <AdminSelect
+                  block
                   value={form.status || editingUser.status}
-                  onChange={(e) => setForm((f) => ({ ...f, status: e.target.value }))}
-                  className="w-full px-3 py-2 border border-zinc-200 rounded-lg"
-                >
-                  <option value="active">正常</option>
-                  <option value="disabled">禁用</option>
-                </select>
+                  onChange={(v) => setForm((f) => ({ ...f, status: String(v) }))}
+                  options={[
+                    { value: 'active', label: '正常' },
+                    { value: 'disabled', label: '禁用' },
+                  ]}
+                />
               </div>
               <div className="flex gap-2 justify-end pt-2">
                 <button
