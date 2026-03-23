@@ -1,6 +1,9 @@
 import { useState } from 'react';
 import { Lock, ArrowRight } from 'lucide-react';
-import { login, setToken, isApiError } from '@/lib/api';
+import { login, setToken } from '@/lib/api';
+import { apiErrorMessage } from '@/lib/errorMessage';
+import { ErrorAlert } from '@/components/ErrorAlert';
+import backgroundImage from '@/assets/images/logo-background.png';
 
 interface LoginProps {
   onLogin: () => void;
@@ -22,8 +25,7 @@ export default function Login({ onLogin }: LoginProps) {
       setToken(token);
       onLogin();
     } catch (err) {
-      const msg = isApiError(err) ? err.message : err instanceof Error ? err.message : '登录失败';
-      setError(msg);
+      setError(apiErrorMessage(err, '登录失败，请检查用户名和密码。'));
     } finally {
       setIsLoading(false);
     }
@@ -34,7 +36,7 @@ export default function Login({ onLogin }: LoginProps) {
       {/* Left Pane - Brand & Image */}
       <div className="hidden lg:flex lg:w-1/2 relative bg-[#0a0a0a] overflow-hidden">
         <img
-          src="https://images.unsplash.com/photo-1499750310107-5fef28a66643?q=80&w=2070&auto=format&fit=crop"
+          src={backgroundImage}
           alt=""
           role="presentation"
           width={2070}
@@ -66,14 +68,7 @@ export default function Login({ onLogin }: LoginProps) {
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
-            {error && (
-              <div
-                className="px-4 py-3 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm"
-                role="alert"
-              >
-                {error}
-              </div>
-            )}
+            {error ? <ErrorAlert message={error} /> : null}
             <div className="space-y-2">
               <label htmlFor="admin-username" className="text-sm font-medium text-zinc-700">
                 用户名
