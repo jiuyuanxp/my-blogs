@@ -69,7 +69,6 @@ services/java/scripts/run-init.sh
 .goose
 .windsurf
 .zencoder
-skills/
 skills-lock.json
 
 # 生成的 OpenAPI 规范（可运行 pnpm docs:generate 重新生成）
