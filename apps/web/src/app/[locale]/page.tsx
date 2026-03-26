@@ -1,6 +1,34 @@
+import type { Metadata } from 'next';
+import { getTranslations } from 'next-intl/server';
 import { fetchArticles, fetchCategories, isApiError } from '@/lib/api';
 import { toCategoryNodes } from '@/lib/category-utils';
+import { getCanonicalUrl } from '@/lib/site-url';
 import HomePageClient from '@/components/HomePageClient';
+
+const siteName = process.env.NEXT_PUBLIC_SITE_NAME || 'jiuyuan.blog';
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: 'home' });
+  const description = t('subtitle');
+  const canonical = getCanonicalUrl(`/${locale}`);
+
+  return {
+    title: siteName,
+    description,
+    alternates: { canonical },
+    openGraph: {
+      title: siteName,
+      description,
+      url: canonical,
+      locale: locale === 'zh' ? 'zh_CN' : 'en_US',
+    },
+  };
+}
 
 export default async function HomePage() {
   let articles: Awaited<ReturnType<typeof fetchArticles>>['data'] = [];

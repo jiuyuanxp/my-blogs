@@ -1,8 +1,8 @@
 import type { MetadataRoute } from 'next';
-
-const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://jiuyuan.blog';
+import { getCanonicalUrl, getPublicSiteOrigin } from '@/lib/site-url';
 
 export default function robots(): MetadataRoute.Robots {
+  const host = getPublicSiteOrigin();
   return {
     rules: [
       {
@@ -11,7 +11,7 @@ export default function robots(): MetadataRoute.Robots {
         disallow: ['/api/', '/_next/', '/admin/'],
       },
     ],
-    sitemap: `${baseUrl}/sitemap.xml`,
-    host: baseUrl,
+    sitemap: getCanonicalUrl('/sitemap.xml'),
+    host,
   };
 }

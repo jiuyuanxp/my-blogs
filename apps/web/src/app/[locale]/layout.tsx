@@ -75,9 +75,6 @@ export async function generateMetadata({
       images: [process.env.NEXT_PUBLIC_OG_IMAGE || '/og-image.png'],
       creator: twitterHandle,
     },
-    alternates: {
-      canonical: '/',
-    },
     robots: {
       index: true,
       follow: true,

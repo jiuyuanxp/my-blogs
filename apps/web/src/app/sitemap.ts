@@ -2,9 +2,7 @@ import type { MetadataRoute } from 'next';
 import { locales } from '@/i18n/request';
 import { fetchArticles, fetchCategories } from '@/lib/api';
 import { parseDateTime } from '@blog/utils';
-
-const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://jiuyuan.blog';
-const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? '/web';
+import { getCanonicalUrl } from '@/lib/site-url';
 
 function flattenCategories(
   cats: { id: string; name: string; children?: unknown[] }[]
@@ -34,7 +32,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
     for (const locale of locales) {
       entries.push({
-        url: `${baseUrl}${basePath}/${locale}`,
+        url: getCanonicalUrl(`/${locale}`),
         lastModified: new Date(),
         changeFrequency: 'weekly' as const,
         priority: 1,
@@ -42,7 +40,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
       for (const article of articles) {
         entries.push({
-          url: `${baseUrl}${basePath}/${locale}/article/${article.id}`,
+          url: getCanonicalUrl(`/${locale}/article/${article.id}`),
           lastModified: parseDateTime(article.createdAt),
           changeFrequency: 'monthly' as const,
           priority: 0.8,
@@ -51,7 +49,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
       for (const category of categories) {
         entries.push({
-          url: `${baseUrl}${basePath}/${locale}/category/${encodeURIComponent(category.id)}`,
+          url: getCanonicalUrl(`/${locale}/category/${encodeURIComponent(category.id)}`),
           lastModified: new Date(),
           changeFrequency: 'weekly' as const,
           priority: 0.7,
@@ -61,7 +59,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   } catch {
     for (const locale of locales) {
       entries.push({
-        url: `${baseUrl}${basePath}/${locale}`,
+        url: getCanonicalUrl(`/${locale}`),
         lastModified: new Date(),
         changeFrequency: 'weekly' as const,
         priority: 1,
